@@ -1,0 +1,104 @@
+/* IntentWeave custom styles */
+
+:root {
+	--sl-color-accent-low: #1a2744;
+	--sl-color-accent: #3b82f6;
+	--sl-color-accent-high: #93c5fd;
+	--sl-font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #dbeafe;
+	--sl-color-accent: #2563eb;
+	--sl-color-accent-high: #1e3a5f;
+}
+
+/* Hero section on homepage */
+.hero-section {
+	text-align: center;
+	padding: 3rem 1rem;
+}
+
+.hero-section h1 {
+	font-size: 2.5rem;
+	line-height: 1.2;
+	margin-bottom: 0.75rem;
+}
+
+.hero-section .subtitle {
+	font-size: 1.25rem;
+	opacity: 0.85;
+	margin-bottom: 2rem;
+	max-width: 640px;
+	margin-inline: auto;
+}
+
+.hero-cta {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-bottom: 2rem;
+}
+
+.hero-cta a {
+	display: inline-block;
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.5rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: opacity 0.2s;
+}
+
+.hero-cta a:hover {
+	opacity: 0.9;
+}
+
+.hero-cta .primary {
+	background: var(--sl-color-accent);
+	color: white;
+}
+
+.hero-cta .secondary {
+	border: 2px solid var(--sl-color-accent);
+	color: var(--sl-color-accent);
+}
+
+/* Feature cards */
+.features {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
+	margin: 2rem 0;
+}
+
+.feature-card {
+	padding: 1.5rem;
+	border-radius: 0.75rem;
+	border: 1px solid var(--sl-color-gray-5);
+	background: var(--sl-color-gray-7, var(--sl-color-bg));
+}
+
+.feature-card h3 {
+	margin-top: 0;
+	font-size: 1.1rem;
+}
+
+.feature-card p {
+	margin-bottom: 0;
+	opacity: 0.85;
+	font-size: 0.95rem;
+}
+
+/* Benchmark table tweaks */
+.benchmark-table {
+	margin: 2rem 0;
+	overflow-x: auto;
+}
+
+/* Terminal-style code blocks */
+.terminal-demo {
+	margin: 2rem 0;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}

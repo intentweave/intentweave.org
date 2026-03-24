@@ -1,0 +1,119 @@
+---
+title: Code + docs + git → a queryable context index
+description: "IntentWeave CARI: a $0 local index from your code, docs, and git history. No LLM, no servers. Build in seconds, query in milliseconds."
+template: splash
+hero:
+  title: Code + docs + git → a queryable context index
+  tagline: "CARI: a $0 local index from your code, docs, and git history. No LLM, no servers. Build in seconds, query in milliseconds."
+  image:
+    dark: ../../assets/logo-dark.svg
+    light: ../../assets/logo-light.svg
+  actions:
+    - text: Get Started
+      link: /docs/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/intentweave/intentweave
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Quick Start
+
+```bash
+npm install -g @intentweave/cli
+cd your-project
+
+iw init
+iw index build                         # < 3 seconds, zero API calls
+iw index retrieve "authentication"     # ranked file retrieval
+iw index connections "AuthService"     # cross-layer connections + gaps
+iw index check --changed src/auth.ts   # CI drift detection
+iw index report                        # health dashboard
+```
+
+---
+
+## What You Get
+
+<CardGrid>
+  <Card title="Ranked Retrieval" icon="magnifier">
+    Find the right files for any topic. CARI combines code structure, document
+    semantics, and git history into a single ranked score with explanations.
+  </Card>
+  <Card title="Connections & Gaps" icon="puzzle">
+    See which entities co-occur in docs, co-change in git, or share code imports —
+    and where these signals **disagree**. Disagreement reveals hidden couplings.
+  </Card>
+  <Card title="CI Drift Checks" icon="warning">
+    Catch stale documentation before it ships. `iw index check` detects docs that
+    reference changed code and reports them as CI warnings.
+  </Card>
+</CardGrid>
+
+---
+
+## Benchmarks
+
+Measured on the IntentWeave monorepo (264 code files, 7 docs, 5316 symbols):
+
+| Metric | Structured | Full-Depth |
+|--------|----------:|----------:|
+| Build time | 1.1 s | 2.8 s |
+| Annotations | 6,721 | 11,533 |
+| Grounded (linked to code) | 2,548 (38%) | 7,360 (64%) |
+| Co-occurrence edges | 1,099 | 2,631 |
+| LLM calls | 0 | 0 |
+| Index file size | ~2 MB | ~4 MB |
+
+**Full-depth mode** adds +72% more annotations and +189% more grounded links by scanning
+document body text with dictionary matching and IDF-based noise filtering.
+
+---
+
+## How It Works
+
+```
+Source Code ──► AST Extraction ──► Symbol Registry
+                                        │
+Markdown Docs ──► Keyword Extraction ──►│──► Annotation Engine ──► SQLite Index
+                                        │         │                    │
+Git History ──► Co-change Analysis ─────┘    IDF Filtering        .iw/index.db
+                                                                       │
+                                                    ┌──────────────────┤
+                                                    │                  │
+                                              CLI Queries        MCP Tools
+                                          (retrieve, check,   (cari_retrieve,
+                                           connections,         cari_connections,
+                                           report)              cari_check)
+```
+
+**No servers to run.** The index is a single SQLite file. Queries are predefined
+SQL — sub-100ms latency. The entire pipeline is local and deterministic.
+
+---
+
+## Optional: Knowledge Graph
+
+For teams that need deep semantic analysis, IntentWeave also supports LLM-powered
+entity extraction to Neo4j. This is a separate, optional path — not required for CARI.
+
+[Learn more →](/docs/kg/overview/)
+
+---
+
+## Open Source
+
+IntentWeave is licensed under **Apache-2.0**. Contributions are welcome.
+
+<CardGrid>
+  <Card title="Contributing" icon="open-book">
+    See the [contribution guide](/community/contributing/) for how to get involved.
+  </Card>
+  <Card title="Roadmap" icon="rocket">
+    Check the [roadmap](/community/roadmap/) for what's next.
+  </Card>
+</CardGrid>

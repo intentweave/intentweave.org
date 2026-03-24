@@ -1,0 +1,111 @@
+---
+title: CARI Technical Specification
+description: Detailed specification for the Code-Aware Retrieval Index.
+---
+
+## Status
+
+**Implemented** — Phases 1–5 complete, 92 tests passing.
+
+## Design Goals
+
+1. **Zero external cost** — no LLM calls, no paid APIs, no database servers
+2. **Single-file output** — one SQLite database, portable and inspectable
+3. **Three-signal fusion** — AST structure + document semantics + git temporal data
+4. **Gap detection** — disagreements between signals are the most valuable findings
+5. **CI-ready** — exit codes, machine-readable formats, fast execution
+
+## Input Layers
+
+### Layer 1: Code (AST)
+
+Tree-sitter parses source files to produce a symbol registry:
+
+- Classes, interfaces, type aliases, enums
+- Functions (top-level and methods)
+- Exported variables and constants
+- Parameter types and return types (where available)
+
+Supported languages: TypeScript, JavaScript, Swift.
+
+### Layer 2: Documents (Keywords)
+
+Markdown documents are scanned for entity mentions:
+
+| Source | What It Captures | Depth |
+|--------|-----------------|-------|
+| Headings (H1-H6) | Section topics | structured |
+| Bold text | Emphasized entities | structured |
+| Code spans | Inline code references | structured |
+| Identifiers | CamelCase / snake_case tokens | structured |
+| Body text | Dictionary-matched terms | full only |
+
+### Layer 3: Git (Temporal)
+
+Git log analysis produces:
+
+- **Co-change Jaccard** — P(A∩B) / P(A∪B) for file pairs across commits
+- **Recency weighting** — recent co-changes score higher
+- **Hotspot detection** — files with high churn
+- **Ownership** — most frequent committer per file
+- **Staleness** — time since last modification relative to dependent code
+
+## Annotation Engine
+
+The annotator matches document mentions to code symbols:
+
+1. For each keyword mention in a document, search the symbol registry
+2. Exact matches get confidence 1.0
+3. Partial/fuzzy matches get reduced confidence
+4. In full mode, apply IDF penalties to body-text matches
+
+### IDF Filtering (Full Mode)
+
+Terms appearing in > 85% of documents are penalized:
+
+- **Stopword baseline**: ~50 known-noisy terms (e.g., "data", "type", "value")
+- **Ceiling**: 0.15 maximum IDF score for baseline terms
+- **Exemptions**: Heading, bold, and code-span annotations are never penalized
+
+## Benchmarks
+
+Measured on the IntentWeave monorepo (264 code files, 7 docs, 5316 symbols):
+
+| Metric | Structured | Full | Delta |
+|--------|----------:|-----:|------:|
+| Build time | 1.1 s | 2.8 s | +1.7 s |
+| Annotations | 6,721 | 11,533 | +72% |
+| Grounded (code-linked) | 2,548 (38%) | 7,360 (64%) | +189% |
+| Co-occurrence edges | 1,099 | 2,631 | +139% |
+| IDF terms tracked | — | 2,843 | — |
+| Index file size | ~2 MB | ~4 MB | +100% |
+
+## Implementation Phases
+
+All phases are complete:
+
+| Phase | Scope | Tests |
+|-------|-------|------:|
+| 1. Foundation | Writer, schema, retrieval queries | 22 |
+| 2. Connections | Co-occurrence, co-change, gap detection | 20 |
+| 3. CI Drift | Check command, severity levels, formats | 16 |
+| 4. Incremental | Content-hash updates, corpus report | 12 |
+| 5. Annotation Depth | Dictionary matching, IDF filtering, stopword baseline | 22 |
+| **Total** | | **92** |
+
+## Key Source Files
+
+| File | Purpose |
+|------|---------|
+| `packages/index/src/writer.ts` | SQLite index builder |
+| `packages/index/src/annotator.ts` | Mention→symbol matching + IDF |
+| `packages/index/src/idf.ts` | IDF scorer + stopword baseline |
+| `packages/index/src/schema.ts` | SQLite table definitions |
+| `packages/index/src/queries/retrieve.ts` | Ranked retrieval |
+| `packages/index/src/queries/connections.ts` | Connection discovery |
+| `packages/index/src/queries/check.ts` | CI drift detection |
+| `packages/index/src/queries/report.ts` | Health dashboard |
+| `packages/index/src/incremental.ts` | Content-hash updates |
+| `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction |
+| `packages/analyzer/src/kwg/kwxStage.ts` | KWX stage options |
+| `packages/cli/src/commands/indexBuild.ts` | Build orchestrator |

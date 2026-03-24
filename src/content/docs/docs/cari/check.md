@@ -1,0 +1,112 @@
+---
+title: CI Drift Check
+description: Detect stale documentation in your CI pipeline.
+---
+
+## Usage
+
+```bash
+iw index check [options]
+```
+
+Identifies documents that reference changed code and may need updating.
+
+## Options
+
+| Option                | Default   | Description                        |
+| --------------------- | --------- | ---------------------------------- |
+| `--changed <files...>`| —         | Files changed in PR/commit         |
+| `--severity <level>`  | `info`    | Minimum: `info`, `warning`, `critical` |
+| `-f, --format`        | `text`    | Output: `text`, `json`, `github`   |
+
+## How It Works
+
+1. You tell `check` which files changed (typically from `git diff`)
+2. CARI looks up all annotations that reference those files
+3. Any document with annotations pointing to changed code is flagged
+4. The severity depends on how many references and how central the change is
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0`  | No drift detected |
+| `1`  | Drift found (docs may need updating) |
+
+## Examples
+
+### Basic check
+
+```bash
+iw index check --changed src/auth/service.ts src/auth/jwt.ts
+
+# ⚠ docs/auth.md references AuthService (12 annotations) — may need updating
+# ⚠ docs/api.md references JwtValidator (3 annotations) — may need updating
+```
+
+### GitHub Actions format
+
+```bash
+iw index check \
+  --changed $(git diff --name-only origin/main...HEAD) \
+  --format github
+
+# ::warning file=docs/auth.md::References changed code: AuthService (12 annotations)
+# ::warning file=docs/api.md::References changed code: JwtValidator (3 annotations)
+```
+
+### JSON output
+
+```bash
+iw index check --changed src/auth.ts --format json
+
+# [
+#   {
+#     "file": "docs/auth.md",
+#     "severity": "warning",
+#     "references": ["AuthService"],
+#     "annotationCount": 12
+#   }
+# ]
+```
+
+### Filter by severity
+
+```bash
+# Only show critical drift (many references to heavily-changed code)
+iw index check --changed src/ --severity critical
+```
+
+## GitHub Actions Integration
+
+```yaml
+name: Doc Drift Check
+on: pull_request
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install -g @intentweave/cli
+
+      - run: iw index build
+
+      - name: Check documentation drift
+        run: |
+          iw index check \
+            --changed $(git diff --name-only origin/main...HEAD) \
+            --format github
+```
+
+## Next Steps
+
+- [Health Report](/docs/cari/report/) — full corpus health dashboard
+- [GitHub Actions / CI](/docs/integrations/ci/) — complete CI setup guide

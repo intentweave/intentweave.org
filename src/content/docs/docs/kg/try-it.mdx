@@ -1,0 +1,109 @@
+---
+title: Try It — Knowledge Graph Quick Start
+description: Set up Neo4j and run your first knowledge extraction in 5 minutes.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+  This requires Docker (for Neo4j) and an OpenAI API key. If you just want to
+  try IntentWeave, start with [CARI](/docs/getting-started/) — no dependencies needed.
+</Aside>
+
+## 1. Start Neo4j
+
+```bash
+docker run -d --name neo4j \
+  -p 7474:7474 -p 7687:7687 \
+  -e NEO4J_AUTH=neo4j/codegraph \
+  neo4j:5
+```
+
+Verify it's running: open [http://localhost:7474](http://localhost:7474) in your browser.
+
+## 2. Set Environment Variables
+
+```bash
+export NEO4J_PASSWORD=codegraph
+export OPENAI_API_KEY=sk-...
+```
+
+## 3. Initialize Your Workspace
+
+```bash
+cd /path/to/your/project
+iw init
+```
+
+## 4. Run the Extraction Pipeline
+
+```bash
+iw run docs/*.md --track open --provider openai -i -v
+```
+
+**What happens:**
+1. Documents are chunked (~16k chars/chunk)
+2. OpenAI extracts entity-relationship triples per chunk
+3. Entities and predicates are canonicalized
+4. Cross-document entities are deduplicated
+
+The `-i` flag enables incremental caching — re-runs skip unchanged files.
+
+## 5. Persist to Neo4j
+
+```bash
+iw persist --latest -v
+```
+
+## 6. Query
+
+### Natural language
+
+```bash
+iw query "What are the main components?" -s my-project
+iw query "What decisions were made about the database?" -s my-project -v
+```
+
+### Raw Cypher
+
+```bash
+iw query --cypher "MATCH (n:Canon:Entity) RETURN n.name, n.type LIMIT 20"
+iw query --cypher "MATCH ()-[r:CANON_REL]->() RETURN r.predicate, count(*) ORDER BY count(*) DESC"
+```
+
+## 7. Build RAG Context
+
+```bash
+# Topic-based
+iw context "authentication architecture" -s my-project
+
+# Entity-seeded (expand 3 hops from a specific entity)
+iw context -e "React" --hops 3 -s my-project
+```
+
+## 8. Impact Analysis
+
+```bash
+iw impact src/auth.ts -s my-project
+```
+
+Traces which entities, decisions, and risks are affected by changing a file.
+
+## 9. Documentation Health
+
+```bash
+iw doc-health -s my-project
+```
+
+Detects stale references, structural drift, and contradictions.
+
+## Tips
+
+- Use `smart-mock` provider for testing without API costs: `--provider smart-mock`
+- The `--from-fx` flag lets you re-run only canonicalization: `--from-fx <run-id>`
+- Output as JSON for programmatic use: `-f json -o results.json`
+
+## Next Steps
+
+- [CLI Reference](/docs/reference/cli/) — full command documentation
+- [Architecture Overview](/architecture/overview/) — how the pipeline works

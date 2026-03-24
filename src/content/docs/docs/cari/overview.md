@@ -1,0 +1,76 @@
+---
+title: CARI Overview
+description: What is the Code-Aware Retrieval Index and why does it exist?
+---
+
+## What Is CARI?
+
+**CARI** (Code-Aware Retrieval Index) is a lightweight, pre-computed index that connects your
+code, documentation, and git history into a single queryable database.
+
+- **Zero cost** — no LLM calls, no external services, no API keys
+- **Single file** — everything lives in `.iw/index.db` (SQLite)
+- **Fast** — builds in seconds, queries in milliseconds
+- **Deterministic** — same input always produces the same output
+
+## Why Not Just grep?
+
+`grep` finds strings. CARI finds **relationships**:
+
+| What you need | grep | CARI |
+|---------------|------|------|
+| "Which files mention auth?" | ✅ String match | ✅ Ranked by relevance |
+| "What's connected to AuthService?" | ❌ | ✅ Doc co-mentions + git co-changes + code imports |
+| "What docs are stale?" | ❌ | ✅ Cross-references changed code to doc mentions |
+| "What's undocumented?" | ❌ | ✅ Exported symbols with no doc coverage |
+
+## Why SQLite?
+
+- Ships with Node.js via `better-sqlite3` — no server process
+- The entire index is one portable file (2–4 MB for typical projects)
+- Queries are pre-written SQL views — no query language to learn
+- Works offline, in CI, in Docker, anywhere Node runs
+
+## Three Independent Signals
+
+CARI's power comes from combining **three layers** that most tools treat separately:
+
+### 1. Code Structure (AST)
+
+Tree-sitter parses your source files to extract classes, functions, interfaces, exports.
+This creates a **symbol registry** — the ground truth for "what exists in the code."
+
+### 2. Document Semantics (Keywords)
+
+Headings, bold text, code spans, and (optionally) body text are scanned for entity mentions.
+Each mention is linked to a code symbol when possible, creating **annotations**.
+
+### 3. Git History (Temporal)
+
+`git log` analysis reveals which files change together (co-change), how often they change
+(hotspot), and how recently (staleness). These signals complement the static analysis.
+
+### The Insight Is in the Gaps
+
+When all three signals agree, you have a well-documented, well-structured codebase.
+When they **disagree**, that's where the interesting findings are:
+
+- **Co-mentioned in docs but no code dependency** → hidden coupling
+- **Co-changed in git but not documented together** → missing documentation
+- **Exported symbol with no doc mention** → undocumented public API
+
+## Architecture
+
+```
+packages/
+  index/        → @intentweave/index — the CARI engine
+  analyzer/     → @intentweave/analyzer — pipeline stages (AX, KWX, COX, TCG)
+  ast-extractor/→ @intentweave/ast-extractor — tree-sitter TS/JS/Swift extraction
+  cli/          → @intentweave/cli — `iw index` commands + MCP tools
+```
+
+## Next Steps
+
+- [Build the Index](/docs/cari/build/) — run your first build
+- [Retrieve](/docs/cari/retrieve/) — ranked file search
+- [Connections & Gaps](/docs/cari/connections/) — cross-layer discovery

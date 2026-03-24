@@ -1,0 +1,80 @@
+---
+title: Knowledge Graph — What It Is
+description: Optional LLM-powered semantic extraction for deep code understanding.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+  The Knowledge Graph is an **optional, advanced feature**. Most teams should start
+  with [CARI](/docs/cari/overview/) — it's free, fast, and covers the most common
+  use cases. The KG adds deep semantic analysis for teams that need it.
+</Aside>
+
+## What It Does
+
+The Knowledge Graph uses LLMs (OpenAI) to extract **entities, decisions, relationships,
+and constraints** from natural-language documents. Results are persisted to Neo4j for
+rich graph queries.
+
+### Example
+
+Given a document about authentication architecture, the KG extracts:
+
+```
+Entity: AuthService (component)
+Entity: JWT (technology)
+Entity: Session-based auth (option)
+Relationship: AuthService USES JWT
+Relationship: Team DECIDED_FOR JWT
+Relationship: Team DECIDED_AGAINST Session-based auth
+```
+
+You can then query:
+
+```bash
+iw query "What decisions were made about authentication?"
+
+# → JWT was chosen over session-based auth for the authentication system
+# → Reasons: statelessness, horizontal scaling, API compatibility
+```
+
+## How It Works
+
+### Pipeline: IN → FX → KX → GX
+
+1. **IN** — Chunks documents (semantic markdown splitting, ~16k chars/chunk)
+2. **FX** — LLM extracts raw entity-relationship triples per chunk
+3. **KX** — Canonicalizes entities and predicates into a consistent schema (30 predicate types)
+4. **GX** — Cross-document entity deduplication (exact + fuzzy merge)
+
+### What Gets Extracted
+
+**Entity types:** concept, decision, option, requirement, feature, component,
+technology, resource, role, risk, phase, constraint, question, tradeoff
+
+**Relationship types:** CONTAINS, DEPENDS_ON, IMPLEMENTS, EXTENDS, CALLS,
+USES, DECIDED_FOR, DECIDED_AGAINST, SUPERSEDES, ENABLES, BLOCKS, RISKS, and more.
+
+## When To Use It
+
+| Need | Use |
+|------|-----|
+| Find relevant files | **CARI** (free, fast) |
+| Check doc freshness | **CARI** (free, fast) |
+| Understand decisions and rationale | **KG** |
+| Trace impact of architectural changes | **KG** |
+| Query natural-language questions | **KG** |
+| Build RAG context for AI agents | **KG** |
+
+## Requirements
+
+| Dependency | Purpose |
+|-----------|---------|
+| **Neo4j 5** | Graph storage (Docker recommended) |
+| **OpenAI API key** | LLM extraction + NL queries |
+
+## Next Steps
+
+- [Try It](/docs/kg/try-it/) — set up Neo4j and run your first extraction
+- [CLI Reference](/docs/reference/cli/) — full command documentation
