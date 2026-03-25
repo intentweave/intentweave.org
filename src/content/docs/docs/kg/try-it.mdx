@@ -92,10 +92,15 @@ Traces which entities, decisions, and risks are affected by changing a file.
 ## 9. Documentation Health
 
 ```bash
-iw doc-health -s my-project
+# CARI mode (default — no Neo4j needed)
+iw doc-health
+
+# Full KG mode (requires Neo4j)
+iw doc-health --neo4j -s my-project
 ```
 
 Detects stale references, structural drift, and contradictions.
+The default CARI mode reads the local SQLite index; add `--neo4j` for the full knowledge-graph analysis.
 
 ## Tips
 

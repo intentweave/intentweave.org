@@ -62,7 +62,7 @@ If you have Neo4j running, additional tools are available:
 | `kg_context` | Build RAG context from graph | `topic?`, `entity?`, `hops?` |
 | `kg_entities` | List/search entities | `type?`, `search?`, `limit?` |
 | `kg_impact` | Semantic impact analysis | `files`, `hops?` |
-| `kg_doc_health` | Documentation freshness | `files?` |
+| `kg_doc_health` | Documentation freshness (requires Neo4j) | `files?` |
 | `kg_schema` | Graph schema description | _(none)_ |
 
 ## MCP Server Options
