@@ -179,17 +179,26 @@ iw impact <files...> [options]
 
 ### `iw doc-health`
 
-Documentation freshness analysis.
+Documentation freshness analysis. Three modes (least → most infrastructure):
+
+1. `--lite` — Zero-infra keyword scan (no index needed)
+2. _(default)_ — CARI-backed analysis from `.iw/index.db` (no Neo4j)
+3. `--neo4j` — Full KG-based analysis (requires Neo4j + persisted KWG)
 
 ```bash
 iw doc-health [files...] [options]
 ```
 
-| Option          | Default | Description         |
-| --------------- | ------- | ------------------- |
-| `-s, --session` | —       | Session scope       |
-| `-f, --format`  | `text`  | Output format       |
-| `-o, --output`  | —       | Write to file       |
+| Option           | Default        | Description                                   |
+| ---------------- | -------------- | --------------------------------------------- |
+| `--db <path>`    | `.iw/index.db` | Path to CARI index (default mode)             |
+| `--neo4j`        | off            | Full KG mode — requires Neo4j                 |
+| `-s, --session`  | —              | Session ID (required for `--neo4j` only)      |
+| `--only`         | all            | Specific detectors: doc-code,temporal,deps,doc-doc |
+| `--lite`         | off            | Lightweight keyword-only mode                 |
+| `-f, --format`   | `markdown`     | Output format: markdown \| json               |
+| `-o, --output`   | —              | Write to file                                 |
+| `-v, --verbose`  | off            | Show progress                                 |
 
 ### `iw persist`
 
