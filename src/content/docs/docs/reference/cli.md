@@ -101,6 +101,29 @@ Incremental index update.
 iw index update [-v]
 ```
 
+### Programmatic CARI Queries
+
+Beyond the CLI subcommands, the `@intentweave/index` package exports additional
+query functions:
+
+```typescript
+import { openIndex } from "@intentweave/index";
+const db = openIndex(".iw/index.db");
+```
+
+| Function | Purpose |
+|----------|---------|
+| `db.clones()` | Exact clone detection (identical body hash) |
+| `db.structuralClones()` | Type 2 clones (same control flow, different identifiers) |
+| `db.circularImports()` | Import cycle detection |
+| `db.unusedExports()` | Exported symbols never imported |
+| `db.hotspotPriority()` | High-churn low-doc files ranked by urgency |
+| `db.todos()` | TODO/FIXME/HACK/XXX inventory |
+| `db.moduleCoverage()` | Documentation coverage % per directory |
+| `db.orphanedSections()` | Doc sections with all-ungrounded mentions |
+| `db.docCompleteness()` | Per-doc completeness vs. referenced exports |
+| `db.crossGroupDrift()` | Cross-group entity coverage conflicts |
+
 ---
 
 ## Knowledge Graph Commands (require Neo4j)

@@ -44,6 +44,11 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_connections` | Cross-layer connections + gap detection | `entity`, `include?`, `limit?` |
 | `cari_check` | CI drift detection for changed files | `changed`, `severity?` |
 
+10 additional query functions (clones, circular imports, unused exports, TODOs,
+module coverage, and more) are available via the `@intentweave/index`
+programmatic API. See the [CARI Overview](/docs/cari/overview/#all-query-modes)
+for the full list.
+
 ### Usage Examples
 
 Ask Copilot:

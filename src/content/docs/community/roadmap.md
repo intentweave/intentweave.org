@@ -5,8 +5,8 @@ description: What's planned for IntentWeave.
 
 ## Current Status
 
-CARI (Code-Aware Retrieval Index) is **production-ready** with 92 tests passing
-across 5 implementation phases. The Knowledge Graph pipeline is functional but
+CARI (Code-Aware Retrieval Index) is **production-ready** with 908 tests passing
+across 48 test files. The Knowledge Graph pipeline is functional but
 considered optional/advanced.
 
 ## Short-term
@@ -34,10 +34,16 @@ considered optional/advanced.
 
 ### Richer Signals
 
-- Import/dependency graph integration into connections
+- ✅ Import/dependency graph integration into connections
 - Test coverage correlation (if test framework metadata available)
 - PR review history as a co-change signal
-- Comment/TODO tracking
+- ✅ Comment/TODO tracking
+- ✅ Clone detection (exact + structural)
+- ✅ Unused export detection
+- ✅ Module documentation coverage
+- ✅ Orphaned section detection
+- ✅ Per-doc completeness scoring
+- ✅ Cross-group drift detection
 
 ### Editor Integration
 

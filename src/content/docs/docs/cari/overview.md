@@ -23,6 +23,9 @@ code, documentation, and git history into a single queryable database.
 | "What's connected to AuthService?" | ❌ | ✅ Doc co-mentions + git co-changes + code imports |
 | "What docs are stale?" | ❌ | ✅ Cross-references changed code to doc mentions |
 | "What's undocumented?" | ❌ | ✅ Exported symbols with no doc coverage |
+| "Find duplicate code" | ❌ | ✅ Exact + structural clone detection |
+| "Show circular imports" | ❌ | ✅ Import cycle detection |
+| "What TODOs exist?" | ❌ | ✅ TODO/FIXME/HACK/XXX inventory |
 
 ## Why SQLite?
 
@@ -74,3 +77,24 @@ packages/
 - [Build the Index](/docs/cari/build/) — run your first build
 - [Retrieve](/docs/cari/retrieve/) — ranked file search
 - [Connections & Gaps](/docs/cari/connections/) — cross-layer discovery
+
+## All Query Modes
+
+CARi provides 14 built-in query modes via the CLI and programmatic API:
+
+| Query | Purpose |
+|-------|---------|
+| `retrieve` | Ranked file retrieval by topic or symbol |
+| `connections` | Cross-layer connections + gap detection |
+| `check` | CI drift detection for changed files |
+| `report` | Corpus-wide health dashboard |
+| `clones` | Exact clone detection (identical body hash) |
+| `structuralClones` | Type 2 clones (same control flow, different names) |
+| `circularImports` | Import cycle detection |
+| `unusedExports` | Exported symbols never imported |
+| `hotspotPriority` | High-churn low-doc files ranked by urgency |
+| `todos` | TODO/FIXME/HACK/XXX inventory |
+| `moduleCoverage` | Documentation coverage % per directory |
+| `orphanedSections` | Doc sections with all-ungrounded mentions |
+| `docCompleteness` | Per-doc completeness vs. referenced exports |
+| `crossGroupDrift` | Cross-group entity coverage conflicts |

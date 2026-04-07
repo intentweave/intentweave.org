@@ -5,7 +5,7 @@ description: Detailed specification for the Code-Aware Retrieval Index.
 
 ## Status
 
-**Implemented** — Phases 1–5 complete, 92 tests passing.
+**Implemented** — Phases 1–7 complete, 908 tests passing across 48 test files.
 
 ## Design Goals
 
@@ -91,7 +91,9 @@ All phases are complete:
 | 3. CI Drift | Check command, severity levels, formats | 16 |
 | 4. Incremental | Content-hash updates, corpus report | 12 |
 | 5. Annotation Depth | Dictionary matching, IDF filtering, stopword baseline | 22 |
-| **Total** | | **92** |
+| 6. Code Quality | Clone detection (exact + structural), circular imports, unused exports, TODO tracking, hotspot prioritization | — |
+| 7. Doc Completeness | Module coverage, orphaned sections, per-doc completeness, cross-group drift, doc-group classification | — |
+| **Total** | | **908** |
 
 ## Key Source Files
 
@@ -105,6 +107,14 @@ All phases are complete:
 | `packages/index/src/queries/connections.ts` | Connection discovery |
 | `packages/index/src/queries/check.ts` | CI drift detection |
 | `packages/index/src/queries/report.ts` | Health dashboard |
+| `packages/index/src/queries/clones.ts` | Exact + structural clone detection |
+| `packages/index/src/queries/imports.ts` | Circular imports + unused exports |
+| `packages/index/src/queries/hotspotPriority.ts` | High-churn low-doc file ranking |
+| `packages/index/src/queries/todos.ts` | TODO/FIXME/HACK/XXX inventory |
+| `packages/index/src/queries/moduleCoverage.ts` | Documentation coverage per directory |
+| `packages/index/src/queries/orphanedSections.ts` | Doc sections with ungrounded mentions |
+| `packages/index/src/queries/docCompleteness.ts` | Per-doc completeness vs. exports |
+| `packages/index/src/queries/crossGroupDrift.ts` | Cross-group coverage conflicts |
 | `packages/index/src/incremental.ts` | Content-hash updates |
 | `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction |
 | `packages/analyzer/src/kwg/kwxStage.ts` | KWX stage options |
