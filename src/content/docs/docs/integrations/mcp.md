@@ -53,6 +53,8 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_orphaned_sections` | Doc sections with ungrounded mentions | _(none)_ |
 | `cari_doc_completeness` | Per-doc completeness scoring | _(none)_ |
 | `cari_cross_group_drift` | Cross-group entity coverage conflicts | _(none)_ |
+| `cari_mentions_of` | Entity → doc mentions | `entityId`, `minConfidence?`, `limit?` |
+| `cari_annotations_for` | File → all annotations | `filePath`, `minConfidence?`, `limit?` |
 
 All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
 See the [CLI Reference](/docs/reference/cli/) for the full command list.
@@ -68,6 +70,8 @@ Ask Copilot:
 - **"Show circular dependencies"** → Copilot calls `cari_circular_imports`
 - **"What TODOs exist?"** → Copilot calls `cari_todos`
 - **"Which modules lack docs?"** → Copilot calls `cari_module_coverage`
+- **"Where is AuthService mentioned?"** → Copilot calls `cari_mentions_of` with entityId
+- **"What entities appear in AUTH.md?"** → Copilot calls `cari_annotations_for` with filePath
 
 ## Knowledge Graph Tools (Optional)
 

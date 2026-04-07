@@ -117,6 +117,9 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index orphaned-sections`   | Doc sections with all-ungrounded mentions                 |
 | `iw index doc-completeness`    | Per-doc completeness vs. referenced exports               |
 | `iw index cross-group-drift`   | Cross-group entity coverage conflicts                     |
+| `iw index mentions-of <id>`    | Find doc mentions of a code or external entity            |
+| `iw index annotations-for <path>` | List all annotations for a documentation file          |
+| `iw index register-entities <file>` | Register external entities from JSON file            |
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.

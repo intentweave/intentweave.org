@@ -5,9 +5,18 @@ description: What's planned for IntentWeave.
 
 ## Current Status
 
-CARI (Code-Aware Retrieval Index) is **production-ready** with 908 tests passing
-across 48 test files. The Knowledge Graph pipeline is functional but
+CARI (Code-Aware Retrieval Index) is **production-ready** with 1012 tests passing
+across 51 test files. The Knowledge Graph pipeline is functional but
 considered optional/advanced.
+
+## Recently Shipped
+
+- ✅ `CariIndex` facade — single-class API for build + query
+- ✅ Entity Bridge — inject external entities for annotation matching
+- ✅ `mentionsOf()` / `annotationsForFile()` query methods
+- ✅ 2 new MCP tools (`cari_mentions_of`, `cari_annotations_for`)
+- ✅ 3 new CLI subcommands (`mentions-of`, `annotations-for`, `register-entities`)
+- ✅ Library API documentation
 
 ## Short-term
 
@@ -44,6 +53,7 @@ considered optional/advanced.
 - ✅ Orphaned section detection
 - ✅ Per-doc completeness scoring
 - ✅ Cross-group drift detection
+- ✅ Entity Bridge (external entity injection for annotation matching)
 
 ### Editor Integration
 

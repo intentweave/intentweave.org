@@ -81,6 +81,7 @@ export default defineConfig({
 					label: 'Reference',
 					items: [
 						{ label: 'CLI Reference', slug: 'docs/reference/cli' },
+						{ label: 'Library API', slug: 'docs/reference/library-api' },
 						{ label: 'Troubleshooting', slug: 'docs/reference/troubleshooting' },
 					],
 				},

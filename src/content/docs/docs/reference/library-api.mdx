@@ -1,0 +1,333 @@
+---
+title: Library API
+description: Use CARI as a TypeScript library — build indexes and run queries programmatically.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Installation
+
+```bash
+# Core package (queries only)
+npm install @intentweave/index
+
+# Full build pipeline (requires analyzer)
+npm install @intentweave/index @intentweave/analyzer @intentweave/core
+```
+
+---
+
+## Quick Start
+
+The `CariIndex` class is the recommended entry point. It manages the database
+lifecycle and exposes typed query methods.
+
+<Tabs>
+  <TabItem label="Build + Query">
+    ```typescript
+    import { CariIndex } from "@intentweave/index";
+
+    const index = await CariIndex.build({
+      paths: ["docs/", "packages/"],
+      workspaceRoot: process.cwd(),
+      depth: "full",
+    });
+
+    const results = index.retrieve({ query: "authentication" });
+    console.log(results.files);
+
+    index.close();
+    ```
+  </TabItem>
+  <TabItem label="Load Existing">
+    ```typescript
+    import { CariIndex } from "@intentweave/index";
+
+    const index = CariIndex.load(".iw/index.db");
+
+    const drift = index.check({ changed: ["src/auth.ts"] });
+    const conns = index.connections({ entity: "AuthService" });
+    const todos = index.todos();
+
+    index.close();
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## CariConfig
+
+Pass a `CariConfig` object to `CariIndex.build()` or `buildFromPaths()`:
+
+| Property        | Type                         | Default              | Description                                     |
+| --------------- | ---------------------------- | -------------------- | ----------------------------------------------- |
+| `paths`         | `string[]`                   | —                    | Document file paths or directories to analyze   |
+| `workspaceRoot` | `string`                     | —                    | Workspace root directory                        |
+| `depth`         | `"structured" \| "full"`     | `"structured"`       | Annotation depth (full = +IDF scoring)          |
+| `exclude`       | `string[]`                   | `[]`                 | Additional glob patterns to exclude             |
+| `include`       | `string[]`                   | —                    | Only include files matching these globs         |
+| `session`       | `string`                     | directory basename   | Session name                                    |
+| `outputPath`    | `string`                     | `.iw/index.db`       | Output SQLite path                              |
+| `log`           | `(msg: string) => void`      | noop                 | Verbose logging callback                        |
+| `onProgress`    | `(s: CariStageProgress) => void` | —              | Called after each pipeline stage completes       |
+
+---
+
+## Entity Bridge
+
+The Entity Bridge lets consumers inject external entities (domain concepts, pipeline
+entities, third-party models) so that annotation matching works beyond AST-extracted
+code symbols.
+
+<Tabs>
+  <TabItem label="Register + Query">
+    ```typescript
+    import { CariIndex, type ExternalEntity } from "@intentweave/index";
+
+    const index = CariIndex.load(".iw/index.db");
+
+    index.registerEntities([
+      {
+        id: "entity:auth-service",
+        name: "AuthService",
+        type: "component",
+        aliases: ["auth service", "authentication module"],
+      },
+      {
+        id: "entity:adr-005",
+        name: "ADR-005",
+        type: "decision",
+        aliases: ["token rotation decision"],
+        metadata: { status: "accepted" },
+      },
+    ]);
+
+    // Find all doc mentions of an entity
+    const mentions = index.mentionsOf({ entityId: "entity:auth-service" });
+    // → [{ docPath, line, text, confidence, source }]
+
+    // List all annotations for a doc file
+    const annotations = index.annotationsForFile({ filePath: "docs/AUTH.md" });
+    // → [{ mention, entityId, entityName, entitySource, line, confidence }]
+
+    index.close();
+    ```
+  </TabItem>
+  <TabItem label="CLI">
+    ```bash
+    # Register external entities from JSON file
+    iw index register-entities entities.json
+
+    # Find doc mentions of an entity
+    iw index mentions-of entity:auth-service
+
+    # List annotations for a file
+    iw index annotations-for docs/AUTH.md
+    ```
+  </TabItem>
+</Tabs>
+
+### ExternalEntity Interface
+
+| Property   | Type                       | Required | Description                               |
+| ---------- | -------------------------- | -------- | ----------------------------------------- |
+| `id`       | `string`                   | yes      | Unique entity identifier                  |
+| `name`     | `string`                   | yes      | Display name (matched against doc text)   |
+| `type`     | `string`                   | yes      | Entity type (e.g. `component`, `decision`)|
+| `aliases`  | `string[]`                 | no       | Alternative names for matching            |
+| `metadata` | `Record<string, unknown>`  | no       | Arbitrary metadata                        |
+
+---
+
+## Query Methods
+
+All query methods are synchronous and return typed results.
+
+### `retrieve(params)` — Ranked File Retrieval
+
+```typescript
+const result = index.retrieve({
+  query: "authentication",
+  scope: "docs",   // 'docs' | 'code' | 'all'
+  limit: 10,
+});
+// result.files: Array<{ path, score, reason, spans? }>
+```
+
+### `connections(params)` — Cross-Layer Connections
+
+```typescript
+const result = index.connections({
+  entity: "AuthService",
+  limit: 10,
+  include: ["doc_cooc", "co_change", "code_import"],
+});
+// result.connections: Array<{ entity, score, sources }>
+// result.gaps: Array<{ entity, expectedIn, reason }>
+```
+
+### `check(params)` — CI Drift Detection
+
+```typescript
+const result = index.check({
+  changed: ["src/auth/service.ts"],
+  severity: "warning",
+});
+// result.findings: Array<{ file, line, severity, message, relatedDocs }>
+```
+
+### `report()` — Corpus Health
+
+```typescript
+const result = index.report();
+// result.coverage: { documented, total, percentage, topUndocumented }
+// result.staleness: { staleDocCount, topStale }
+// result.hiddenCouplings, result.undocumentedDeps
+```
+
+### `clones()` / `structuralClones()`
+
+```typescript
+const exact   = index.clones();         // Identical body hashes
+const type2   = index.structuralClones(); // Same AST, different identifiers
+// .cloneGroups: Array<{ bodyHash|structureHash, bodyLines, symbols }>
+```
+
+### `circularImports()` / `unusedExports()`
+
+```typescript
+const cycles  = index.circularImports(); // .cycles: Array<{ files, length }>
+const unused  = index.unusedExports();   // .unused: Array<{ name, filePath, kind }>
+```
+
+### `hotspotPriority()` — Documentation Urgency
+
+```typescript
+const result = index.hotspotPriority();
+// .priorities: Array<{ filePath, churn, coveragePercent, priorityScore }>
+```
+
+### `todos()` — TODO/FIXME/HACK/XXX
+
+```typescript
+const result = index.todos();
+// .todos: Array<{ filePath, line, kind, text }>
+// .byKind: Record<string, number>
+```
+
+### Other Methods
+
+| Method               | Returns                    | Purpose                                |
+| -------------------- | -------------------------- | -------------------------------------- |
+| `moduleCoverage()`   | `ModuleCoverageResult`     | Coverage % per directory               |
+| `orphanedSections()` | `OrphanedSectionsResult`   | Doc sections with no grounded mentions |
+| `docCompleteness()`  | `DocCompletenessResult`    | Per-doc completeness score             |
+| `crossGroupDrift()`  | `CrossGroupDriftResult`    | Entity conflicts across doc groups     |
+
+### `mentionsOf(params)` — Entity → Doc Mentions
+
+Find all documentation mentions of a specific entity (code symbol or external).
+
+```typescript
+const result = index.mentionsOf({
+  entityId: "entity:auth-service",
+  minConfidence: 0.7,
+  limit: 20,
+});
+// result: Array<{ docPath, line, text, confidence, source }>
+```
+
+### `annotationsForFile(params)` — File → Annotations
+
+List all annotations for a documentation file, resolving entity names
+from both symbols and external entities.
+
+```typescript
+const result = index.annotationsForFile({
+  filePath: "docs/AUTH.md",
+  minConfidence: 0.5,
+});
+// result: Array<{ mention, entityId, entityName, entitySource, line, confidence }>
+// entitySource: "symbol" | "external" | undefined
+```
+
+---
+
+## Low-Level API
+
+For fine-grained control, use the dual-signature query functions directly:
+
+```typescript
+import { retrieve, retrieveFromDb, openIndex } from "@intentweave/index";
+
+// Path-based (opens and closes DB internally)
+const result = retrieve(".iw/index.db", { query: "auth" });
+
+// DB-based (you manage the connection)
+const db = openIndex(".iw/index.db");
+const r1 = retrieveFromDb(db, { query: "auth" });
+const r2 = retrieveFromDb(db, { query: "database" });
+db.close();
+```
+
+---
+
+## Incremental Updates
+
+```typescript
+import { detectChanges, applyChanges } from "@intentweave/index";
+
+const changes = detectChanges(".iw/index.db", process.cwd());
+const result = await applyChanges(".iw/index.db", changes, {
+  workspaceRoot: process.cwd(),
+  depth: "structured",
+});
+```
+
+---
+
+## File Discovery Utilities
+
+```typescript
+import {
+  DEFAULT_EXCLUDES,
+  loadIwIgnore,
+  buildExcludeList,
+  discoverFiles,
+} from "@intentweave/index";
+
+const ignorePatterns = await loadIwIgnore(process.cwd());
+const excludes = buildExcludeList(["custom/**"], ignorePatterns, true);
+const files = await discoverFiles(["docs/"], process.cwd(), { exclude: excludes });
+```
+
+---
+
+## Type Exports
+
+All result types are exported for TypeScript consumers:
+
+```typescript
+import type {
+  CariConfig, CariStageProgress,
+  RetrieveParams, RetrieveResult,
+  ConnectionsParams, ConnectionsResult,
+  CheckParams, CheckResult,
+  ReportResult, ClonesResult, StructuralClonesResult,
+  CircularImportsResult, UnusedExportsResult,
+  HotspotPriorityResult, TodosResult,
+  ModuleCoverageResult, OrphanedSectionsResult,
+  DocCompletenessResult, CrossGroupDriftResult,
+  ExternalEntity, MentionsOfParams, MentionsOfResult,
+  AnnotationsForFileParams, AnnotationsForFileResult,
+} from "@intentweave/index";
+```
+
+---
+
+## Next Steps
+
+- [CLI Reference](/docs/reference/cli) — All `iw` commands
+- [CI Integration](/docs/integrations/ci) — Add drift checks to your pipeline
+- [CARI Internals](/docs/cari/internals) — How the index is built
