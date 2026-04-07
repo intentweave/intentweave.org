@@ -19,6 +19,7 @@ packages/
   profiles/             → @intentweave/profiles — extraction profile packs
   ast-extractor/        → @intentweave/ast-extractor — tree-sitter TS/JS extraction
   swift-parser/         → @intentweave/swift-parser — tree-sitter Swift extraction
+  python-parser/        → @intentweave/python-parser — tree-sitter Python extraction
 ```
 
 ## CARI Pipeline
@@ -42,14 +43,14 @@ The CARI index is built by a sequence of pipeline stages, orchestrated by
 
 ### Stage Details
 
-| Stage | Package | Input | Output |
-|-------|---------|-------|--------|
-| **AX** | `ast-extractor` | Source files | Symbol registry (classes, functions, exports) |
-| **KWX** | `analyzer` | Docs + symbol dictionary | Keyword mentions per document |
-| **COX** | `analyzer` | Mentions | Entity pair co-occurrence scores |
-| **TCG** | `analyzer` | Git log | Co-change Jaccard, hotspot, ownership, staleness |
-| **Annotate** | `index` | Mentions + symbols | Grounded annotations with IDF scores |
-| **Write** | `index` | All above | SQLite database (`.iw/index.db`) |
+| Stage        | Package                        | Input                    | Output                                           |
+| ------------ | ------------------------------ | ------------------------ | ------------------------------------------------ |
+| **AX**       | `analyzer` (language registry) | Source files             | Symbol registry (classes, functions, exports)    |
+| **KWX**      | `analyzer`                     | Docs + symbol dictionary | Keyword mentions per document                    |
+| **COX**      | `analyzer`                     | Mentions                 | Entity pair co-occurrence scores                 |
+| **TCG**      | `analyzer`                     | Git log                  | Co-change Jaccard, hotspot, ownership, staleness |
+| **Annotate** | `index`                        | Mentions + symbols       | Grounded annotations with IDF scores             |
+| **Write**    | `index`                        | All above                | SQLite database (`.iw/index.db`)                 |
 
 ## Knowledge Graph Pipeline (Optional)
 
@@ -61,12 +62,12 @@ Documents ──► IN (chunk) ──► FX (extract) ──► KX (canonicalize
                                                           Neo4j ◄──── Persist
 ```
 
-| Stage | Purpose |
-|-------|---------|
+| Stage  | Purpose                                                         |
+| ------ | --------------------------------------------------------------- |
 | **IN** | Chunk documents (semantic markdown splitting, ~16k chars/chunk) |
-| **FX** | LLM extracts raw entity-relationship triples per chunk |
-| **KX** | Canonicalize entities and predicates (30 predicate types) |
-| **GX** | Cross-document entity deduplication (exact + fuzzy merge) |
+| **FX** | LLM extracts raw entity-relationship triples per chunk          |
+| **KX** | Canonicalize entities and predicates (30 predicate types)       |
+| **GX** | Cross-document entity deduplication (exact + fuzzy merge)       |
 
 ## Server Architecture
 
@@ -91,18 +92,18 @@ Documents ──► IN (chunk) ──► FX (extract) ──► KX (canonicalize
 
 ## Technology Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Language | TypeScript 5.6, ESM, strict mode |
-| Monorepo | pnpm workspaces + Turbo |
-| CLI | Commander.js |
-| Server | Fastify 5 |
-| Database (CARI) | SQLite via better-sqlite3 |
-| Database (KG) | Neo4j 5 |
-| AST parsing | tree-sitter (TS/JS/Swift) |
-| LLM | OpenAI (gpt-4o-mini), pluggable |
-| Testing | Vitest (800+ tests) |
-| MCP | stdio transport |
+| Layer           | Technology                       |
+| --------------- | -------------------------------- |
+| Language        | TypeScript 5.6, ESM, strict mode |
+| Monorepo        | pnpm workspaces + Turbo          |
+| CLI             | Commander.js                     |
+| Server          | Fastify 5                        |
+| Database (CARI) | SQLite via better-sqlite3        |
+| Database (KG)   | Neo4j 5                          |
+| AST parsing     | tree-sitter (TS/JS/Swift)        |
+| LLM             | OpenAI (gpt-4o-mini), pluggable  |
+| Testing         | Vitest (800+ tests)              |
+| MCP             | stdio transport                  |
 
 ## Next Steps
 

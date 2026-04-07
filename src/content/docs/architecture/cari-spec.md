@@ -26,19 +26,19 @@ Tree-sitter parses source files to produce a symbol registry:
 - Exported variables and constants
 - Parameter types and return types (where available)
 
-Supported languages: TypeScript, JavaScript, Swift.
+Supported languages: TypeScript, JavaScript, Swift, Python.
 
 ### Layer 2: Documents (Keywords)
 
 Markdown documents are scanned for entity mentions:
 
-| Source | What It Captures | Depth |
-|--------|-----------------|-------|
-| Headings (H1-H6) | Section topics | structured |
-| Bold text | Emphasized entities | structured |
-| Code spans | Inline code references | structured |
-| Identifiers | CamelCase / snake_case tokens | structured |
-| Body text | Dictionary-matched terms | full only |
+| Source           | What It Captures              | Depth      |
+| ---------------- | ----------------------------- | ---------- |
+| Headings (H1-H6) | Section topics                | structured |
+| Bold text        | Emphasized entities           | structured |
+| Code spans       | Inline code references        | structured |
+| Identifiers      | CamelCase / snake_case tokens | structured |
+| Body text        | Dictionary-matched terms      | full only  |
 
 ### Layer 3: Git (Temporal)
 
@@ -71,51 +71,51 @@ Terms appearing in > 85% of documents are penalized:
 
 Measured on the IntentWeave monorepo (264 code files, 7 docs, 5316 symbols):
 
-| Metric | Structured | Full | Delta |
-|--------|----------:|-----:|------:|
-| Build time | 1.1 s | 2.8 s | +1.7 s |
-| Annotations | 6,721 | 11,533 | +72% |
-| Grounded (code-linked) | 2,548 (38%) | 7,360 (64%) | +189% |
-| Co-occurrence edges | 1,099 | 2,631 | +139% |
-| IDF terms tracked | — | 2,843 | — |
-| Index file size | ~2 MB | ~4 MB | +100% |
+| Metric                 |  Structured |        Full |  Delta |
+| ---------------------- | ----------: | ----------: | -----: |
+| Build time             |       1.1 s |       2.8 s | +1.7 s |
+| Annotations            |       6,721 |      11,533 |   +72% |
+| Grounded (code-linked) | 2,548 (38%) | 7,360 (64%) |  +189% |
+| Co-occurrence edges    |       1,099 |       2,631 |  +139% |
+| IDF terms tracked      |           — |       2,843 |      — |
+| Index file size        |       ~2 MB |       ~4 MB |  +100% |
 
 ## Implementation Phases
 
 All phases are complete:
 
-| Phase | Scope | Tests |
-|-------|-------|------:|
-| 1. Foundation | Writer, schema, retrieval queries | 22 |
-| 2. Connections | Co-occurrence, co-change, gap detection | 20 |
-| 3. CI Drift | Check command, severity levels, formats | 16 |
-| 4. Incremental | Content-hash updates, corpus report | 12 |
-| 5. Annotation Depth | Dictionary matching, IDF filtering, stopword baseline | 22 |
-| 6. Code Quality | Clone detection (exact + structural), circular imports, unused exports, TODO tracking, hotspot prioritization | — |
-| 7. Doc Completeness | Module coverage, orphaned sections, per-doc completeness, cross-group drift, doc-group classification | — |
-| **Total** | | **908** |
+| Phase               | Scope                                                                                                         |   Tests |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- | ------: |
+| 1. Foundation       | Writer, schema, retrieval queries                                                                             |      22 |
+| 2. Connections      | Co-occurrence, co-change, gap detection                                                                       |      20 |
+| 3. CI Drift         | Check command, severity levels, formats                                                                       |      16 |
+| 4. Incremental      | Content-hash updates, corpus report                                                                           |      12 |
+| 5. Annotation Depth | Dictionary matching, IDF filtering, stopword baseline                                                         |      22 |
+| 6. Code Quality     | Clone detection (exact + structural), circular imports, unused exports, TODO tracking, hotspot prioritization |       — |
+| 7. Doc Completeness | Module coverage, orphaned sections, per-doc completeness, cross-group drift, doc-group classification         |       — |
+| **Total**           |                                                                                                               | **908** |
 
 ## Key Source Files
 
-| File | Purpose |
-|------|---------|
-| `packages/index/src/writer.ts` | SQLite index builder |
-| `packages/index/src/annotator.ts` | Mention→symbol matching + IDF |
-| `packages/index/src/idf.ts` | IDF scorer + stopword baseline |
-| `packages/index/src/schema.ts` | SQLite table definitions |
-| `packages/index/src/queries/retrieve.ts` | Ranked retrieval |
-| `packages/index/src/queries/connections.ts` | Connection discovery |
-| `packages/index/src/queries/check.ts` | CI drift detection |
-| `packages/index/src/queries/report.ts` | Health dashboard |
-| `packages/index/src/queries/clones.ts` | Exact + structural clone detection |
-| `packages/index/src/queries/imports.ts` | Circular imports + unused exports |
-| `packages/index/src/queries/hotspotPriority.ts` | High-churn low-doc file ranking |
-| `packages/index/src/queries/todos.ts` | TODO/FIXME/HACK/XXX inventory |
-| `packages/index/src/queries/moduleCoverage.ts` | Documentation coverage per directory |
-| `packages/index/src/queries/orphanedSections.ts` | Doc sections with ungrounded mentions |
-| `packages/index/src/queries/docCompleteness.ts` | Per-doc completeness vs. exports |
-| `packages/index/src/queries/crossGroupDrift.ts` | Cross-group coverage conflicts |
-| `packages/index/src/incremental.ts` | Content-hash updates |
-| `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction |
-| `packages/analyzer/src/kwg/kwxStage.ts` | KWX stage options |
-| `packages/cli/src/commands/indexBuild.ts` | Build orchestrator |
+| File                                              | Purpose                               |
+| ------------------------------------------------- | ------------------------------------- |
+| `packages/index/src/writer.ts`                    | SQLite index builder                  |
+| `packages/index/src/annotator.ts`                 | Mention→symbol matching + IDF         |
+| `packages/index/src/idf.ts`                       | IDF scorer + stopword baseline        |
+| `packages/index/src/schema.ts`                    | SQLite table definitions              |
+| `packages/index/src/queries/retrieve.ts`          | Ranked retrieval                      |
+| `packages/index/src/queries/connections.ts`       | Connection discovery                  |
+| `packages/index/src/queries/check.ts`             | CI drift detection                    |
+| `packages/index/src/queries/report.ts`            | Health dashboard                      |
+| `packages/index/src/queries/clones.ts`            | Exact + structural clone detection    |
+| `packages/index/src/queries/imports.ts`           | Circular imports + unused exports     |
+| `packages/index/src/queries/hotspotPriority.ts`   | High-churn low-doc file ranking       |
+| `packages/index/src/queries/todos.ts`             | TODO/FIXME/HACK/XXX inventory         |
+| `packages/index/src/queries/moduleCoverage.ts`    | Documentation coverage per directory  |
+| `packages/index/src/queries/orphanedSections.ts`  | Doc sections with ungrounded mentions |
+| `packages/index/src/queries/docCompleteness.ts`   | Per-doc completeness vs. exports      |
+| `packages/index/src/queries/crossGroupDrift.ts`   | Cross-group coverage conflicts        |
+| `packages/index/src/incremental.ts`               | Content-hash updates                  |
+| `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction                    |
+| `packages/analyzer/src/kwg/kwxStage.ts`           | KWX stage options                     |
+| `packages/cli/src/commands/indexBuild.ts`         | Build orchestrator                    |

@@ -5,8 +5,8 @@ description: What's planned for IntentWeave.
 
 ## Current Status
 
-CARI (Code-Aware Retrieval Index) is **production-ready** with 1012 tests passing
-across 51 test files. The Knowledge Graph pipeline is functional but
+CARI (Code-Aware Retrieval Index) is **production-ready** with 1087 tests passing
+across 54 test files. The Knowledge Graph pipeline is functional but
 considered optional/advanced.
 
 ## Recently Shipped
@@ -17,6 +17,9 @@ considered optional/advanced.
 - ✅ 2 new MCP tools (`cari_mentions_of`, `cari_annotations_for`)
 - ✅ 3 new CLI subcommands (`mentions-of`, `annotations-for`, `register-entities`)
 - ✅ Library API documentation
+- ✅ Test coverage mapping (`testCoverage()` query)
+- ✅ Python AST extraction via `@intentweave/python-parser` (tree-sitter)
+- ✅ Language-agnostic AX dispatch (`LanguageRegistry` + `LanguageAdapter`)
 
 ## Short-term
 
@@ -28,7 +31,6 @@ considered optional/advanced.
 
 ### Language Support
 
-- Python AST extraction (tree-sitter)
 - Go AST extraction (tree-sitter)
 - Rust AST extraction (tree-sitter)
 - Generic fallback for unsupported languages (regex-based symbol detection)

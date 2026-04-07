@@ -22,10 +22,10 @@ npx @intentweave/cli index retrieve "authentication"
 
 ### Requirements
 
-| Requirement  | Version | Notes                                     |
-| ------------ | ------- | ----------------------------------------- |
-| **Node.js**  | ≥ 20    | `node -v` to check                       |
-| **Git**      | any     | For co-change analysis (`iw index build`) |
+| Requirement | Version | Notes                                     |
+| ----------- | ------- | ----------------------------------------- |
+| **Node.js** | ≥ 20    | `node -v` to check                        |
+| **Git**     | any     | For co-change analysis (`iw index build`) |
 
 That's it. CARI needs no database, no API keys, no Docker.
 
@@ -50,7 +50,7 @@ iw index build
 
 This runs the full CARI pipeline:
 
-1. **AX** — AST extraction → builds a symbol registry from your code
+1. **AX** — AST extraction → builds a symbol registry from your code (TS/JS/Swift/Python)
 2. **KWX** — Keyword extraction → scans docs for entity mentions
 3. **COX** — Co-occurrence scoring → finds entities mentioned together
 4. **TCG** — Git analysis → co-changes, hotspots, ownership, staleness

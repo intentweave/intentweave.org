@@ -19,7 +19,7 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
 
 ## Quick Start
 
@@ -45,12 +45,13 @@ iw index report                        # health dashboard
     semantics, and git history into a single ranked score with explanations.
   </Card>
   <Card title="Connections & Gaps" icon="puzzle">
-    See which entities co-occur in docs, co-change in git, or share code imports —
-    and where these signals **disagree**. Disagreement reveals hidden couplings.
+    See which entities co-occur in docs, co-change in git, or share code imports
+    — and where these signals **disagree**. Disagreement reveals hidden
+    couplings.
   </Card>
   <Card title="CI Drift Checks" icon="warning">
-    Catch stale documentation before it ships. `iw index check` detects docs that
-    reference changed code and reports them as CI warnings.
+    Catch stale documentation before it ships. `iw index check` detects docs
+    that reference changed code and reports them as CI warnings.
   </Card>
 </CardGrid>
 
@@ -60,14 +61,14 @@ iw index report                        # health dashboard
 
 Measured on the IntentWeave monorepo (264 code files, 7 docs, 5316 symbols):
 
-| Metric | Structured | Full-Depth |
-|--------|----------:|----------:|
-| Build time | 1.1 s | 2.8 s |
-| Annotations | 6,721 | 11,533 |
+| Metric                    |  Structured |  Full-Depth |
+| ------------------------- | ----------: | ----------: |
+| Build time                |       1.1 s |       2.8 s |
+| Annotations               |       6,721 |      11,533 |
 | Grounded (linked to code) | 2,548 (38%) | 7,360 (64%) |
-| Co-occurrence edges | 1,099 | 2,631 |
-| LLM calls | 0 | 0 |
-| Index file size | ~2 MB | ~4 MB |
+| Co-occurrence edges       |       1,099 |       2,631 |
+| LLM calls                 |           0 |           0 |
+| Index file size           |       ~2 MB |       ~4 MB |
 
 **Full-depth mode** adds +72% more annotations and +189% more grounded links by scanning
 document body text with dictionary matching and IDF-based noise filtering.
@@ -78,7 +79,7 @@ document body text with dictionary matching and IDF-based noise filtering.
 
 ```
 Source Code ──► AST Extraction ──► Symbol Registry
-                                        │
+              (TS/JS/Swift/Python)        │
 Markdown Docs ──► Keyword Extraction ──►│──► Annotation Engine ──► SQLite Index
                                         │         │                    │
 Git History ──► Co-change Analysis ─────┘    IDF Filtering        .iw/index.db
@@ -111,7 +112,8 @@ IntentWeave is licensed under **Apache-2.0**. Contributions are welcome.
 
 <CardGrid>
   <Card title="Contributing" icon="open-book">
-    See the [contribution guide](/community/contributing/) for how to get involved.
+    See the [contribution guide](/community/contributing/) for how to get
+    involved.
   </Card>
   <Card title="Roadmap" icon="rocket">
     Check the [roadmap](/community/roadmap/) for what's next.

@@ -17,15 +17,15 @@ code, documentation, and git history into a single queryable database.
 
 `grep` finds strings. CARI finds **relationships**:
 
-| What you need | grep | CARI |
-|---------------|------|------|
-| "Which files mention auth?" | ✅ String match | ✅ Ranked by relevance |
-| "What's connected to AuthService?" | ❌ | ✅ Doc co-mentions + git co-changes + code imports |
-| "What docs are stale?" | ❌ | ✅ Cross-references changed code to doc mentions |
-| "What's undocumented?" | ❌ | ✅ Exported symbols with no doc coverage |
-| "Find duplicate code" | ❌ | ✅ Exact + structural clone detection |
-| "Show circular imports" | ❌ | ✅ Import cycle detection |
-| "What TODOs exist?" | ❌ | ✅ TODO/FIXME/HACK/XXX inventory |
+| What you need                      | grep            | CARI                                               |
+| ---------------------------------- | --------------- | -------------------------------------------------- |
+| "Which files mention auth?"        | ✅ String match | ✅ Ranked by relevance                             |
+| "What's connected to AuthService?" | ❌              | ✅ Doc co-mentions + git co-changes + code imports |
+| "What docs are stale?"             | ❌              | ✅ Cross-references changed code to doc mentions   |
+| "What's undocumented?"             | ❌              | ✅ Exported symbols with no doc coverage           |
+| "Find duplicate code"              | ❌              | ✅ Exact + structural clone detection              |
+| "Show circular imports"            | ❌              | ✅ Import cycle detection                          |
+| "What TODOs exist?"                | ❌              | ✅ TODO/FIXME/HACK/XXX inventory                   |
 
 ## Why SQLite?
 
@@ -68,7 +68,8 @@ When they **disagree**, that's where the interesting findings are:
 packages/
   index/        → @intentweave/index — the CARI engine
   analyzer/     → @intentweave/analyzer — pipeline stages (AX, KWX, COX, TCG)
-  ast-extractor/→ @intentweave/ast-extractor — tree-sitter TS/JS/Swift extraction
+  ast-extractor/→ @intentweave/ast-extractor — tree-sitter TS/JS extraction
+  python-parser/→ @intentweave/python-parser — tree-sitter Python extraction
   cli/          → @intentweave/cli — `iw index` commands + MCP tools
 ```
 
@@ -83,19 +84,19 @@ packages/
 CARI provides 14 built-in query modes — all available via CLI (`iw index <command>`),
 MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 
-| Query | Purpose |
-|-------|---------|
-| `retrieve` | Ranked file retrieval by topic or symbol |
-| `connections` | Cross-layer connections + gap detection |
-| `check` | CI drift detection for changed files |
-| `report` | Corpus-wide health dashboard |
-| `clones` | Exact clone detection (identical body hash) |
+| Query              | Purpose                                            |
+| ------------------ | -------------------------------------------------- |
+| `retrieve`         | Ranked file retrieval by topic or symbol           |
+| `connections`      | Cross-layer connections + gap detection            |
+| `check`            | CI drift detection for changed files               |
+| `report`           | Corpus-wide health dashboard                       |
+| `clones`           | Exact clone detection (identical body hash)        |
 | `structuralClones` | Type 2 clones (same control flow, different names) |
-| `circularImports` | Import cycle detection |
-| `unusedExports` | Exported symbols never imported |
-| `hotspotPriority` | High-churn low-doc files ranked by urgency |
-| `todos` | TODO/FIXME/HACK/XXX inventory |
-| `moduleCoverage` | Documentation coverage % per directory |
-| `orphanedSections` | Doc sections with all-ungrounded mentions |
-| `docCompleteness` | Per-doc completeness vs. referenced exports |
-| `crossGroupDrift` | Cross-group entity coverage conflicts |
+| `circularImports`  | Import cycle detection                             |
+| `unusedExports`    | Exported symbols never imported                    |
+| `hotspotPriority`  | High-churn low-doc files ranked by urgency         |
+| `todos`            | TODO/FIXME/HACK/XXX inventory                      |
+| `moduleCoverage`   | Documentation coverage % per directory             |
+| `orphanedSections` | Doc sections with all-ungrounded mentions          |
+| `docCompleteness`  | Per-doc completeness vs. referenced exports        |
+| `crossGroupDrift`  | Cross-group entity coverage conflicts              |

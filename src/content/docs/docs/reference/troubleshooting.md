@@ -18,25 +18,28 @@ iw index retrieve "something"
 
 If `iw index build` completes but queries return nothing:
 
-1. Check your project has source files (`.ts`, `.js`, `.swift`) and Markdown docs
+1. Check your project has source files (`.ts`, `.js`, `.swift`, `.py`) and Markdown docs
 2. Run with verbose: `iw index build -v` to see stage output
-3. Verify tree-sitter can parse your files (currently supports TS/JS/Swift)
+3. Verify tree-sitter can parse your files (currently supports TS/JS/Swift/Python)
 
 ### "tree-sitter build failed"
 
 tree-sitter requires a C compiler for native bindings.
 
 **macOS:**
+
 ```bash
 xcode-select --install
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt-get install build-essential
 ```
 
 **Alpine (Docker):**
+
 ```bash
 apk add python3 make g++
 ```
@@ -60,6 +63,7 @@ Error: Connection refused to bolt://localhost:7687
 ```
 
 **Fix:** Start Neo4j:
+
 ```bash
 docker run -d --name neo4j \
   -p 7474:7474 -p 7687:7687 \
@@ -74,6 +78,7 @@ Error: Neo4j authentication failed
 ```
 
 **Fix:** Set the password environment variable:
+
 ```bash
 export NEO4J_PASSWORD=codegraph
 ```
@@ -93,6 +98,7 @@ Neo4j is only required for: `iw run`, `iw query`, `iw context`, `iw impact`,
 ### Copilot doesn't see IntentWeave tools
 
 1. Verify `.vscode/mcp.json` exists:
+
    ```json
    {
      "servers": {
@@ -123,11 +129,13 @@ Neo4j is only required for: `iw run`, `iw query`, `iw context`, `iw impact`,
 ### "iw: command not found"
 
 Install globally:
+
 ```bash
 npm install -g @intentweave/cli
 ```
 
 Or use npx:
+
 ```bash
 npx @intentweave/cli <command>
 ```
@@ -135,6 +143,7 @@ npx @intentweave/cli <command>
 ### Node.js version
 
 IntentWeave requires Node.js ≥ 20:
+
 ```bash
 node -v
 # Should show v20.x or higher
@@ -143,6 +152,7 @@ node -v
 ### Cache issues
 
 If results seem stale:
+
 ```bash
 # Rebuild from scratch
 iw index build --force
