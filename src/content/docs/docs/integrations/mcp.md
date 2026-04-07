@@ -43,11 +43,19 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_retrieve` | Ranked file retrieval by topic or symbol | `query`, `scope?`, `limit?` |
 | `cari_connections` | Cross-layer connections + gap detection | `entity`, `include?`, `limit?` |
 | `cari_check` | CI drift detection for changed files | `changed`, `severity?` |
+| `cari_clones` | Exact code clone detection | _(none)_ |
+| `cari_structural_clones` | Type 2 clone detection | _(none)_ |
+| `cari_circular_imports` | Import cycle detection | _(none)_ |
+| `cari_unused_exports` | Unused exported symbols | `limit?` |
+| `cari_hotspot_priority` | High-churn low-doc file ranking | `limit?` |
+| `cari_todos` | TODO/FIXME/HACK/XXX inventory | `kind?`, `limit?` |
+| `cari_module_coverage` | Documentation coverage per directory | _(none)_ |
+| `cari_orphaned_sections` | Doc sections with ungrounded mentions | _(none)_ |
+| `cari_doc_completeness` | Per-doc completeness scoring | _(none)_ |
+| `cari_cross_group_drift` | Cross-group entity coverage conflicts | _(none)_ |
 
-10 additional query functions (clones, circular imports, unused exports, TODOs,
-module coverage, and more) are available via the `@intentweave/index`
-programmatic API. See the [CARI Overview](/docs/cari/overview/#all-query-modes)
-for the full list.
+All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
+See the [CLI Reference](/docs/reference/cli/) for the full command list.
 
 ### Usage Examples
 
@@ -56,6 +64,10 @@ Ask Copilot:
 - **"Find files about authentication"** → Copilot calls `cari_retrieve` with query="authentication"
 - **"What's connected to AuthService?"** → Copilot calls `cari_connections` with entity="AuthService"
 - **"I changed auth.ts — any docs to update?"** → Copilot calls `cari_check` with changed files
+- **"Find duplicate code"** → Copilot calls `cari_clones`
+- **"Show circular dependencies"** → Copilot calls `cari_circular_imports`
+- **"What TODOs exist?"** → Copilot calls `cari_todos`
+- **"Which modules lack docs?"** → Copilot calls `cari_module_coverage`
 
 ## Knowledge Graph Tools (Optional)
 

@@ -101,28 +101,28 @@ Incremental index update.
 iw index update [-v]
 ```
 
-### Programmatic CARI Queries
+### CARI Analysis Subcommands
 
-Beyond the CLI subcommands, the `@intentweave/index` package exports additional
-query functions:
+All analysis queries are available as `iw index` subcommands:
 
-```typescript
-import { openIndex } from "@intentweave/index";
-const db = openIndex(".iw/index.db");
-```
+| Command                        | Purpose                                                  |
+| ------------------------------ | -------------------------------------------------------- |
+| `iw index clones`              | Exact clone detection (identical body hash)               |
+| `iw index structural-clones`   | Type 2 clones (same control flow, different identifiers)  |
+| `iw index circular-imports`    | Import cycle detection                                    |
+| `iw index unused-exports`      | Exported symbols never imported                           |
+| `iw index hotspot-priority`    | High-churn low-doc files ranked by urgency                |
+| `iw index todos`               | TODO/FIXME/HACK/XXX inventory                             |
+| `iw index module-coverage`     | Documentation coverage % per directory                    |
+| `iw index orphaned-sections`   | Doc sections with all-ungrounded mentions                 |
+| `iw index doc-completeness`    | Per-doc completeness vs. referenced exports               |
+| `iw index cross-group-drift`   | Cross-group entity coverage conflicts                     |
 
-| Function | Purpose |
-|----------|---------|
-| `db.clones()` | Exact clone detection (identical body hash) |
-| `db.structuralClones()` | Type 2 clones (same control flow, different identifiers) |
-| `db.circularImports()` | Import cycle detection |
-| `db.unusedExports()` | Exported symbols never imported |
-| `db.hotspotPriority()` | High-churn low-doc files ranked by urgency |
-| `db.todos()` | TODO/FIXME/HACK/XXX inventory |
-| `db.moduleCoverage()` | Documentation coverage % per directory |
-| `db.orphanedSections()` | Doc sections with all-ungrounded mentions |
-| `db.docCompleteness()` | Per-doc completeness vs. referenced exports |
-| `db.crossGroupDrift()` | Cross-group entity coverage conflicts |
+All subcommands support `--db <path>` and `-f, --format <text|json>`.
+Some also accept `-n, --limit` or `--kind`.
+
+These queries are also available as MCP tools (e.g., `cari_clones`) and via the
+`@intentweave/index` programmatic API.
 
 ---
 

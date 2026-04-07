@@ -80,7 +80,8 @@ packages/
 
 ## All Query Modes
 
-CARi provides 14 built-in query modes via the CLI and programmatic API:
+CARI provides 14 built-in query modes — all available via CLI (`iw index <command>`),
+MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 
 | Query | Purpose |
 |-------|---------|
