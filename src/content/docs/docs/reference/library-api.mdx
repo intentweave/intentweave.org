@@ -218,12 +218,20 @@ const result = index.todos();
 
 ### Other Methods
 
-| Method               | Returns                    | Purpose                                |
-| -------------------- | -------------------------- | -------------------------------------- |
-| `moduleCoverage()`   | `ModuleCoverageResult`     | Coverage % per directory               |
-| `orphanedSections()` | `OrphanedSectionsResult`   | Doc sections with no grounded mentions |
-| `docCompleteness()`  | `DocCompletenessResult`    | Per-doc completeness score             |
-| `crossGroupDrift()`  | `CrossGroupDriftResult`    | Entity conflicts across doc groups     |
+| Method               | Returns                       | Purpose                                |
+| -------------------- | ----------------------------- | -------------------------------------- |
+| `moduleCoverage()`   | `ModuleCoverageResult`        | Coverage % per directory               |
+| `orphanedSections()` | `OrphanedSectionsResult`      | Doc sections with no grounded mentions |
+| `docCompleteness()`  | `DocCompletenessResult`       | Per-doc completeness score             |
+| `crossGroupDrift()`  | `CrossGroupDriftResult`       | Entity conflicts across doc groups     |
+| `testCoverage()`     | `TestCoverageResult`          | Test→source mapping + untested exports |
+| `hubs()`             | `HubsResult`                  | God-node / hub analysis                |
+| `communities()`      | `CommunitiesResult`           | Label-propagation community detection  |
+| `surprises()`        | `SurprisesResult`             | Surprising connection ranking          |
+| `rationale()`        | `RationaleResult`             | WHY/NOTE/IMPORTANT/DESIGN inventory    |
+| `terminologyInconsistency()` | `TerminologyInconsistencyResult` | Terminology inconsistency detection |
+| `dependencyDepth()`  | `DependencyDepthResult`       | Transitive import depth + risk         |
+| `boundaryViolations()` | `BoundaryViolationsResult`  | Cross-package import detection         |
 
 ### `mentionsOf(params)` — Entity → Doc Mentions
 

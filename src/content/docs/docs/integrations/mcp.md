@@ -55,6 +55,14 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_cross_group_drift` | Cross-group entity coverage conflicts | _(none)_ |
 | `cari_mentions_of` | Entity → doc mentions | `entityId`, `minConfidence?`, `limit?` |
 | `cari_annotations_for` | File → all annotations | `filePath`, `minConfidence?`, `limit?` |
+| `cari_test_coverage` | Test→source mapping + gaps | `limit?` |
+| `cari_hubs` | God-node / hub analysis | `limit?` |
+| `cari_communities` | Community detection | _(none)_ |
+| `cari_surprises` | Surprising connection ranking | `limit?` |
+| `cari_rationale` | WHY/NOTE/IMPORTANT/DESIGN inventory | `kind?`, `limit?` |
+| `cari_terminology` | Terminology inconsistency detection | `limit?` |
+| `cari_dep_depth` | Transitive import depth analysis | `limit?` |
+| `cari_boundary_violations` | Package boundary violation detection | _(none)_ |
 
 All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
 See the [CLI Reference](/docs/reference/cli/) for the full command list.

@@ -120,6 +120,14 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index mentions-of <id>`    | Find doc mentions of a code or external entity            |
 | `iw index annotations-for <path>` | List all annotations for a documentation file          |
 | `iw index register-entities <file>` | Register external entities from JSON file            |
+| `iw index test-coverage`      | Map test files to source files, find untested exports     |
+| `iw index hubs`               | God-node / hub analysis (degree centrality)               |
+| `iw index communities`        | Label-propagation community detection                     |
+| `iw index surprises`          | Surprising connection ranking (composite score)           |
+| `iw index rationale`          | WHY/NOTE/IMPORTANT/DESIGN rationale inventory             |
+| `iw index terminology`        | Terminology inconsistency detection                       |
+| `iw index dep-depth`          | Transitive import depth + fan-in/fan-out risk             |
+| `iw index boundary-violations`| Cross-package internal import detection                   |
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.
