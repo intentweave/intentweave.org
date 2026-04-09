@@ -81,7 +81,7 @@ packages/
 
 ## All Query Modes
 
-CARI provides 24 built-in query modes — all available via CLI (`iw index <command>`),
+CARI provides 27 built-in query modes — all available via CLI (`iw index <command>`),
 MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 
 | Query              | Purpose                                            |
@@ -110,3 +110,6 @@ MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 | `terminology`      | Terminology inconsistency detection                |
 | `dependencyDepth`  | Transitive import depth + fan-in/fan-out risk      |
 | `boundaryViolations` | Cross-package internal import detection          |
+| `layersInfer`      | Auto-infer architectural layers from import graph  |
+| `layersCheck`      | Validate imports against layer boundaries          |
+| `export --html`    | Interactive HTML architecture report               |

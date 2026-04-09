@@ -128,12 +128,80 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index terminology`        | Terminology inconsistency detection                       |
 | `iw index dep-depth`          | Transitive import depth + fan-in/fan-out risk             |
 | `iw index boundary-violations`| Cross-package internal import detection                   |
+| `iw index layers-infer`       | Auto-infer architectural layers from import graph         |
+| `iw index layers-check`       | Validate imports against layer boundaries                 |
+| `iw index export --html`      | Interactive standalone HTML architecture report           |
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.
 
 These queries are also available as MCP tools (e.g., `cari_clones`) and via the
 `@intentweave/index` programmatic API.
+
+### `iw index layers-infer`
+
+Auto-infer architectural layers from your import graph topology.
+
+```bash
+iw index layers-infer [options]
+```
+
+| Option           | Default        | Description                    |
+| ---------------- | -------------- | ------------------------------ |
+| `--db <path>`    | `.iw/index.db` | Path to CARI index             |
+| `-f, --format`   | `text`         | `text` or `json`               |
+
+Uses topological sort of the import DAG to assign depth ranks, then buckets files
+into layers (foundation at 0, entry points at the top). Outputs layer definitions
+with file assignments.
+
+### `iw index layers-check`
+
+Validate all imports against inferred or configured layer boundaries.
+
+```bash
+iw index layers-check [options]
+```
+
+| Option                  | Default        | Description                              |
+| ----------------------- | -------------- | ---------------------------------------- |
+| `--db <path>`           | `.iw/index.db` | Path to CARI index                       |
+| `--allow-skip-layer`    | off            | Don't flag skip-layer imports            |
+| `-f, --format`          | `text`         | `text` or `json`                         |
+
+Detects:
+- **Reverse imports** — lower layer importing from higher layer
+- **Skip-layer imports** — layer N importing from layer N+2 (skipping N+1)
+
+Each violation includes source file, target file, source layer, target layer,
+and a human-readable reason.
+
+### `iw index export --html`
+
+Generate a standalone interactive HTML architecture report.
+
+```bash
+iw index export --html [options]
+```
+
+| Option                | Default              | Description                               |
+| --------------------- | -------------------- | ----------------------------------------- |
+| `-o, --output <path>` | `architecture.html`  | Output file path                          |
+| `--db <path>`         | `.iw/index.db`       | Path to CARI index                        |
+| `--provider <name>`   | —                    | LLM provider for layer naming (`openai`)  |
+| `--model <name>`      | `gpt-4o-mini`        | Model for LLM naming                      |
+| `--api-key <key>`     | `$OPENAI_API_KEY`    | OpenAI API key (if not env var)           |
+
+The report combines data from layers, communities, dependencies, and boundary
+violations into three interactive views:
+
+- **Layers** — tiered layout with import edges (violations in red)
+- **Communities** — force-directed layout coloured by community
+- **Dependencies** — root-focused tree for any selected file
+
+Features: directory aggregation, zoom/pan, edge filtering, search,
+hover tooltips with per-file metrics, and optional LLM-generated names
+for layers and directories.
 
 ---
 

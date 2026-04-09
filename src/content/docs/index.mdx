@@ -32,7 +32,8 @@ iw index build                         # < 3 seconds, zero API calls
 iw index retrieve "authentication"     # ranked file retrieval
 iw index connections "AuthService"     # cross-layer connections + gaps
 iw index check --changed src/auth.ts   # CI drift detection
-iw index report                        # health dashboard
+iw index layers-infer                  # auto-infer architectural layers
+iw index export --html                 # interactive architecture report
 ```
 
 ---
@@ -48,6 +49,11 @@ iw index report                        # health dashboard
     See which entities co-occur in docs, co-change in git, or share code imports
     — and where these signals **disagree**. Disagreement reveals hidden
     couplings.
+  </Card>
+  <Card title="Architecture Visualization" icon="seti:plan">
+    Auto-infer architectural layers from your import graph. Generate an
+    interactive HTML report with layered views, community clusters, dependency
+    trees, and optional LLM-generated names — all in a single shareable file.
   </Card>
   <Card title="CI Drift Checks" icon="warning">
     Catch stale documentation before it ships. `iw index check` detects docs
@@ -94,6 +100,42 @@ Git History ──► Co-change Analysis ─────┘    IDF Filtering    
 
 **No servers to run.** The index is a single SQLite file. Queries are predefined
 SQL — sub-100ms latency. The entire pipeline is local and deterministic.
+
+---
+
+## Architecture Analysis & Visualization
+
+CARI automatically infers your project's architectural layers from the import graph and
+generates an interactive HTML report — **zero cost, zero configuration**:
+
+```bash
+iw index layers-infer                  # infer layers from import topology
+iw index layers-check                  # validate imports against layer boundaries
+iw index export --html                 # generate standalone architecture.html
+```
+
+The HTML report includes three interactive views:
+
+- **Layers view** — files positioned in their inferred tier (foundation → entry points), with
+  import edges and layer violations highlighted in red
+- **Communities view** — force-directed layout coloured by detected community clusters, including
+  documentation files as linked nodes
+- **Dependencies view** — root-focused dependency tree for any selected file
+
+![Layers View — files arranged into auto-inferred architectural tiers with LLM-generated names](/screenshots/layers-view.png)
+
+Features: directory aggregation, zoom/pan, edge filtering, node search, and hover tooltips
+with per-file metrics (depth, dependents, risk, hub degree).
+
+### Optional: LLM-Generated Names
+
+```bash
+iw index export --html --provider openai --model gpt-4o-mini
+```
+
+An optional LLM pass names layers ("HTTP Layer", "Core Types") and directories ("CLI Subcommands",
+"Pipeline Stages") with one-sentence architectural descriptions. The report remains
+fully functional without this — heuristic labels are used by default.
 
 ---
 

@@ -132,11 +132,22 @@ iw index check --changed $(git diff --name-only origin/main...HEAD)
 
 Exit code 0 = clean, 1 = drift found (docs may need updating).
 
+### Architecture analysis
+
+```bash
+iw index layers-infer                  # auto-infer layers from import graph
+iw index layers-check                  # find layer boundary violations
+iw index export --html                 # interactive architecture report
+```
+
+Generates a standalone HTML file with layered, community, and dependency views.
+
 ---
 
 ## Next Steps
 
 - [CARI Overview](/docs/cari/overview/) — understand how CARI works
+- [Architecture Analysis](/examples/architecture-layers/) — layers, violations, and HTML reports
 - [CI Integration](/docs/integrations/ci/) — add drift checks to your pipeline
 - [Copilot / MCP](/docs/integrations/mcp/) — use CARI tools in VS Code
 - [Knowledge Graph](/docs/kg/overview/) — optional deep semantic extraction

@@ -64,5 +64,6 @@ Undocumented Dependencies:
 
 ## Next Steps
 
+- [Architecture Analysis](/examples/architecture-layers/) — infer layers and generate reports
 - [Connections & Gaps](/docs/cari/connections/) — drill into specific entities
 - [CI Drift Check](/docs/cari/check/) — automate checks in CI

@@ -63,6 +63,9 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_terminology` | Terminology inconsistency detection | `limit?` |
 | `cari_dep_depth` | Transitive import depth analysis | `limit?` |
 | `cari_boundary_violations` | Package boundary violation detection | _(none)_ |
+| `cari_layers_infer` | Auto-infer architectural layers | _(none)_ |
+| `cari_layers_check` | Validate imports against layer config | `allowSkipLayer?` |
+| `cari_layers_name` | LLM-generated layer & directory names | `provider`, `model?`, `api_key?` |
 
 All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
 See the [CLI Reference](/docs/reference/cli/) for the full command list.
@@ -80,6 +83,9 @@ Ask Copilot:
 - **"Which modules lack docs?"** → Copilot calls `cari_module_coverage`
 - **"Where is AuthService mentioned?"** → Copilot calls `cari_mentions_of` with entityId
 - **"What entities appear in AUTH.md?"** → Copilot calls `cari_annotations_for` with filePath
+- **"What are the architectural layers?"** → Copilot calls `cari_layers_infer`
+- **"Are there any layer violations?"** → Copilot calls `cari_layers_check`
+- **"Name my layers with AI"** → Copilot calls `cari_layers_name` with provider="openai"
 
 ## Knowledge Graph Tools (Optional)
 

@@ -5,7 +5,7 @@ description: Detailed specification for the Code-Aware Retrieval Index.
 
 ## Status
 
-**Implemented** — Phases 1–7 complete, 908 tests passing across 48 test files.
+**Implemented** — Phases 1–9 complete, 1174 tests passing across 58 test files.
 
 ## Design Goals
 
@@ -93,7 +93,9 @@ All phases are complete:
 | 5. Annotation Depth | Dictionary matching, IDF filtering, stopword baseline                                                         |      22 |
 | 6. Code Quality     | Clone detection (exact + structural), circular imports, unused exports, TODO tracking, hotspot prioritization |       — |
 | 7. Doc Completeness | Module coverage, orphaned sections, per-doc completeness, cross-group drift, doc-group classification         |       — |
-| **Total**           |                                                                                                               | **908** |
+| 8. Graph Topology   | Community detection, hub analysis, surprising connections, rationale extraction, terminology inconsistency     |       — |
+| 9. Architecture     | Layer inference, layer check, dependency depth, boundary violations, HTML architecture report, LLM layer naming |       — |
+| **Total**           |                                                                                                               | **1174** |
 
 ## Key Source Files
 
@@ -114,8 +116,11 @@ All phases are complete:
 | `packages/index/src/queries/moduleCoverage.ts`    | Documentation coverage per directory  |
 | `packages/index/src/queries/orphanedSections.ts`  | Doc sections with ungrounded mentions |
 | `packages/index/src/queries/docCompleteness.ts`   | Per-doc completeness vs. exports      |
-| `packages/index/src/queries/crossGroupDrift.ts`   | Cross-group coverage conflicts        |
-| `packages/index/src/incremental.ts`               | Content-hash updates                  |
+| `packages/index/src/queries/crossGroupDrift.ts`   | Cross-group coverage conflicts        || `packages/index/src/queries/layersInfer.ts`       | Auto-infer architectural layers        |
+| `packages/index/src/queries/layersCheck.ts`       | Validate imports against layers        |
+| `packages/index/src/queries/layerNaming.ts`       | LLM-generated layer & directory names  |
+| `packages/index/src/queries/archReport.ts`        | Architecture report data collector     |
+| `packages/index/src/export/htmlReport.ts`         | Standalone HTML architecture renderer  || `packages/index/src/incremental.ts`               | Content-hash updates                  |
 | `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction                    |
 | `packages/analyzer/src/kwg/kwxStage.ts`           | KWX stage options                     |
 | `packages/cli/src/commands/indexBuild.ts`         | Build orchestrator                    |

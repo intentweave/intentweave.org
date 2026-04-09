@@ -232,6 +232,8 @@ const result = index.todos();
 | `terminologyInconsistency()` | `TerminologyInconsistencyResult` | Terminology inconsistency detection |
 | `dependencyDepth()`  | `DependencyDepthResult`       | Transitive import depth + risk         |
 | `boundaryViolations()` | `BoundaryViolationsResult`  | Cross-package import detection         |
+| `layersInfer()`      | `LayersInferResult`           | Auto-infer layers from import graph    |
+| `layersCheck()`      | `LayersCheckResult`           | Validate imports against layer config  |
 
 ### `mentionsOf(params)` — Entity → Doc Mentions
 
@@ -329,6 +331,9 @@ import type {
   DocCompletenessResult, CrossGroupDriftResult,
   ExternalEntity, MentionsOfParams, MentionsOfResult,
   AnnotationsForFileParams, AnnotationsForFileResult,
+  InferredLayer, LayersInferResult, LayerViolation, LayersCheckResult,
+  NamedLayer, NamedDirectory, LayerNamingResult,
+  ArchReportData, ArchReportNode, ArchReportEdge, ArchReportOptions,
 } from "@intentweave/index";
 ```
 

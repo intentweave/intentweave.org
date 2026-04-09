@@ -60,6 +60,7 @@ export default defineConfig({
 						{ label: 'Auth Topic Retrieval', slug: 'examples/auth-retrieval' },
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
 						{ label: 'PR Drift Check', slug: 'examples/pr-drift' },
+						{ label: 'Architecture Layers', slug: 'examples/architecture-layers' },
 					],
 				},
 				{

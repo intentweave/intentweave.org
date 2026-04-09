@@ -12,8 +12,9 @@ apps/
 packages/
   core/                 → @intentweave/core — shared types, predicates, interfaces
   analyzer/             → @intentweave/analyzer — pipeline stages (AX, KWX, COX, TCG, FX, KX, GX)
-  index/                → @intentweave/index — CARI SQLite engine (writer, annotator, IDF, queries)
-  cli/                  → @intentweave/cli — `iw` commands + MCP server
+  index/                → @intentweave/index — CARI SQLite engine (writer, annotator, IDF, queries,
+                                                 architecture analysis, HTML report)
+  cli/                  → @intentweave/cli — `iw` commands + MCP server (32 tools)
   server-core/          → @intentweave/server-core — Fastify + Neo4j + middleware
   server-open/          → @intentweave/server-open — open track API routes
   profiles/             → @intentweave/profiles — extraction profile packs
@@ -100,9 +101,10 @@ Documents ──► IN (chunk) ──► FX (extract) ──► KX (canonicalize
 | Server          | Fastify 5                        |
 | Database (CARI) | SQLite via better-sqlite3        |
 | Database (KG)   | Neo4j 5                          |
-| AST parsing     | tree-sitter (TS/JS/Swift)        |
+| AST parsing     | tree-sitter (TS/JS/Swift/Python) |
 | LLM             | OpenAI (gpt-4o-mini), pluggable  |
-| Testing         | Vitest (800+ tests)              |
+| Visualization   | D3.js v7 (inline in HTML report) |
+| Testing         | Vitest (1174 tests)              |
 | MCP             | stdio transport                  |
 
 ## Next Steps
