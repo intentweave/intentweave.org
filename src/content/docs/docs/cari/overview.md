@@ -104,7 +104,7 @@ MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 | `annotationsFor`   | File → all annotations                             |
 | `testCoverage`     | Test→source mapping + untested exports             |
 | `hubs`             | God-node / hub analysis (degree centrality)        |
-| `communities`      | Label-propagation community detection              |
+| `communities`      | Community detection (structural / semantic / temporal)  |
 | `surprises`        | Surprising connection ranking (composite score)    |
 | `rationale`        | WHY/NOTE/IMPORTANT/DESIGN rationale inventory      |
 | `terminology`      | Terminology inconsistency detection                |

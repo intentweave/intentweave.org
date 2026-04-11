@@ -5,12 +5,20 @@ description: What's planned for IntentWeave.
 
 ## Current Status
 
-CARI (Code-Aware Retrieval Index) is **production-ready** with 1174 tests passing
-across 58 test files. The Knowledge Graph pipeline is functional but
+CARI (Code-Aware Retrieval Index) is **production-ready** with 1220 tests passing
+across 60 test files. The Knowledge Graph pipeline is functional but
 considered optional/advanced.
 
 ## Recently Shipped
 
+- ✅ **Multi-view community detection (v0.6)** — three switchable modes (structural, semantic,
+  temporal) for different architectural perspectives, with live mode switching in the HTML report
+- ✅ **Vertical slice detection (v0.6)** — identify cross-layer feature slices; click a community
+  in the legend to highlight its vertical slice across layers
+- ✅ **Hierarchical sub-layering (v0.6)** — recursive sub-community splitting within layers with
+  four-strategy fallback; deterministic via seeded PRNG
+- ✅ **Community resolution parameter (v0.6)** — `--resolution` scales max community size for
+  finer or coarser clustering
 - ✅ **Architecture analysis & visualization (5.1a/b/c, 10.1)** — auto-infer layers, validate
   imports, generate interactive HTML report with three views (Layers, Communities, Dependencies),
   directory aggregation, and optional LLM-generated names for layers and directories

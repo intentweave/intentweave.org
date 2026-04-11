@@ -122,7 +122,7 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index register-entities <file>` | Register external entities from JSON file            |
 | `iw index test-coverage`      | Map test files to source files, find untested exports     |
 | `iw index hubs`               | God-node / hub analysis (degree centrality)               |
-| `iw index communities`        | Label-propagation community detection                     |
+| `iw index communities`        | Community detection (structural / semantic / temporal)    |
 | `iw index surprises`          | Surprising connection ranking (composite score)           |
 | `iw index rationale`          | WHY/NOTE/IMPORTANT/DESIGN rationale inventory             |
 | `iw index terminology`        | Terminology inconsistency detection                       |
@@ -188,6 +188,7 @@ iw index export --html [options]
 | --------------------- | -------------------- | ----------------------------------------- |
 | `-o, --output <path>` | `architecture.html`  | Output file path                          |
 | `--db <path>`         | `.iw/index.db`       | Path to CARI index                        |
+| `-m, --mode <mode>`   | `structural`         | Community mode: structural, semantic, temporal |
 | `--provider <name>`   | —                    | LLM provider for layer naming (`openai`)  |
 | `--model <name>`      | `gpt-4o-mini`        | Model for LLM naming                      |
 | `--api-key <key>`     | `$OPENAI_API_KEY`    | OpenAI API key (if not env var)           |
@@ -196,7 +197,8 @@ The report combines data from layers, communities, dependencies, and boundary
 violations into three interactive views:
 
 - **Layers** — tiered layout with import edges (violations in red)
-- **Communities** — force-directed layout coloured by community
+- **Communities** — force-directed layout coloured by community, with switchable modes
+  (structural, semantic, temporal) and vertical slice highlighting
 - **Dependencies** — root-focused tree for any selected file
 
 Features: directory aggregation, zoom/pan, edge filtering, search,

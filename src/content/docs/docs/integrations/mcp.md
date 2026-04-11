@@ -57,7 +57,7 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_annotations_for` | File → all annotations | `filePath`, `minConfidence?`, `limit?` |
 | `cari_test_coverage` | Test→source mapping + gaps | `limit?` |
 | `cari_hubs` | God-node / hub analysis | `limit?` |
-| `cari_communities` | Community detection | _(none)_ |
+| `cari_communities` | Community detection (3 modes) | `mode?`, `resolution?`, `limit?` |
 | `cari_surprises` | Surprising connection ranking | `limit?` |
 | `cari_rationale` | WHY/NOTE/IMPORTANT/DESIGN inventory | `kind?`, `limit?` |
 | `cari_terminology` | Terminology inconsistency detection | `limit?` |
@@ -86,6 +86,7 @@ Ask Copilot:
 - **"What are the architectural layers?"** → Copilot calls `cari_layers_infer`
 - **"Are there any layer violations?"** → Copilot calls `cari_layers_check`
 - **"Name my layers with AI"** → Copilot calls `cari_layers_name` with provider="openai"
+- **"Show communities by git history"** → Copilot calls `cari_communities` with mode="temporal"
 
 ## Knowledge Graph Tools (Optional)
 

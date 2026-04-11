@@ -81,9 +81,18 @@ more downstream impact.
 ### Communities View
 
 A force-directed layout where files cluster by community membership (detected
-via label-propagation on the combined import + co-occurrence + co-change graph).
+via label-propagation on the combined import + co-change graph).
 Clusters are colour-coded. Documentation files appear as purple dashed nodes,
 linked to their communities.
+
+Use the **community mode dropdown** (top-right) to switch between three perspectives:
+
+- **Structural** (default): imports + co-changes — shows functional architecture
+- **Semantic**: full co-occurrence graph — shows conceptual/topical grouping
+- **Temporal**: git co-changes only — shows historically coupled clusters
+
+Click any community in the legend to **highlight its vertical slice** across all layers,
+revealing cross-cutting feature concerns.
 
 ![Communities View — force-directed layout showing community clusters and doc-code links](/screenshots/communities-view.png)
 
