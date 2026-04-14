@@ -5,7 +5,7 @@ description: Detailed specification for the Code-Aware Retrieval Index.
 
 ## Status
 
-**Implemented** — Phases 1–9 complete, 1174 tests passing across 58 test files.
+**Implemented** — Phases 1–10 complete, 1248 tests passing across 63 test files.
 
 ## Design Goals
 
@@ -95,7 +95,8 @@ All phases are complete:
 | 7. Doc Completeness | Module coverage, orphaned sections, per-doc completeness, cross-group drift, doc-group classification         |       — |
 | 8. Graph Topology   | Community detection, hub analysis, surprising connections, rationale extraction, terminology inconsistency     |       — |
 | 9. Architecture     | Layer inference, layer check, dependency depth, boundary violations, HTML architecture report, LLM layer naming |       — |
-| **Total**           |                                                                                                               | **1174** |
+| 10. Advanced Analysis | Focused architecture, interface conformance, dead feature detection, API surface changelog, layer comparison |       — |
+| **Total**           |                                                                                                               | **1248** |
 
 ## Key Source Files
 
@@ -120,7 +121,13 @@ All phases are complete:
 | `packages/index/src/queries/layersCheck.ts`       | Validate imports against layers        |
 | `packages/index/src/queries/layerNaming.ts`       | LLM-generated layer & directory names  |
 | `packages/index/src/queries/archReport.ts`        | Architecture report data collector     |
-| `packages/index/src/export/htmlReport.ts`         | Standalone HTML architecture renderer  || `packages/index/src/incremental.ts`               | Content-hash updates                  |
+| `packages/index/src/export/htmlReport.ts`         | Standalone HTML architecture renderer  |
+| `packages/index/src/export/focusReport.ts`        | Focused Graphviz SVG report            |
+| `packages/index/src/queries/focus.ts`             | Focused architecture query             |
+| `packages/index/src/queries/interfaceConformance.ts` | Interface conformance drift         |
+| `packages/index/src/queries/deadFeatures.ts`      | Dead feature detection (3 signals)     |
+| `packages/index/src/queries/layersCompare.ts`     | As-is vs. as-should layer comparison   |
+| `packages/cli/src/api-surface/apiSurface.ts`      | API surface changelog (git + AST)      || `packages/index/src/incremental.ts`               | Content-hash updates                  |
 | `packages/analyzer/src/kwg/heuristicExtractor.ts` | Keyword extraction                    |
 | `packages/analyzer/src/kwg/kwxStage.ts`           | KWX stage options                     |
 | `packages/cli/src/commands/indexBuild.ts`         | Build orchestrator                    |

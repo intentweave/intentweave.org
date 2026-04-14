@@ -66,6 +66,7 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_layers_infer` | Auto-infer architectural layers | _(none)_ |
 | `cari_layers_check` | Validate imports against layer config | `allowSkipLayer?` |
 | `cari_layers_name` | LLM-generated layer & directory names | `provider`, `model?`, `api_key?` |
+| `cari_focus` | Focused architecture view around a target | `target`, `hops?`, `maxNodes?` |
 
 All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
 See the [CLI Reference](/docs/reference/cli/) for the full command list.
@@ -87,6 +88,7 @@ Ask Copilot:
 - **"Are there any layer violations?"** → Copilot calls `cari_layers_check`
 - **"Name my layers with AI"** → Copilot calls `cari_layers_name` with provider="openai"
 - **"Show communities by git history"** → Copilot calls `cari_communities` with mode="temporal"
+- **"Show me the architecture around auth.ts"** → Copilot calls `cari_focus` with target="auth.ts"
 
 ## Knowledge Graph Tools (Optional)
 

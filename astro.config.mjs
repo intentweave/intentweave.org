@@ -41,6 +41,7 @@ export default defineConfig({
 						{ label: 'Build the Index', slug: 'docs/cari/build' },
 						{ label: 'Retrieve', slug: 'docs/cari/retrieve' },
 						{ label: 'Connections & Gaps', slug: 'docs/cari/connections' },
+						{ label: 'Focused Architecture View', slug: 'docs/cari/focus' },
 						{ label: 'CI Drift Check', slug: 'docs/cari/check' },
 						{ label: 'Health Report', slug: 'docs/cari/report' },
 						{ label: 'Incremental Update', slug: 'docs/cari/update' },

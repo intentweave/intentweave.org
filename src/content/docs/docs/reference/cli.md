@@ -130,7 +130,13 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index boundary-violations`| Cross-package internal import detection                   |
 | `iw index layers-infer`       | Auto-infer architectural layers from import graph         |
 | `iw index layers-check`       | Validate imports against layer boundaries                 |
+| `iw index layers-check --compare` | As-is vs. as-should layer comparison                   |
+| `iw index conformance`        | Interface conformance drift detection                     |
+| `iw index dead-features`      | Dead feature detection (unused + undocumented + stale)    |
+| `iw index api-surface`        | API surface changelog (additions, removals, sig changes)  |
+| `iw index focus <target>`     | Focused architecture view around a target entity          |
 | `iw index export --html`      | Interactive standalone HTML architecture report           |
+| `iw index export --focus <t>` | Focused Graphviz SVG architecture report                  |
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.
@@ -167,6 +173,7 @@ iw index layers-check [options]
 | ----------------------- | -------------- | ---------------------------------------- |
 | `--db <path>`           | `.iw/index.db` | Path to CARI index                       |
 | `--allow-skip-layer`    | off            | Don't flag skip-layer imports            |
+| `--compare`             | off            | Show as-is vs. as-should delta view      |
 | `-f, --format`          | `text`         | `text` or `json`                         |
 
 Detects:
@@ -204,6 +211,86 @@ violations into three interactive views:
 Features: directory aggregation, zoom/pan, edge filtering, search,
 hover tooltips with per-file metrics, and optional LLM-generated names
 for layers and directories.
+
+### `iw index conformance`
+
+Detect interface conformance drift — when a class claims to implement an interface
+but method signatures have diverged.
+
+```bash
+iw index conformance [options]
+```
+
+| Option           | Default        | Description                    |
+| ---------------- | -------------- | ------------------------------ |
+| `--db <path>`    | `.iw/index.db` | Path to CARI index             |
+| `-f, --format`   | `text`         | `text` or `json`               |
+
+Reports: missing methods, missing properties, and signature mismatches.
+
+### `iw index dead-features`
+
+Combine three signals to surface likely dead features.
+
+```bash
+iw index dead-features [options]
+```
+
+| Option                  | Default        | Description                              |
+| ----------------------- | -------------- | ---------------------------------------- |
+| `--db <path>`           | `.iw/index.db` | Path to CARI index                       |
+| `--min-signals <n>`     | `2`            | Minimum signals to report (1–3)          |
+| `--staleness <months>`  | `6`            | Months since last modification           |
+| `-n, --limit <n>`       | `100`          | Maximum results                          |
+| `-f, --format`          | `text`         | `text` or `json`                         |
+
+Signals: (a) unused export, (b) undocumented symbol, (c) stale file (no commits in N months).
+
+### `iw index api-surface`
+
+Track exported symbols over time via git history. Detects additions, removals,
+and signature changes per release.
+
+```bash
+iw index api-surface [options]
+```
+
+| Option               | Default        | Description                              |
+| -------------------- | -------------- | ---------------------------------------- |
+| `--db <path>`        | `.iw/index.db` | Path to CARI index                       |
+| `--baseline <ref>`   | latest git tag | Git ref to compare against               |
+| `-f, --format`       | `text`         | `text` or `json`                         |
+
+Example output: _"+40 added, −14 removed, ~1 signature changed across 28 files"_.
+
+### `iw index focus`
+
+Focused architecture view around a target file or symbol.
+
+```bash
+iw index focus <target> [options]
+```
+
+| Option               | Default        | Description                              |
+| -------------------- | -------------- | ---------------------------------------- |
+| `--db <path>`        | `.iw/index.db` | Path to CARI index                       |
+| `--hops <n>`         | `2`            | Expansion depth from target              |
+| `--max-nodes <n>`    | `20`           | Maximum nodes in the view                |
+| `-f, --format`       | `text`         | `text` or `json`                         |
+
+### `iw index export --focus`
+
+Generate a focused Graphviz SVG architecture report.
+
+```bash
+iw index export --focus <target> [options]
+```
+
+| Option               | Default              | Description                              |
+| -------------------- | -------------------- | ---------------------------------------- |
+| `--hops <n>`         | `2`                  | Expansion depth                          |
+| `--max-nodes <n>`    | `20`                 | Maximum nodes                            |
+| `-o, --output`       | `focus.html`         | Output file path                         |
 
 ---
 

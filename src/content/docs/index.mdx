@@ -33,6 +33,8 @@ iw index retrieve "authentication"     # ranked file retrieval
 iw index connections "AuthService"     # cross-layer connections + gaps
 iw index check --changed src/auth.ts   # CI drift detection
 iw index layers-infer                  # auto-infer architectural layers
+iw index conformance                   # interface conformance drift
+iw index api-surface                   # API changelog since last release
 iw index export --html                 # interactive architecture report
 ```
 
@@ -58,6 +60,15 @@ iw index export --html                 # interactive architecture report
   <Card title="CI Drift Checks" icon="warning">
     Catch stale documentation before it ships. `iw index check` detects docs
     that reference changed code and reports them as CI warnings.
+  </Card>
+  <Card title="API Surface Tracking" icon="list-format">
+    Track exported symbols across releases. Detect additions, removals, and
+    signature changes automatically from git history — no manual changelog
+    maintenance.
+  </Card>
+  <Card title="Dead Feature Detection" icon="close">
+    Combine unused exports, undocumented symbols, and stale files to surface
+    likely dead features. Three independent signals means fewer false positives.
   </Card>
 </CardGrid>
 
