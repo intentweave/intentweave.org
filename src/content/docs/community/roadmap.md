@@ -5,102 +5,97 @@ description: What's planned for IntentWeave.
 
 ## Current Status
 
-CARI (Code-Aware Retrieval Index) is **production-ready** with 1220 tests passing
-across 60 test files. The Knowledge Graph pipeline is functional but
-considered optional/advanced.
+IntentWeave ships **three composable layers** of code intelligence. Layer 1 (CARI) is
+**production-ready** with 1375+ tests passing across 70 test files and 18 packages.
+Layer 2 (Selective Enrichment) is specced and in active development. Layer 3 (Intent
+Verification) is planned.
+
+## Architecture
+
+```
+Layer 3 — Intent Verification          (planned)
+  weave spec-to-code, verify invariants
+Layer 2 — Selective Semantic Enrichment (in development)
+  budget-controlled LLM on CARI-selected targets
+Layer 1 — CARI                         (production-ready, $0)
+  AST + keywords + git + SQLite → 30+ query modes
+```
 
 ## Recently Shipped
 
-- ✅ **Multi-view community detection (v0.6)** — three switchable modes (structural, semantic,
-  temporal) for different architectural perspectives, with live mode switching in the HTML report
-- ✅ **Vertical slice detection (v0.6)** — identify cross-layer feature slices; click a community
-  in the legend to highlight its vertical slice across layers
-- ✅ **Hierarchical sub-layering (v0.6)** — recursive sub-community splitting within layers with
-  four-strategy fallback; deterministic via seeded PRNG
-- ✅ **Community resolution parameter (v0.6)** — `--resolution` scales max community size for
-  finer or coarser clustering
-- ✅ **Architecture analysis & visualization (5.1a/b/c, 10.1)** — auto-infer layers, validate
-  imports, generate interactive HTML report with three views (Layers, Communities, Dependencies),
-  directory aggregation, and optional LLM-generated names for layers and directories
-- ✅ Layer inference (`layersInfer`) — topological sort of import DAG into architectural tiers
-- ✅ Layer check (`layersCheck`) — detect reverse and skip-layer import violations
-- ✅ Standalone HTML architecture report (`export --html`) — D3-powered, zero-dependency, shareable
-- ✅ LLM layer naming (`cari_layers_name`) — descriptive layer and directory names via OpenAI
+### Plugin Architecture (11.x)
+
+- ✅ **Plugin system** — `PluginRegistry` with auto-discovery, 3 capability types
+  (LLM, persistence, language)
+- ✅ **CypherLite** — zero-dependency Cypher→SQL transpiler for SQLite-backed KG queries
+- ✅ **plugin-kg-lite** — lightweight KG backend using CypherLite + SQLite (no Neo4j needed)
+- ✅ **plugin-kg** — full Neo4j KG backend via `PersistenceCapability`
+- ✅ **plugin-swift** / **plugin-python** — tree-sitter language plugins
+- ✅ **plugin-llm** — OpenAI-based LLM capability
+
+### Architecture Visualization (5.x / 10.x)
+
+- ✅ **Multi-view community detection** — structural, semantic, temporal modes with live switching
+- ✅ **Vertical slice detection** — cross-layer feature slices with interactive highlighting
+- ✅ **Hierarchical sub-layering** — recursive splitting with four-strategy fallback
+- ✅ **Architecture report** — D3-powered HTML report with Layers, Communities, Dependencies views
+- ✅ **Focused architecture view** — Graphviz WASM report centered on a target entity
+- ✅ **LLM layer naming** — descriptive layer and directory names via OpenAI
+- ✅ Layer inference (`layersInfer`) — topological sort of import DAG
+- ✅ Layer check (`layersCheck`) — reverse and skip-layer import violations
+
+### CARI Core (1.x – 9.x)
+
 - ✅ `CariIndex` facade — single-class API for build + query
 - ✅ Entity Bridge — inject external entities for annotation matching
-- ✅ `mentionsOf()` / `annotationsForFile()` query methods
-- ✅ 2 new MCP tools (`cari_mentions_of`, `cari_annotations_for`)
-- ✅ 3 new CLI subcommands (`mentions-of`, `annotations-for`, `register-entities`)
-- ✅ Library API documentation
-- ✅ Test coverage mapping (`testCoverage()` query)
 - ✅ Python AST extraction via `@intentweave/python-parser` (tree-sitter)
 - ✅ Language-agnostic AX dispatch (`LanguageRegistry` + `LanguageAdapter`)
 - ✅ Hub analysis, community detection, surprising connections, rationale extraction
 - ✅ Terminology inconsistency detection
 - ✅ Dependency depth + boundary violation detection
+- ✅ Clone detection (exact + structural), unused exports, circular imports
+- ✅ Module documentation coverage, orphaned sections, per-doc completeness
+- ✅ Cross-group drift detection, TODO/FIXME inventory
+- ✅ Test coverage mapping (`testCoverage()` query)
+- ✅ 31 MCP tools (6 KG + 25 CARI) for GitHub Copilot
+- ✅ Library API (`@intentweave/index` npm package)
 
-## Short-term
+## Next Up
 
-### Index Quality
+### Selective Semantic Enrichment (11.8)
 
-- Improved scoring heuristics for ranked retrieval
-- Better handling of monorepo structures
-- Support for more annotation source types
+CARI signals guide targeted LLM extraction — spend tokens only where they matter:
+
+| Use Case | CARI Signal | LLM Action |
+|---|---|---|
+| Diagram validation | Mermaid blocks in docs | Parse diagram, diff against import graph |
+| Decision tracking | `DECIDED_FOR` / rationale markers | Extract ADR-style triples |
+| Config-to-docs sync | `.env` / config file changes | Match params to doc sections |
+| Contradiction detection | Cross-group drift conflicts | Verify which version is current |
+| Completion backfill | Low completeness scores | Generate missing doc sections |
+| Architecture narrative | Layer + community data | Generate prose architecture overview |
 
 ### Language Support
 
+- Swift AST extraction (tree-sitter) — plugin scaffolded
 - Go AST extraction (tree-sitter)
 - Rust AST extraction (tree-sitter)
-- Generic fallback for unsupported languages (regex-based symbol detection)
+- Generic fallback for unsupported languages
 
 ### Developer Experience
 
 - `iw index watch` — continuous re-indexing on file changes
-- Richer `report` output with actionable suggestions
-- Better error messages and onboarding flow
-
-## Medium-term
-
-### Richer Signals
-
-- ✅ Import/dependency graph integration into connections
-- Test coverage correlation (if test framework metadata available)
-- PR review history as a co-change signal
-- ✅ Comment/TODO tracking
-- ✅ Clone detection (exact + structural)
-- ✅ Unused export detection
-- ✅ Module documentation coverage
-- ✅ Orphaned section detection
-- ✅ Per-doc completeness scoring
-- ✅ Cross-group drift detection
-- ✅ Entity Bridge (external entity injection for annotation matching)
-- ✅ Hub analysis + community detection + surprising connections
-- ✅ Terminology inconsistency detection
-- ✅ Dependency depth analysis + boundary violation detection
-- ✅ Architectural layer inference + validation
-- ✅ Interactive HTML architecture report
-- ✅ LLM-powered layer & directory naming
-
-### Editor Integration
-
 - VS Code extension with inline drift warnings
-- Hover providers showing CARI context for symbols
-- CodeLens for annotation density
-
-### CI Enhancements
-
 - Pre-built GitHub Action (`uses: intentweave/check-drift@v1`)
-- Support for GitLab CI, CircleCI templates
-- Baseline comparison (track drift trend over time)
 
-## Knowledge Graph
+## Long-term — Intent Verification (Layer 3)
 
-The KG pipeline (LLM extraction → Neo4j) is functional but under evaluation:
+The vision: weave specifications to code and verify that implementation matches intent.
 
-- Useful for architecture exploration and decision archaeology
-- Cost (LLM API calls) and complexity (Neo4j) limit adoption
-- Keeping it as an optional advanced path
-- May evolve based on community feedback and use cases
+- Spec-to-code traceability links
+- Invariant checking across spec + code + docs
+- Drift alerts when code evolves but specs don't
+- Natural-language queries over the combined graph
 
 ## Contributing
 

@@ -1,10 +1,10 @@
 ---
-title: Code + docs + git → a queryable context index
-description: "IntentWeave CARI: a $0 local index from your code, docs, and git history. No LLM, no servers. Build in seconds, query in milliseconds."
+title: From Code Graph to Intent Graph
+description: "IntentWeave — build a $0 index of your codebase, enrich it with semantic understanding, and weave code intent with implementation reality."
 template: splash
 hero:
-  title: Code + docs + git → a queryable context index
-  tagline: "CARI: a $0 local index from your code, docs, and git history. No LLM, no servers. Build in seconds, query in milliseconds."
+  title: From code graph to intent graph
+  tagline: "Build a $0 index of your codebase, enrich it with semantic understanding, and weave code intent with implementation reality."
   image:
     dark: ../../assets/logo-dark.svg
     light: ../../assets/logo-light.svg
@@ -20,6 +20,30 @@ hero:
 ---
 
 import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Three Composable Layers
+
+<CardGrid>
+  <Card title="Layer 1: CARI Index — always $0" icon="seti:db">
+    A zero-cost SQLite index built from your code's AST, document keywords, and
+    git history. No LLM, no servers, no API keys. 30+ query modes, architecture
+    visualization, community detection, clone detection, CI drift checks, and more.
+    **This is the foundation — always free, always local.**
+  </Card>
+  <Card title="Layer 2: Semantic Enrichment" icon="star">
+    Selectively apply LLM extraction to the files CARI flags as highest-value.
+    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
+    architecture diagram validation, cross-doc contradiction detection, and
+    config-to-docs synchronization.
+  </Card>
+  <Card title="Layer 3: Intent Verification" icon="approve-check-circle">
+    The apex — weave code graph and intent graph together. Verify that specs
+    match implementation, track decisions through their lifecycle, and score
+    your documentation as a living system. **Coming soon.**
+  </Card>
+</CardGrid>
+
+---
 
 ## Quick Start
 
@@ -43,6 +67,12 @@ iw index export --html                 # interactive architecture report
 ## What You Get
 
 <CardGrid>
+  <Card title="Architecture Visualization" icon="seti:plan">
+    Auto-infer architectural layers from your import graph. Generate an
+    interactive HTML report with layered views, community clusters, dependency
+    trees, vertical slice detection, and optional LLM-generated names — all in
+    a single shareable file. **No similar tool exists for this.**
+  </Card>
   <Card title="Ranked Retrieval" icon="magnifier">
     Find the right files for any topic. CARI combines code structure, document
     semantics, and git history into a single ranked score with explanations.
@@ -52,23 +82,29 @@ iw index export --html                 # interactive architecture report
     — and where these signals **disagree**. Disagreement reveals hidden
     couplings.
   </Card>
-  <Card title="Architecture Visualization" icon="seti:plan">
-    Auto-infer architectural layers from your import graph. Generate an
-    interactive HTML report with layered views, community clusters, dependency
-    trees, and optional LLM-generated names — all in a single shareable file.
-  </Card>
   <Card title="CI Drift Checks" icon="warning">
     Catch stale documentation before it ships. `iw index check` detects docs
     that reference changed code and reports them as CI warnings.
   </Card>
-  <Card title="API Surface Tracking" icon="list-format">
-    Track exported symbols across releases. Detect additions, removals, and
-    signature changes automatically from git history — no manual changelog
-    maintenance.
+  <Card title="Diagram Validation" icon="document">
+    LLM reads ASCII art and Mermaid diagrams in your docs, extracts component
+    flows, and CARI validates them against the actual import graph. The diagram
+    in your docs **is** the architecture spec — no YAML config needed.
+    *Coming with semantic enrichment.*
+  </Card>
+  <Card title="Decision Tracking" icon="open-book">
+    Selective LLM extraction finds decisions in your ADRs and docs. CARI checks
+    which decisions have code grounding and which are unimplemented or stale.
+    *Coming with semantic enrichment.*
   </Card>
   <Card title="Dead Feature Detection" icon="close">
     Combine unused exports, undocumented symbols, and stale files to surface
     likely dead features. Three independent signals means fewer false positives.
+  </Card>
+  <Card title="Plugin Architecture" icon="setting">
+    Install only what you need. Core ships zero-cost. Add LLM capability,
+    Neo4j persistence, or language support (Swift, Python) as plugins.
+    `iw plugin add llm` — done.
   </Card>
 </CardGrid>
 
@@ -150,18 +186,23 @@ fully functional without this — heuristic labels are used by default.
 
 ---
 
-## Optional: Knowledge Graph
+## The Upgrade Path
 
-For teams that need deep semantic analysis, IntentWeave also supports LLM-powered
-entity extraction to Neo4j. This is a separate, optional path — not required for CARI.
+IntentWeave grows with your needs. Start free, add capabilities when you need them:
 
-[Learn more →](/docs/kg/overview/)
+```
+$0, zero config                    + LLM (budget-controlled)             + Neo4j (full scale)
+─────────────────                  ──────────────────────                 ────────────────────
+iw index build                     iw index enrich --budget 20           iw run docs/*.md --persist
+  → 30+ code intelligence queries    → decision tracking                   → full KG queries
+  → architecture visualization       → diagram validation                  → impact analysis
+  → CI drift detection                → contradiction detection             → semantic search
+  → clone detection                   → config-to-docs sync                → cross-doc reasoning
+  → community detection               → same SQLite index                  → Neo4j persistence
+```
 
----
-
-## Open Source
-
-IntentWeave is licensed under **Apache-2.0**. Contributions are welcome.
+No lock-in — each layer is independently useful and stores results in formats you own
+(SQLite files, Neo4j database).
 
 <CardGrid>
   <Card title="Contributing" icon="open-book">
@@ -169,6 +210,7 @@ IntentWeave is licensed under **Apache-2.0**. Contributions are welcome.
     involved.
   </Card>
   <Card title="Roadmap" icon="rocket">
-    Check the [roadmap](/community/roadmap/) for what's next.
+    Check the [roadmap](/community/roadmap/) for what's next — 80+ features
+    specced, 40+ already shipped.
   </Card>
 </CardGrid>

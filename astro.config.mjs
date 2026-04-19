@@ -35,17 +35,25 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'CARI (Core)',
+					label: 'Core (Layer 1 — $0)',
 					items: [
 						{ label: 'Overview', slug: 'docs/cari/overview' },
 						{ label: 'Build the Index', slug: 'docs/cari/build' },
 						{ label: 'Retrieve', slug: 'docs/cari/retrieve' },
 						{ label: 'Connections & Gaps', slug: 'docs/cari/connections' },
-						{ label: 'Focused Architecture View', slug: 'docs/cari/focus' },
+						{ label: 'Architecture Visualization', slug: 'docs/cari/focus' },
 						{ label: 'CI Drift Check', slug: 'docs/cari/check' },
 						{ label: 'Health Report', slug: 'docs/cari/report' },
 						{ label: 'Incremental Update', slug: 'docs/cari/update' },
 						{ label: 'Internals', slug: 'docs/cari/internals' },
+					],
+				},
+				{
+					label: 'Plugins',
+					items: [
+						{ label: 'Overview & Combinations', slug: 'docs/plugins/overview' },
+						{ label: 'Knowledge Graph', slug: 'docs/kg/overview' },
+						{ label: 'Try the KG', slug: 'docs/kg/try-it' },
 					],
 				},
 				{
@@ -56,7 +64,7 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Examples',
+					label: 'Use Cases',
 					items: [
 						{ label: 'Auth Topic Retrieval', slug: 'examples/auth-retrieval' },
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
@@ -69,14 +77,6 @@ export default defineConfig({
 					items: [
 						{ label: 'Overview', slug: 'architecture/overview' },
 						{ label: 'CARI Technical Spec', slug: 'architecture/cari-spec' },
-					],
-				},
-				{
-					label: 'Knowledge Graph (Optional)',
-					collapsed: true,
-					items: [
-						{ label: 'What It Is', slug: 'docs/kg/overview' },
-						{ label: 'Try It', slug: 'docs/kg/try-it' },
 					],
 				},
 				{
