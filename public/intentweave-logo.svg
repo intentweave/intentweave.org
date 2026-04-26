@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480">
+  <!--
+    IntentWeave — full wordmark vector (mark + logotype)
+    Mark: 2×2 woven basket-weave lattice, rotated 45°, diamond silhouette
+    Logotype: "Intent" (white/dark) + "Weave" (green), bold sans-serif
+    viewBox 400×480: mark centered 0..400 × 0..340, text 340..480
+  -->
+  <defs>
+    <!-- Mark gradients (dark-background palette) -->
+    <linearGradient id="gb1" gradientUnits="userSpaceOnUse" x1="200" y1="103" x2="200" y2="163">
+      <stop offset="0%"   stop-color="#d1fae5"/>
+      <stop offset="40%"  stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </linearGradient>
+    <linearGradient id="gb2" gradientUnits="userSpaceOnUse" x1="200" y1="177" x2="200" y2="237">
+      <stop offset="0%"   stop-color="#d1fae5"/>
+      <stop offset="40%"  stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </linearGradient>
+    <linearGradient id="ga1" gradientUnits="userSpaceOnUse" x1="103" y1="170" x2="163" y2="170">
+      <stop offset="0%"   stop-color="#4ade80"/>
+      <stop offset="55%"  stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <linearGradient id="ga2" gradientUnits="userSpaceOnUse" x1="177" y1="170" x2="237" y2="170">
+      <stop offset="0%"   stop-color="#4ade80"/>
+      <stop offset="55%"  stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+
+    <!-- Weave clip paths (pre-rotation space, scaled 2× from 200px base) -->
+    <clipPath id="cp-b1" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M10,103H390V163H10Z M103,103H163V163H103Z"/>
+    </clipPath>
+    <clipPath id="cp-b2" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M10,177H390V237H10Z M177,177H237V237H177Z"/>
+    </clipPath>
+    <clipPath id="cp-a1" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M103,10H163V330H103Z M103,177H163V237H103Z"/>
+    </clipPath>
+    <clipPath id="cp-a2" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M177,10H237V330H177Z M177,103H237V163H177Z"/>
+    </clipPath>
+
+    <!-- Diamond clip (screen coords, mark area 0..400 × 0..340, center 200,170) -->
+    <clipPath id="cp-diamond">
+      <polygon points="200,15 375,170 200,325 25,170"/>
+    </clipPath>
+  </defs>
+
+  <!-- Mark -->
+  <g clip-path="url(#cp-diamond)">
+    <g transform="rotate(45,200,170)">
+      <rect x="10"  y="103" width="380" height="60" fill="url(#gb1)" clip-path="url(#cp-b1)"/>
+      <rect x="10"  y="177" width="380" height="60" fill="url(#gb2)" clip-path="url(#cp-b2)"/>
+      <rect x="103" y="10"  width="60" height="320" fill="url(#ga1)" clip-path="url(#cp-a1)"/>
+      <rect x="177" y="10"  width="60" height="320" fill="url(#ga2)" clip-path="url(#cp-a2)"/>
+    </g>
+  </g>
+
+  <!-- Logotype — "Intent" dark / "Weave" green -->
+  <text
+    x="200" y="415"
+    text-anchor="middle"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="72"
+    font-weight="700"
+    letter-spacing="-1"
+  >
+    <tspan fill="#1a1a1a">Intent</tspan><tspan fill="#22c55e">Weave</tspan>
+  </text>
+  <!-- Tagline -->
+  <text
+    x="200" y="458"
+    text-anchor="middle"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="22"
+    fill="#6b7280"
+    letter-spacing="0.5"
+  >intentweave.org</text>
+</svg>
