@@ -60,6 +60,13 @@ Layer 1 — CARI                         (production-ready, $0)
 - ✅ 31 MCP tools (6 KG + 25 CARI) for GitHub Copilot
 - ✅ Library API (`@intentweave/index` npm package)
 
+### CI & Automation (8.x / 10.x)
+
+- ✅ **Watch mode** — `iw index watch` continuous re-indexing on file changes (debounced, EMFILE-safe)
+- ✅ **CI GitHub Action** — `uses: intentweave/doc-health-action@v1` composite action with living score badge, PR comments, and caching
+- ✅ **Git hooks** — `iw hook install/uninstall/status` for `post-commit` + `post-checkout` hooks
+- ✅ **REST API v1.0.0** — versioned HTTP API (`x-api-version` header), OpenAPI/Swagger UI, bearer auth, 11 endpoint groups
+
 ## Next Up
 
 ### Selective Semantic Enrichment (11.8)
@@ -84,7 +91,6 @@ CARI signals guide targeted LLM extraction — spend tokens only where they matt
 
 ### Developer Experience
 
-- `iw index watch` — continuous re-indexing on file changes
 - VS Code extension with inline drift warnings
 - Pre-built GitHub Action (`uses: intentweave/check-drift@v1`)
 
