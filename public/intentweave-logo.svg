@@ -1,4 +1,93 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600">
+  <!--
+    IntentWeave wordmark — DARK background variant
+    White “Intent” + green “Weave”. Transparent bg — designed for dark surfaces.
+
+    Mark geometry (pre-rotation coordinate space):
+      Ribbon width: 74px, rx=37 (fully rounded pill ends)
+      B1 (horizontal upper): y=95..169, center=132
+      B2 (horizontal lower): y=221..295, center=258
+      A1 (vertical left):    x=150..224, center=187
+      A2 (vertical right):   x=276..350, center=313
+      All bands extend ±162px from mark center (250,195) → 88..412 / 33..357
+    Basket weave (checkerboard): A1▲B1, B1▲A2, B2▲A1, A2▲B2
+    Diamond clip (screen coords): top=(250,63) right=(387,195) bottom=(250,327) left=(113,195)
+  -->
+  <defs>
+    <!--
+      Gradient strategy: objectBoundingBox with perpendicular direction per strand type.
+      B strands are horizontal in pre-rotation space → top-to-bottom gradient = perpendicular.
+      A strands are vertical in pre-rotation space  → left-to-right gradient = perpendicular.
+      After rotate(45), the gradient stays perpendicular to the ribbon, creating a 3D cylinder look.
+    -->
+    <linearGradient id="grad-b" gradientUnits="objectBoundingBox"
+        x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%"   stop-color="#d1fae5"/><!-- bright highlight -->
+      <stop offset="25%"  stop-color="#4ade80"/><!-- main green -->
+      <stop offset="75%"  stop-color="#16a34a"/><!-- mid shadow -->
+      <stop offset="100%" stop-color="#14532d"/><!-- deep shadow -->
+    </linearGradient>
+    <linearGradient id="grad-a" gradientUnits="objectBoundingBox"
+        x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%"   stop-color="#86efac"/><!-- highlight -->
+      <stop offset="30%"  stop-color="#22c55e"/><!-- main -->
+      <stop offset="72%"  stop-color="#15803d"/><!-- shadow -->
+      <stop offset="100%" stop-color="#052e16"/><!-- deep -->
+    </linearGradient>
+
+    <!-- Basket-weave clip paths (clipPathUnits=userSpaceOnUse = pre-rotation coords) -->
+    <!-- B1 is clipped (goes under) at TL where A1 is on top -->
+    <clipPath id="cp-b1" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M88,95 H412 V169 H88 Z  M150,95 H224 V169 H150 Z"/>
+    </clipPath>
+    <!-- B2 is clipped (goes under) at BR where A2 is on top -->
+    <clipPath id="cp-b2" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M88,221 H412 V295 H88 Z  M276,221 H350 V295 H276 Z"/>
+    </clipPath>
+    <!-- A1 is clipped (goes under) at BL where B2 is on top -->
+    <clipPath id="cp-a1" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M150,33 H224 V357 H150 Z  M150,221 H224 V295 H150 Z"/>
+    </clipPath>
+    <!-- A2 is clipped (goes under) at TR where B1 is on top -->
+    <clipPath id="cp-a2" clipPathUnits="userSpaceOnUse">
+      <path fill-rule="evenodd" d="M276,33 H350 V357 H276 Z  M276,95 H350 V169 H276 Z"/>
+    </clipPath>
+
+    <!-- Diamond outer clip in screen/SVG coordinates -->
+    <clipPath id="cp-diamond">
+      <polygon points="250,63 387,195 250,327 113,195"/>
+    </clipPath>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="500" height="600" fill="#0d0d0d"/>
+
+  <!-- Woven lattice mark -->
+  <g clip-path="url(#cp-diamond)">
+    <g transform="rotate(45,250,195)">
+      <!-- B strands: horizontal → become “/” diagonals (lighter mint side) -->
+      <rect x="88"  y="95"  width="324" height="74" rx="37" fill="url(#grad-b)" clip-path="url(#cp-b1)"/>
+      <rect x="88"  y="221" width="324" height="74" rx="37" fill="url(#grad-b)" clip-path="url(#cp-b2)"/>
+      <!-- A strands: vertical → become “\” diagonals (darker forest green side) -->
+      <rect x="150" y="33"  width="74"  height="324" rx="37" fill="url(#grad-a)" clip-path="url(#cp-a1)"/>
+      <rect x="276" y="33"  width="74"  height="324" rx="37" fill="url(#grad-a)" clip-path="url(#cp-a2)"/>
+    </g>
+  </g>
+
+  <!-- Logotype -->
+  <text
+    x="250" y="410"
+    text-anchor="middle"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="68" font-weight="700" letter-spacing="-1">
+    <tspan fill="#ffffff">Intent</tspan><tspan fill="#4ade80">Weave</tspan>
+  </text>
+  <text
+    x="250" y="455"
+    text-anchor="middle"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="20" fill="#9ca3af" letter-spacing="1">intentweave.org</text>
+</svg>
   <!--
     IntentWeave — full wordmark vector (mark + logotype)
     Mark: 2×2 woven basket-weave lattice, rotated 45°, diamond silhouette
