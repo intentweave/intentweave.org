@@ -37,9 +37,10 @@ import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
     config-to-docs synchronization.
   </Card>
   <Card title="Layer 3: Intent Verification" icon="approve-check-circle">
-    The apex — weave code graph and intent graph together. Verify that specs
-    match implementation, track decisions through their lifecycle, and score
-    your documentation as a living system. **Coming soon.**
+    The apex — weave code graph and intent graph together. Core is **shipped**:
+    `iw verify` checks spec-to-code grounding, constraint consistency across docs,
+    and computes a composite living documentation score (A–F grade). Remaining:
+    push alerts and native NL queries without Neo4j.
   </Card>
 </CardGrid>
 

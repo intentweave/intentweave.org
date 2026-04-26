@@ -8,13 +8,14 @@ description: What's planned for IntentWeave.
 IntentWeave ships **three composable layers** of code intelligence. Layer 1 (CARI) is
 **production-ready** with 1375+ tests passing across 70 test files and 18 packages.
 Layer 2 (Selective Enrichment) is **shipped** — `iw index enrich` is live. Layer 3 (Intent
-Verification) is planned.
+Verification) core is **shipped** — `iw verify` with spec-to-code, constraint consistency,
+and living documentation score.
 
 ## Architecture
 
 ```
-Layer 3 — Intent Verification          (planned)
-  weave spec-to-code, verify invariants
+Layer 3 — Intent Verification          (core shipped)
+  iw verify: spec-to-code, constraint consistency, living doc score
 Layer 2 — Selective Semantic Enrichment (shipped)
   iw index enrich — budget-controlled LLM on CARI-selected targets
 Layer 1 — CARI                         (production-ready, $0)
@@ -30,7 +31,7 @@ Layer 1 — CARI                         (production-ready, $0)
 - ✅ **CypherLite** — zero-dependency Cypher→SQL transpiler for SQLite-backed KG queries
 - ✅ **plugin-kg-lite** — lightweight KG backend using CypherLite + SQLite (no Neo4j needed)
 - ✅ **plugin-kg** — full Neo4j KG backend via `PersistenceCapability`
-- ✅ **plugin-swift** / **plugin-python** — tree-sitter language plugins
+- ✅ **plugin-swift** / **plugin-python** — tree-sitter Swift and Python language plugins (fully implemented, not just scaffolded)
 - ✅ **plugin-llm** — OpenAI-based LLM capability
 
 ### Architecture Visualization (5.x / 10.x)
@@ -77,6 +78,14 @@ Layer 1 — CARI                         (production-ready, $0)
 - ✅ **Contradiction detection** — enrichment targets files flagged by `crossGroupDrift()`; conflicting predicates surfaced as conflicts
 - ✅ **Config-to-docs sync** — enrichment on config files guided by low module coverage; value mismatches detected
 
+### Intent Verification (12.x)
+
+`iw verify` — weave the code graph and intent graph together:
+
+- ✅ **Spec-to-code verification** (12.1) — check that each requirement/decision entity has code grounding; reports grounded, partial, and unimplemented
+- ✅ **Constraint consistency** (12.2) — `iw verify --consistency` detects contradictions across spec documents
+- ✅ **Living documentation score** (12.3) — `iw verify --score` composite 0–100/A–F grade across 4 dimensions (spec coverage, constraint consistency, doc freshness, arch conformance)
+
 ## Next Up
 
 ### Selective Enrichment — Remaining Use Cases
@@ -88,24 +97,20 @@ Layer 1 — CARI                         (production-ready, $0)
 
 ### Language Support
 
-- Swift AST extraction (tree-sitter) — plugin scaffolded
-- Go AST extraction (tree-sitter)
-- Rust AST extraction (tree-sitter)
-- Generic fallback for unsupported languages
+- ✅ Swift AST extraction — `@intentweave/swift-parser` + `@intentweave/plugin-swift` (fully working, tree-sitter)
+- ✅ Python AST extraction — `@intentweave/python-parser` + `@intentweave/plugin-python` (fully working, tree-sitter)
+- Planned: Go AST extraction (tree-sitter)
+- Planned: Rust AST extraction (tree-sitter)
+- Planned: Generic keyword-only fallback for unsupported extensions
 
 ### Developer Experience
 
-- VS Code extension with inline drift warnings
-- Pre-built GitHub Action (`uses: intentweave/check-drift@v1`)
+- VS Code extension with inline drift warnings (planned)
 
-## Long-term — Intent Verification (Layer 3)
+### Intent Verification — Remaining
 
-The vision: weave specifications to code and verify that implementation matches intent.
-
-- Spec-to-code traceability links
-- Invariant checking across spec + code + docs
-- Drift alerts when code evolves but specs don't
-- Natural-language queries over the combined graph
+- Drift alerts pushed to editor/Slack when `iw index watch` detects doc-breaking changes (planned)
+- Natural-language queries over the combined CARI + KG graph without Neo4j (planned)
 
 ## Contributing
 
