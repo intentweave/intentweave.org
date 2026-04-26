@@ -29,7 +29,7 @@
     --sl-color-accent-low: #dcfce7;
     --sl-color-accent: #16a34a;          /* Richer mid-green for white bg */
     --sl-color-accent-high: #14532d;
-    --sl-color-white: #ffffff;
+    --sl-color-white: #0f172a;           /* Fix: Ensure text/headings use dark blue-slate on light bg! */
     
     /* Light mode neutral background mapping directly to the new SVG #ffffff */
     --sl-color-bg: #ffffff;
@@ -44,6 +44,7 @@
     --sl-color-gray-5: #cbd5e1;
     --sl-color-gray-6: #e2e8f0;
     --sl-color-gray-7: #f1f5f9;
+}
 .hero-section {
 	text-align: center;
 	padding: 3rem 1rem;
