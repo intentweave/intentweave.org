@@ -1,19 +1,49 @@
 /* IntentWeave custom styles */
 
 :root {
-	--sl-color-accent-low: #14532d;
-	--sl-color-accent: #22c55e;
-	--sl-color-accent-high: #86efac;
-	--sl-font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    /* Core accent mapping based on the woven green gradients (#4ade80 / #15803d / etc.) */
+    --sl-color-accent-low: #064e3b;      /* 900-ish dark green */
+    --sl-color-accent: #4ade80;          /* The vibrant mid-green from grad-bands */
+    --sl-color-accent-high: #bbf7d0;     /* The brightest highlight from grad-bands */
+    --sl-color-white: #ffffff;
+    
+    /* Dark mode neutral background mapping directly to the new SVG #0b0e14 */
+    --sl-color-bg: #0b0e14;
+    --sl-color-bg-nav: rgba(11, 14, 20, 0.85); /* Match bg with blur */
+    --sl-color-bg-sidebar: #0f131b;      /* Slightly lighter for depth */
+    
+    /* Neutral text scales adapted for #0b0e14 bg */
+    --sl-color-gray-1: #f3f4f6;
+    --sl-color-gray-2: #e5e7eb;
+    --sl-color-gray-3: #9ca3af;          /* Tagline hue */
+    --sl-color-gray-4: #6b7280;
+    --sl-color-gray-5: #374151;
+    --sl-color-gray-6: #1f2937;
+    --sl-color-gray-7: #111827;
+    
+    --sl-font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 :root[data-theme='light'] {
-	--sl-color-accent-low: #dcfce7;
-	--sl-color-accent: #16a34a;
-	--sl-color-accent-high: #14532d;
-}
-
-/* Hero section on homepage */
+    /* Core accent mapping based on light SVG (#22c55e / #16a34a etc) */
+    --sl-color-accent-low: #dcfce7;
+    --sl-color-accent: #16a34a;          /* Richer mid-green for white bg */
+    --sl-color-accent-high: #14532d;
+    --sl-color-white: #ffffff;
+    
+    /* Light mode neutral background mapping directly to the new SVG #ffffff */
+    --sl-color-bg: #ffffff;
+    --sl-color-bg-nav: rgba(255, 255, 255, 0.85);
+    --sl-color-bg-sidebar: #f8fafc;
+    
+    /* Neutral text scales */
+    --sl-color-gray-1: #0f172a;          /* Title hue in light logo */
+    --sl-color-gray-2: #334155;
+    --sl-color-gray-3: #475569;
+    --sl-color-gray-4: #6b7280;          /* Tagline hue in light logo */
+    --sl-color-gray-5: #cbd5e1;
+    --sl-color-gray-6: #e2e8f0;
+    --sl-color-gray-7: #f1f5f9;
 .hero-section {
 	text-align: center;
 	padding: 3rem 1rem;
