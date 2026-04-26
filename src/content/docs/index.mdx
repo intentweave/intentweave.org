@@ -32,7 +32,7 @@ import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
   </Card>
   <Card title="Layer 2: Semantic Enrichment" icon="star">
     Selectively apply LLM extraction to the files CARI flags as highest-value.
-    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
+    Budget-controlled, stored in the same SQLite index. Ships now: decision tracking,
     architecture diagram validation, cross-doc contradiction detection, and
     config-to-docs synchronization.
   </Card>
@@ -57,9 +57,8 @@ iw index retrieve "authentication"     # ranked file retrieval
 iw index connections "AuthService"     # cross-layer connections + gaps
 iw index check --changed src/auth.ts   # CI drift detection
 iw index layers-infer                  # auto-infer architectural layers
-iw index conformance                   # interface conformance drift
-iw index api-surface                   # API changelog since last release
 iw index export --html                 # interactive architecture report
+iw index enrich --budget 20 --provider openai  # selective LLM enrichment (Layer 2)
 ```
 
 ---
@@ -90,12 +89,12 @@ iw index export --html                 # interactive architecture report
     LLM reads ASCII art and Mermaid diagrams in your docs, extracts component
     flows, and CARI validates them against the actual import graph. The diagram
     in your docs **is** the architecture spec — no YAML config needed.
-    *Coming with semantic enrichment.*
+    Run `iw index enrich` then `iw index arch-check --from-diagrams`.
   </Card>
   <Card title="Decision Tracking" icon="open-book">
     Selective LLM extraction finds decisions in your ADRs and docs. CARI checks
     which decisions have code grounding and which are unimplemented or stale.
-    *Coming with semantic enrichment.*
+    Run `iw index enrich --provider openai`.
   </Card>
   <Card title="Dead Feature Detection" icon="close">
     Combine unused exports, undocumented symbols, and stale files to surface

@@ -7,7 +7,7 @@ description: What's planned for IntentWeave.
 
 IntentWeave ships **three composable layers** of code intelligence. Layer 1 (CARI) is
 **production-ready** with 1375+ tests passing across 70 test files and 18 packages.
-Layer 2 (Selective Enrichment) is specced and in active development. Layer 3 (Intent
+Layer 2 (Selective Enrichment) is **shipped** — `iw index enrich` is live. Layer 3 (Intent
 Verification) is planned.
 
 ## Architecture
@@ -15,8 +15,8 @@ Verification) is planned.
 ```
 Layer 3 — Intent Verification          (planned)
   weave spec-to-code, verify invariants
-Layer 2 — Selective Semantic Enrichment (in development)
-  budget-controlled LLM on CARI-selected targets
+Layer 2 — Selective Semantic Enrichment (shipped)
+  iw index enrich — budget-controlled LLM on CARI-selected targets
 Layer 1 — CARI                         (production-ready, $0)
   AST + keywords + git + SQLite → 30+ query modes
 ```
@@ -67,20 +67,24 @@ Layer 1 — CARI                         (production-ready, $0)
 - ✅ **Git hooks** — `iw hook install/uninstall/status` for `post-commit` + `post-checkout` hooks
 - ✅ **REST API v1.0.0** — versioned HTTP API (`x-api-version` header), OpenAPI/Swagger UI, bearer auth, 11 endpoint groups
 
-## Next Up
-
 ### Selective Semantic Enrichment (11.8)
 
-CARI signals guide targeted LLM extraction — spend tokens only where they matter:
+`iw index enrich` — CARI signals guide targeted LLM extraction, spend tokens only where they matter:
 
-| Use Case | CARI Signal | LLM Action |
+- ✅ **Core engine** — budget-controlled scoring, FX+KX on top-N candidates, KG storage in the same `index.db`
+- ✅ **Diagram validation** — LLM reads Mermaid/ASCII diagrams, CARI validates flows against real import graph (`iw index scan-diagrams`, `arch-check --from-scan`)
+- ✅ **Decision tracking** — enrichment guided by rationale markers; FX extracts `DECIDED_FOR` triples from ADR files
+- ✅ **Contradiction detection** — enrichment targets files flagged by `crossGroupDrift()`; conflicting predicates surfaced as conflicts
+- ✅ **Config-to-docs sync** — enrichment on config files guided by low module coverage; value mismatches detected
+
+## Next Up
+
+### Selective Enrichment — Remaining Use Cases
+
+| Use Case | Status | Notes |
 |---|---|---|
-| Diagram validation | Mermaid blocks in docs | Parse diagram, diff against import graph |
-| Decision tracking | `DECIDED_FOR` / rationale markers | Extract ADR-style triples |
-| Config-to-docs sync | `.env` / config file changes | Match params to doc sections |
-| Contradiction detection | Cross-group drift conflicts | Verify which version is current |
-| Completion backfill | Low completeness scores | Generate missing doc sections |
-| Architecture narrative | Layer + community data | Generate prose architecture overview |
+| Completion backfill | Planned | Requires *generating* new doc content, not just extracting triples |
+| Architecture narrative | Planned | Standalone `iw index narrative` command — LLM prose from layer/community data |
 
 ### Language Support
 
