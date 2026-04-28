@@ -70,6 +70,7 @@ export default defineConfig({
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
 						{ label: 'PR Drift Check', slug: 'examples/pr-drift' },
 						{ label: 'Architecture Layers', slug: 'examples/architecture-layers' },
+					{ label: 'Ensure Intent in the Code', slug: 'examples/intent-rule-checking' },
 					],
 				},
 				{

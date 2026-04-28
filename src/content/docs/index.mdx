@@ -150,6 +150,61 @@ SQL — sub-100ms latency. The entire pipeline is local and deterministic.
 
 ---
 
+## Ensure the Intent in the Code (Semantic Rule Checking 0.11.0)
+
+Vibe-coding AI agents and busy developers can easily implement against architectural decisions. IntentWeave turns your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring Neo4j or LLMs in your CI.
+
+### 1. Extract and Enforce ADRs
+
+Translate intent from plain-text markdown and check it in CI milliseconds later.
+
+```bash
+# LLM-assisted: Extract architectural constraints from an ADR into .iw/rules.yaml
+iw index rules-extract docs/ADR-003.md --provider openai --output .iw/rules.yaml
+
+# CI Validation: Check if the codebase violates any architectural rules
+iw index rules-check --changed src/auth.ts --severity high --format text
+```
+
+* **`rules-extract` options:** `--provider` (e.g. openai), `--output` (specify rules file path).
+* **`rules-check` options:** `--changed <files>` (incremental CI mode), `--severity <level>` (filter by high/medium/low), `--rule-id <id>` (check specific rule), `--format <format>` (json/text).
+
+### 2. Architecture Diagram Validation
+
+Let the diagram *be* the specification. Extract component flows directly from Mermaid or ASCII diagrams in your markdown files and validate them against actual code imports.
+
+```bash
+# Validate AST imports against flows found in diagrams
+iw index arch-check --from-scan docs/ARCHITECTURE.md --provider openai --strict
+```
+
+* **`arch-check` options:** `--from-scan <paths>` (extract on-the-fly), `--from-diagrams` (use previously enriched `.db` diagrams), `--strict` (fail on undocumented flows), `--refresh` (ignore cache).
+
+### 3. Built-in Intent Enforcements (Zero Config)
+
+No LLM or config file required. These built-in rules run via fast AST analysis:
+
+*   **Deprecated active callers:** Find active components ignoring `@deprecated` signals.
+    ```bash
+    iw index deprecated-callers --limit 50
+    ```
+*   **Internal boundary violations:** Enforce `@internal` and `_` prefix visibility across package boundaries.
+    ```bash
+    iw index internal-violations --changed src/ --no-underscore
+    ```
+*   **Type safety bypassed:** Track down `as any` casts in high-fan-in (highly depended upon) files.
+    ```bash
+    iw index type-assertions --kind as_any --risk-sort
+    ```
+*   **Test-intent drift:** Detect tests whose descriptions refer to code symbols that no longer exist.
+    ```bash
+    iw index test-intent --format json
+    ```
+
+These rules run offline in milliseconds and plug straight into CI. Let standard tools review formatting, and let IntentWeave guard the architectural intent.
+
+---
+
 ## Architecture Analysis & Visualization
 
 CARI automatically infers your project's architectural layers from the import graph and

@@ -141,6 +141,7 @@ All architecture analysis is also available as Copilot tools:
 
 ## Next Steps
 
+- [Ensure Intent in Code](/examples/intent-rule-checking/) — enforce ADRs and automatically validate architecture diagrams
 - [CARI Overview](/docs/cari/overview/) — understand all 27 query modes
 - [CI Drift Check](/docs/cari/check/) — catch layer violations in CI
 - [CLI Reference](/docs/reference/cli/) — full command documentation
