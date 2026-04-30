@@ -59,3 +59,33 @@ cd your-project
 iw init && iw index build
 iw index retrieve "your-topic-here"
 ```
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+const index = CariIndex.load(".iw/index.db");
+
+// Same as: iw index retrieve "authentication"
+const results = index.retrieve({ query: "authentication", limit: 10 });
+
+for (const r of results) {
+  console.log(r.file, r.score);
+  console.log("  symbols:", r.symbols.map((s) => s.name).join(", "));
+  // e.g. src/auth/service.ts 0.95
+  //       symbols: AuthService, login, verify
+}
+
+index.close();
+```
+
+`CariIndex.retrieve()` returns the same ranked list as the CLI, including the four
+underlying signals — `annotations`, `symbols`, `co_occurrences`, `co_changes` —
+that produced each score.
+
+## Next Steps
+
+- [Retrieve](/docs/cari/retrieve/) — full `iw index retrieve` reference with all options
+- [Connections & Gaps](/docs/cari/connections/) — explore what’s related to a symbol
+- [Hidden Coupling Example](/examples/hidden-coupling/) — find implicit relationships

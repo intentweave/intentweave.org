@@ -57,3 +57,25 @@ iw index update -v
 
 - [Build the Index](/docs/cari/build/) — full build options
 - [CI Drift Check](/docs/cari/check/) — pair with incremental updates
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+// Equivalent to: iw index update -v
+await CariIndex.update({
+  workspaceRoot: process.cwd(),
+  verbose: true,
+});
+
+// Or: load existing index and inspect freshness
+const index = CariIndex.load(".iw/index.db");
+const report = index.report();
+console.log(`${report.staleCount} stale files`);
+index.close();
+```
+
+`CariIndex.update()` uses the same SHA-256 content-hash comparison as `iw index update`.
+Only files whose hash differs from the `files` table entry are re-processed through the
+**AX → KWX → COX → Annotate** stages.

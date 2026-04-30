@@ -107,8 +107,34 @@ The default CARI mode reads the local SQLite index; add `--neo4j` for the full k
 - Use `smart-mock` provider for testing without API costs: `--provider smart-mock`
 - The `--from-fx` flag lets you re-run only canonicalization: `--from-fx <run-id>`
 - Output as JSON for programmatic use: `-f json -o results.json`
+- Re-runs are fast: `iw run` with `-i` skips files whose content hasn’t changed
+
+## Programmatic API
+
+```typescript
+import { runPipeline, persistToNeo4j, queryKg } from "@intentweave/cli";
+
+// Run extraction (equivalent to iw run docs/*.md --track open --provider openai)
+await runPipeline({
+  paths: ["docs/"],
+  track: "open",
+  provider: "openai",
+  incremental: true,
+});
+
+// Persist latest run to Neo4j (equivalent to iw persist --latest)
+await persistToNeo4j({ latest: true, verbose: true });
+
+// Query the knowledge graph
+const answer = await queryKg({
+  question: "What are the main components?",
+  space: "my-project",
+});
+console.log(answer.text);
+```
 
 ## Next Steps
 
 - [CLI Reference](/docs/reference/cli/) — full command documentation
 - [Architecture Overview](/architecture/overview/) — how the pipeline works
+- [CARI Quick Start](/docs/getting-started/) — zero-dependency local index

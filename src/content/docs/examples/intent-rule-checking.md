@@ -106,7 +106,22 @@ iw index test-intent --format json
 
 ## Integrating With Copilot
 
-These tools are seamlessly exposed via IntentWeave’s MCP server so Copilot can interact with them while you work:
-* Copilot can automatically execute `cari_arch_check` to see if the new architecture flows you're adding are compliant.
-* Copilot can check `cari_rules_check` automatically against your working files to guard against ADR violations.
-* Use `cari_deprecated_callers` to have an agent automatically clean up technical debt securely.
+All enforcement commands are exposed via IntentWeave's MCP server (`packages/cli/src/mcp/server.ts`)
+so Copilot can interact with them while you code:
+
+| MCP Tool | CLI Equivalent | What Copilot Can Do |
+|----------|----------------|---------------------|
+| `cari_arch_check` | `iw index arch-check` | Validate that new flows you're adding match the architecture diagram |
+| `cari_rules_check` | `iw index rules-check` | Guard open files against ADR violations before you commit |
+| `cari_deprecated_callers` | `iw index deprecated-callers` | Automatically find and clean up callers of deprecated symbols |
+| `cari_internal_violations` | `iw index internal-violations` | Prevent hidden coupling across package boundaries |
+| `cari_test_intent` | `iw index test-intent` | Detect test suites drifted from the functions they describe |
+
+To enable this, add IntentWeave to your MCP configuration (see [MCP Setup](/docs/integrations/mcp/)).
+Once connected, you can ask Copilot questions like:
+
+```
+@workspace Does this change violate any ADRs?
+@workspace Are there deprecated callers I should fix in src/auth/?
+@workspace Does the new flow in auth.ts match the architecture diagram?
+```

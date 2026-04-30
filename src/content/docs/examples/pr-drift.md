@@ -110,3 +110,36 @@ iw init && iw index build
 # Check against your current uncommitted changes
 iw index check --changed $(git diff --name-only)
 ```
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+const index = CariIndex.load(".iw/index.db");
+
+// Same as: iw index check --changed src/auth/service.ts
+const drift = index.check({
+  changed: ["src/auth/service.ts", "src/auth/jwt.ts"],
+});
+
+for (const result of drift) {
+  console.log(result.file, result.severity, result.annotationCount);
+  // e.g. docs/auth.md warning 12
+}
+
+// Inspect individual file annotations
+const annotations = index.annotationsForFile({ filePath: "docs/auth.md" });
+console.log(annotations.map((a) => a.mention));
+// → ["AuthService", "JwtValidator", "login", ...]
+
+index.close();
+```
+
+`check()` returns the same data as `--format json`. The `annotationsForFile()`
+call shows exactly which mentions created the drift signal.
+
+## Next Steps
+
+- [CI Drift Check](/docs/cari/check/) — full `iw index check` reference
+- [GitHub Actions / CI](/docs/integrations/ci/) — complete workflow setup

@@ -50,8 +50,15 @@ Each mention is linked to a code symbol when possible, creating **annotations**.
 
 ### 3. Git History (Temporal)
 
-`git log` analysis reveals which files change together (co-change), how often they change
-(hotspot), and how recently (staleness). These signals complement the static analysis.
+`git log` analysis is run by the **TCG** stage during `iw index build`. It computes:
+
+- **Co-change** — which file pairs change together across commits (Jaccard similarity, stored in `co_changes`)
+- **Hotspot** — files with high churn frequency (drives `hotspotPriority`)
+- **Staleness** — how recently each file was updated (surfaced in `iw index report`)
+- **Ownership** — primary committer per file
+
+These signals are stored in the `files` and `co_changes` tables and used by queries like
+`hotspotPriority`, `connections`, and `retrieve` to weight results by temporal relevance.
 
 ### The Insight Is in the Gaps
 

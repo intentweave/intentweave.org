@@ -151,3 +151,46 @@ Generates a standalone HTML file with layered, community, and dependency views.
 - [CI Integration](/docs/integrations/ci/) — add drift checks to your pipeline
 - [Copilot / MCP](/docs/integrations/mcp/) — use CARI tools in VS Code
 - [Knowledge Graph](/docs/kg/overview/) — optional deep semantic extraction
+
+---
+
+## Programmatic API
+
+All CLI commands are available programmatically via `@intentweave/index`:
+
+```typescript
+import { CariIndex, buildFromPaths } from "@intentweave/index";
+
+// Build the index (runs AX → KWX → COX → TCG → Annotate → Write)
+const index = await buildFromPaths({
+  paths: ["src/", "docs/"],
+  workspaceRoot: process.cwd(),
+  depth: "structured",
+});
+
+// Ranked retrieval
+const results = index.retrieve({ query: "authentication" });
+// → [{ file: "src/auth/service.ts", score: 0.95, symbols: [...] }, ...]
+
+// Drift detection
+const drift = index.check({ changed: ["src/auth/service.ts"] });
+// → [{ file: "docs/auth.md", severity: "warning", annotationCount: 12 }, ...]
+
+// Cross-layer connections
+const conns = index.connections({ entity: "AuthService" });
+// → { coMentioned: [...], coChanged: [...], gaps: [...] }
+
+// Health report
+const report = index.report();
+// → { coveragePercent: 72, staleCount: 3, hiddenCouplings: [...] }
+
+index.close();
+```
+
+Or load an existing `.iw/index.db` without rebuilding:
+
+```typescript
+const index = CariIndex.load(".iw/index.db");
+```
+
+See the [Library API docs](/docs/reference/library-api/) for the full `CariIndex` reference.

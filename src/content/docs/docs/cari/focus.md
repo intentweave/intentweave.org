@@ -10,7 +10,9 @@ unreadable. When onboarding to a module, reviewing a PR, or assessing change imp
 need a **scoped view** — just the target file and its neighbourhood.
 
 `iw index focus` builds exactly that: an N-hop subgraph around any target, with layer
-context, hub detection, and an interactive HTML report.
+context, hub detection, and an interactive HTML report. Programmatically, the same data
+is available via `CariIndex.focus()` (or the `focus()` function from `@intentweave/index`)
+and rendered to HTML by `focusReport`.
 
 ## Quick Start
 
@@ -78,6 +80,9 @@ bigger nodes have more downstream impact if changed.
 A linearised import flow through the target. Entry points (callers) on the left,
 the target in the middle, dependencies on the right. Useful for understanding data
 flow direction through a module.
+
+The flow view filters the `imports` table to a directed path through the target,
+using the same `focus()` subgraph query with edge-type filtering applied by `focusReport`.
 
 ### Abstract
 

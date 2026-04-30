@@ -57,6 +57,10 @@ iw index check \
 
 ### JSON output
 
+Use `--format json` to get machine-readable output. Each entry corresponds to one
+`annotations` group per doc file — `annotationCount` is the number of annotation rows
+linking that doc to the changed symbols (via `CariIndex.annotationsForFile()`):
+
 ```bash
 iw index check --changed src/auth.ts --format json
 
@@ -110,3 +114,30 @@ jobs:
 
 - [Health Report](/docs/cari/report/) — full corpus health dashboard
 - [GitHub Actions / CI](/docs/integrations/ci/) — complete CI setup guide
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+const index = CariIndex.load(".iw/index.db");
+
+// Equivalent to: iw index check --changed src/auth.ts --severity warning
+const drift = index.check({
+  changed: ["src/auth.ts", "src/auth/jwt.ts"],
+  severity: "warning",
+});
+
+for (const result of drift) {
+  console.log(result.file);
+  // result.severity, result.references, result.annotationCount
+}
+
+// Inspect which annotations triggered the flag
+const annotations = index.annotationsForFile({ filePath: drift[0]?.file });
+
+index.close();
+```
+
+`check()` queries the `annotations` table for entries where `symbol_file` matches any
+changed file, then groups by `doc_file` and computes severity from `annotationCount`.

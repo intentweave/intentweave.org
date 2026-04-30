@@ -16,6 +16,10 @@ score = w_ann × annotation_relevance
 
 Each signal is normalized to `[0, 1]` before weighting.
 
+This formula is implemented in the `retrieve` query (`packages/index/src/queries/retrieve.ts`)
+and is exposed via `CariIndex.retrieve()` and the `cari_retrieve` MCP tool. The four
+component tables are `annotations`, `symbols`, `co_occurrences`, and `co_changes`.
+
 ## Annotation Sources
 
 Annotations are created when a document mention matches a code symbol. Each annotation

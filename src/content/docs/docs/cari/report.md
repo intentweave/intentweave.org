@@ -67,3 +67,30 @@ Undocumented Dependencies:
 - [Architecture Analysis](/examples/architecture-layers/) — infer layers and generate reports
 - [Connections & Gaps](/docs/cari/connections/) — drill into specific entities
 - [CI Drift Check](/docs/cari/check/) — automate checks in CI
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+const index = CariIndex.load(".iw/index.db");
+
+// Equivalent to: iw index report
+const report = index.report();
+
+console.log(`Coverage: ${report.coveragePercent}%`);
+console.log(`Stale docs: ${report.staleCount}`);
+console.log(`Hidden couplings: ${report.hiddenCouplings.length}`);
+console.log(`Undocumented deps: ${report.undocumentedDependencies.length}`);
+
+// Drill into the stale list
+for (const doc of report.staleDocs) {
+  console.log(doc.file, `last updated ${doc.docAge}d ago, code changed ${doc.codeAge}d ago`);
+}
+
+index.close();
+```
+
+`report()` aggregates across `symbols`, `annotations`, `co_occurrences`,
+`co_changes`, `files`, and `imports` — the same tables queried individually
+by `hotspotPriority`, `connections`, and `check`.

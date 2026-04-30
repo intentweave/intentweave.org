@@ -29,7 +29,8 @@ Fast and precise — best for everyday use.
 
 ```bash
 iw index build
-# or explicitly:
+
+# or explicitly, passing depth to buildFromPaths:
 iw index build --depth structured
 ```
 
@@ -94,3 +95,28 @@ The build creates `.iw/index.db` with these tables:
 
 - [Retrieve](/docs/cari/retrieve/) — query the index for relevant files
 - [Incremental Update](/docs/cari/update/) — re-index only changed files
+
+## Programmatic API
+
+```typescript
+import { buildFromPaths, CariIndex } from "@intentweave/index";
+
+// Equivalent to: iw index build --depth full
+const index = await buildFromPaths({
+  paths: ["src/", "docs/"],
+  workspaceRoot: process.cwd(),
+  depth: "full",
+});
+
+// Use immediately after building
+const results = index.retrieve({ query: "authentication" });
+
+index.close();
+
+// Or load a previously built index
+const existing = CariIndex.load(".iw/index.db");
+```
+
+`buildFromPaths` runs the full pipeline: **AX → KWX → COX → TCG → Annotate → Write**
+and returns a ready-to-use `CariIndex` instance backed by the `symbols`, `annotations`,
+`co_occurrences`, `co_changes`, `files`, and `imports` tables.

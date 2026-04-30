@@ -81,3 +81,34 @@ cd your-project
 iw init && iw index build
 iw index connections "YourClassName"
 ```
+
+## Programmatic API
+
+```typescript
+import { CariIndex } from "@intentweave/index";
+
+const index = CariIndex.load(".iw/index.db");
+
+// Same as: iw index connections "AuthService"
+const result = index.connections({ entity: "AuthService" });
+
+console.log("Co-mentioned:", result.coMentioned);
+// → [{ entity: "JwtValidator", score: 0.72, docCount: 4 }, ...]
+
+console.log("Co-changed:", result.coChanged);
+// → [{ file: "src/auth/jwt.ts", jaccard: 0.68, commits: 15 }, ...]
+
+console.log("Gaps:", result.gaps);
+// → [{ entity: "RateLimiter", coMentionedIn: 2, coChangedIn: 4, hasCodeImport: false }, ...]
+
+index.close();
+```
+
+`connections()` surfaces all three signal layers — `annotations`, `co_occurrences`,
+and `co_changes` — and cross-references them against `imports` to identify gaps.
+
+## Next Steps
+
+- [Connections & Gaps](/docs/cari/connections/) — full `iw index connections` reference
+- [Health Report](/docs/cari/report/) — see all hidden couplings across the corpus
+- [Focused Architecture View](/docs/cari/focus/) — visualize the neighbourhood around a symbol
