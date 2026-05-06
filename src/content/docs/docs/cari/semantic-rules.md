@@ -14,13 +14,13 @@ Import-graph violations (layers-check):
   File A  ──imports──►  File B     ← edge in the import graph
 
 Semantic violations (rules-check):
-  File A  ──accesses──► entity.source.path   ← property access chain
+  File A  ──accesses──► item.resource.path   ← property access chain
   File A  ──calls─────► parseRef()           ← function invocation
-  File A  ──defines───► entityById Map       ← forbidden symbol pattern
+  File A  ──defines───► itemsById Map        ← forbidden symbol pattern
   File A  ──imports───► packages/data/**     ← import path pattern
 ```
 
-This matters because **import boundaries can be clean while the code still violates architectural intent**. A UI component that accesses `entity.source.path` and applies domain parsing logic may have legal imports — but it's doing resolver work that belongs in the adapter layer.
+This matters because **import boundaries can be clean while the code still violates architectural intent**. A UI component that accesses `item.resource.path` and applies domain parsing logic may have legal imports — but it's doing resolver work that belongs in the adapter layer.
 
 ## Quick Start
 
@@ -49,13 +49,13 @@ allowed:
     description: "UI may call the API gateway"
 
 rules:
-  - id: no-source-path-in-ui
-    description: "UI components must not access entity.source.path"
-    adr: ADR-003
+  - id: no-internal-field-access-in-ui
+    description: "UI components must not access internal resource fields directly"
+    adr: ADR-001
     severity: high
     forbidden:
       - type: property_access
-        chain: "**.source.path"
+        chain: "**.resource.path"
         in: "apps/ui/src/components/**"
 ```
 
@@ -102,14 +102,14 @@ Use it when the ADR says "layer X must never import layer Y".
 
 ### `property_access` — Forbidden Property Chains
 
-Flags any access to a property chain matching the pattern (e.g. `entity.source.path`).
+Flags any access to a property chain matching the pattern (e.g. `item.resource.path`).
 
 ```yaml
-- id: no-source-path-in-ui
+- id: no-internal-field-access-in-ui
   severity: high
   forbidden:
     - type: property_access
-      chain: "**.source.path"      # glob-style chain matcher; ** matches any prefix
+      chain: "**.resource.path"    # glob-style chain matcher; ** matches any prefix
       in: "apps/ui/src/**"
       except: "apps/ui/src/adapters/**"
 ```
@@ -136,7 +136,7 @@ Flags any call to a function whose name matches the pattern.
   severity: high
   forbidden:
     - type: call
-      callee: "extractEESystem|parseSourcePath|refToId"  # pipe-separated names or regex
+      callee: "parseCategory|parsePath|normalizeRef"  # pipe-separated names or regex
       in: "apps/ui/src/**"
 ```
 
@@ -149,7 +149,7 @@ Combine with `context_access` to only flag calls that co-occur with a forbidden 
     - type: call
       callee: "match|exec"
       in: "apps/**"
-      context_access: "**.source.path"   # only flag when .source.path is accessed nearby
+      context_access: "**.resource.path"  # only flag when .resource.path is accessed nearby
 ```
 
 | Field | Description |
@@ -171,7 +171,7 @@ Flags any symbol (variable, constant, function, class) whose name matches the pa
   severity: medium
   forbidden:
     - type: symbol_name
-      pattern: "entityById"          # exact name or regex
+      pattern: "itemsById"            # exact name or regex
       in: "apps/ui/src/components/**"
 ```
 
@@ -258,31 +258,31 @@ Flags any property chain access exceeding a maximum depth.
 When a forbidden `property_access` or `call` result is stored in a local variable, the violation can silently escape detection if only the original expression is checked. Enable `taint_propagation: true` to have CARI follow **intra-function def-use chains** and flag any subsequent access or call through tainted variables.
 
 ```yaml
-- id: no-source-path-in-ui
+- id: no-internal-field-access-in-ui
   severity: high
   forbidden:
     - type: property_access
-      chain: "**.source.path"
+      chain: "**.resource.path"
       in: "apps/ui/src/**"
-      taint_propagation: true   # also flag uses of vars assigned from .source.path
+      taint_propagation: true   # also flag uses of vars assigned from .resource.path
 ```
 
 Without taint propagation, this code is not flagged:
 
 ```typescript
-// apps/ui/src/components/EntityCard.tsx
-const path = entity.source.path;   // direct access — flagged ✓
+// apps/ui/src/components/ItemCard.tsx
+const path = item.resource.path;     // direct access — flagged ✓
 const label = path.split("/").pop(); // indirect use — NOT flagged without taint_propagation
 ```
 
-With `taint_propagation: true`, the assignment `const path = entity.source.path` taints the
+With `taint_propagation: true`, the assignment `const path = item.resource.path` taints the
 variable `path`, and any subsequent `property_access` or `call` on `path` within the same function
 is also reported as a violation.
 
 ```
-FAIL  no-source-path-in-ui [high]
-  apps/ui/src/components/EntityCard.tsx:4   entity.source.path  (direct)
-  apps/ui/src/components/EntityCard.tsx:5   path.split          (taint: path ← entity.source.path)
+FAIL  no-internal-field-access-in-ui [high]
+  apps/ui/src/components/ItemCard.tsx:4   item.resource.path  (direct)
+  apps/ui/src/components/ItemCard.tsx:5   path.split          (taint: path ← item.resource.path)
 ```
 
 Taint tracking is **intra-function only** — it does not follow values across function boundaries or

@@ -34,19 +34,19 @@ escape through local variable assignments.
 **Example:**
 
 ```yaml
-- id: no-source-path-in-ui
+- id: no-internal-field-access-in-ui
   severity: high
   forbidden:
     - type: property_access
-      chain: "**.source.path"
+      chain: "**.resource.path"
       in: "apps/ui/src/**"
       taint_propagation: true
 ```
 
-Without `taint_propagation`, only the direct access `entity.source.path` is
-flagged. With it, any local variable that is assigned from `entity.source.path`
+Without `taint_propagation`, only the direct access `item.resource.path` is
+flagged. With it, any local variable that is assigned from `item.resource.path`
 and subsequently used in a call or property access in the same function is also
-reported — with a `(taint: path ← entity.source.path)` annotation in the output.
+reported — with a `(taint: path ← item.resource.path)` annotation in the output.
 
 **Scope:** Intra-function only. Taint does not follow values across function
 boundaries or module exports.

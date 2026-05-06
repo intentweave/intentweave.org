@@ -141,7 +141,7 @@ CREATE TABLE def_use_chains (
   file          TEXT NOT NULL,
   function_name TEXT NOT NULL,
   variable      TEXT NOT NULL,   -- local variable name
-  assigned_from TEXT NOT NULL,   -- the expression (e.g. "entity.source.path")
+  assigned_from TEXT NOT NULL,   -- the expression (e.g. "item.resource.path")
   line          INTEGER,
   UNIQUE(file, function_name, variable, assigned_from)
 );
@@ -162,7 +162,7 @@ whose initializer matches one of these node kinds:
 
 | AST Node Kind | Example | Recorded as |
 |---------------|---------|-------------|
-| `member_expression` | `entity.source.path` | `assigned_from = "entity.source.path"` |
+| `member_expression` | `item.resource.path` | `assigned_from = "item.resource.path"` |
 | `call_expression` | `parseRef(id)` | `assigned_from = "parseRef(id)"` |
 | `await_expression` | `await fetch(url)` | `assigned_from = "await fetch(url)"` |
 
@@ -176,20 +176,20 @@ or module exports.
 Given this code:
 
 ```typescript
-// apps/ui/src/components/EntityCard.tsx
-function render(entity: Entity) {
-  const path = entity.source.path;    // ← def-use chain recorded
+// apps/ui/src/components/ItemCard.tsx
+function render(item: Item) {
+  const path = item.resource.path;     // ← def-use chain recorded
   const label = path.split("/").pop(); // ← tainted call
   return label;
 }
 ```
 
 The rule engine:
-1. Finds `entity.source.path` as a direct violation of the `property_access` chain `**.source.path`
-2. Looks up `def_use_chains` for `(file, function_name = "render", assigned_from LIKE "%.source.path%")`
+1. Finds `item.resource.path` as a direct violation of the `property_access` chain `**.resource.path`
+2. Looks up `def_use_chains` for `(file, function_name = "render", assigned_from LIKE "%.resource.path%")`
 3. Finds `variable = "path"` was tainted
 4. Scans for subsequent `property_access` or `call` expressions on `path` in the same function
 5. Reports `path.split` as a secondary (taint-propagated) violation
 
-Secondary violations are reported with a `(taint: path ← entity.source.path)` suffix
+Secondary violations are reported with a `(taint: path ← item.resource.path)` suffix
 in CLI output so they are distinguishable from direct violations.
