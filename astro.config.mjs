@@ -42,6 +42,9 @@ export default defineConfig({
 						{ label: 'Retrieve', slug: 'docs/cari/retrieve' },
 						{ label: 'Connections & Gaps', slug: 'docs/cari/connections' },
 						{ label: 'Architecture Visualization', slug: 'docs/cari/focus' },
+						{ label: 'Semantic Rule Checking', slug: 'docs/cari/semantic-rules' },
+						{ label: 'Prescriptive Architecture Diagram', slug: 'docs/cari/prescriptive-diagram' },
+						{ label: 'Insights Book', slug: 'docs/cari/insights-book' },
 						{ label: 'CI Drift Check', slug: 'docs/cari/check' },
 						{ label: 'Health Report', slug: 'docs/cari/report' },
 						{ label: 'Incremental Update', slug: 'docs/cari/update' },
@@ -92,6 +95,7 @@ export default defineConfig({
 					label: 'Community',
 					items: [
 						{ label: 'Contributing', slug: 'community/contributing' },
+						{ label: 'Changelog', slug: 'community/changelog' },
 						{ label: 'Roadmap', slug: 'community/roadmap' },
 					],
 				},

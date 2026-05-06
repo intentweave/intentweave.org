@@ -128,3 +128,68 @@ CREATE TABLE files (
   kind          TEXT   -- 'code' or 'doc'
 );
 ```
+
+### `def_use_chains`
+
+Intra-function def-use relationships extracted during AST traversal (§16.1).
+Each row records a variable assignment inside a function body, plus the expression
+that was assigned to it.
+
+```sql
+CREATE TABLE def_use_chains (
+  id            INTEGER PRIMARY KEY,
+  file          TEXT NOT NULL,
+  function_name TEXT NOT NULL,
+  variable      TEXT NOT NULL,   -- local variable name
+  assigned_from TEXT NOT NULL,   -- the expression (e.g. "entity.source.path")
+  line          INTEGER,
+  UNIQUE(file, function_name, variable, assigned_from)
+);
+CREATE INDEX def_use_chains_file    ON def_use_chains(file);
+CREATE INDEX def_use_chains_fn_var  ON def_use_chains(function_name, variable);
+```
+
+This table powers the `taint_propagation` feature in semantic rule checking:
+when a `property_access` or `call` rule has `taint_propagation: true`, the rule
+engine joins against `def_use_chains` to find variables that were assigned from
+a matching expression, then checks whether those variables are subsequently used
+in further accesses or calls within the same function.
+
+## Intra-Function Def-Use Extraction
+
+The AST extractor visits function bodies and records **local variable declarations**
+whose initializer matches one of these node kinds:
+
+| AST Node Kind | Example | Recorded as |
+|---------------|---------|-------------|
+| `member_expression` | `entity.source.path` | `assigned_from = "entity.source.path"` |
+| `call_expression` | `parseRef(id)` | `assigned_from = "parseRef(id)"` |
+| `await_expression` | `await fetch(url)` | `assigned_from = "await fetch(url)"` |
+
+Only **local variables** within function/method bodies are tracked — top-level
+declarations and module-level assignments are excluded. Tracking is strictly
+intra-function: def-use chains do not follow values across function boundaries
+or module exports.
+
+### How Taint Propagation Works
+
+Given this code:
+
+```typescript
+// apps/ui/src/components/EntityCard.tsx
+function render(entity: Entity) {
+  const path = entity.source.path;    // ← def-use chain recorded
+  const label = path.split("/").pop(); // ← tainted call
+  return label;
+}
+```
+
+The rule engine:
+1. Finds `entity.source.path` as a direct violation of the `property_access` chain `**.source.path`
+2. Looks up `def_use_chains` for `(file, function_name = "render", assigned_from LIKE "%.source.path%")`
+3. Finds `variable = "path"` was tainted
+4. Scans for subsequent `property_access` or `call` expressions on `path` in the same function
+5. Reports `path.split` as a secondary (taint-propagated) violation
+
+Secondary violations are reported with a `(taint: path ← entity.source.path)` suffix
+in CLI output so they are distinguishable from direct violations.
