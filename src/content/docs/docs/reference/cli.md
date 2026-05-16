@@ -368,7 +368,7 @@ iw impact <files...> [options]
 | `-f, --format`  | `text`  | Output format       |
 | `-o, --output`  | —       | Write to file       |
 
-### `iw doc-health`
+### `iw intent living`
 
 Documentation freshness analysis. Three modes (least → most infrastructure):
 
@@ -377,7 +377,7 @@ Documentation freshness analysis. Three modes (least → most infrastructure):
 3. `--neo4j` — Full KG-based analysis (requires Neo4j + persisted KWG)
 
 ```bash
-iw doc-health [files...] [options]
+iw intent living [files...] [options]
 ```
 
 | Option           | Default        | Description                                   |

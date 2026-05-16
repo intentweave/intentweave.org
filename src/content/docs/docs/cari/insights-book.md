@@ -191,7 +191,7 @@ Generate the book as a CI artifact and attach it to every PR:
 
 - name: Check Living Score
   run: |
-    iw verify --score --format json > score.json
+    iw intent score --format json > score.json
     # Fail CI if grade is below C (score < 60)
     node -e "const s=require('./score.json'); process.exit(s.score < 60 ? 1 : 0)"
 ```

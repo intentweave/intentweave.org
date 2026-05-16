@@ -89,7 +89,7 @@ Or match whatever you set in `NEO4J_AUTH` when starting the container.
 
 If you only use `iw index` commands, you don't need Neo4j at all.
 Neo4j is only required for: `iw run`, `iw query`, `iw context`, `iw impact`,
-`iw doc-health --neo4j`, `iw persist`, `iw xlink`.
+`iw intent living --neo4j`, `iw persist`, `iw xlink`.
 
 ---
 

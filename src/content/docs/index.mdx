@@ -1,18 +1,22 @@
 ---
-title: From Code Graph to Intent Graph
-description: "IntentWeave — build a $0 index of your codebase, enrich it with semantic understanding, and weave code intent with implementation reality."
+title: CARI + Intent Guardrails
+description: "CARI: a $0 local workspace index. Intent Guardrails: your ADRs and conventions, enforced in CI."
 template: splash
 hero:
-  title: From code graph to intent graph
-  tagline: "Build a $0 index of your codebase, enrich it with semantic understanding, and weave code intent with implementation reality."
+  title: Know your codebase. Enforce your intent.
+  tagline: "Two products for engineering teams — a $0 local index and ADR-level guardrails that run in CI."
   image:
     dark: ../../assets/logo-dark.svg
     light: ../../assets/logo-light.svg
   actions:
-    - text: Get Started
+    - text: Build your index
       link: /docs/getting-started/
       icon: right-arrow
       variant: primary
+    - text: Enforce your ADRs
+      link: /docs/cari/semantic-rules/
+      icon: approve-check-circle
+      variant: secondary
     - text: View on GitHub
       link: https://github.com/intentweave/intentweave
       icon: external
@@ -21,26 +25,32 @@ hero:
 
 import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
 
-## Three Composable Layers
+## Two Products, One Platform
 
 <CardGrid>
-  <Card title="Layer 1: CARI Index — always $0" icon="seti:db">
+  <Card title="CARI Evidence Engine — always $0" icon="seti:db">
     A zero-cost SQLite index built from your code's AST, document keywords, and
-    git history. No LLM, no servers, no API keys. 30+ query modes, architecture
-    visualization, community detection, clone detection, CI drift checks, and more.
-    **This is the foundation — always free, always local.**
+    git history. **No LLM. No servers. No API keys.** 30+ query modes, architecture
+    visualization, community detection, clone detection, and more — in under 3 seconds.
+    **The foundation. Always free. Always local.**
   </Card>
-  <Card title="Layer 2: Semantic Enrichment" icon="star">
+  <Card title="Intent Engine" icon="approve-check-circle">
+    Turn your ADRs and conventions into executable rules that run in CI. Catch
+    property-access violations, forbidden call patterns, architecture drift, and
+    documentation staleness — all at $0 after a one-time LLM extraction step.
+  </Card>
+</CardGrid>
+
+<CardGrid>
+  <Card title="Semantic Enrichment (optional)" icon="star">
     Selectively apply LLM extraction to the files CARI flags as highest-value.
-    Budget-controlled, stored in the same SQLite index. Ships now: decision tracking,
-    architecture diagram validation, cross-doc contradiction detection, and
-    config-to-docs synchronization.
+    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
+    diagram validation, and cross-doc contradiction detection.
   </Card>
-  <Card title="Layer 3: Intent Verification" icon="approve-check-circle">
-    The apex — weave code graph and intent graph together. Core is **shipped**:
-    `iw verify` checks spec-to-code grounding, constraint consistency across docs,
-    and computes a composite living documentation score (A–F grade). Remaining:
-    push alerts and native NL queries without Neo4j.
+  <Card title="Knowledge Graph (optional)" icon="open-book">
+    Persist to Neo4j for full-scale semantic queries and impact analysis. CypherLite
+    lets the same queries run against both SQLite and Neo4j — swap backends without
+    changing code.
   </Card>
 </CardGrid>
 
@@ -51,16 +61,61 @@ import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
 ```bash
 npm install -g @intentweave/cli
 cd your-project
-
 iw init
+```
+
+**Step 1 — Observe** (CARI Evidence Engine):
+
+```bash
 iw index build                         # < 3 seconds, zero API calls
+```
+
+**Step 2 — Enforce** (Intent Engine):
+
+```bash
+iw intent check                        # check rules.yaml against the index
+```
+
+**Step 3 — Deliver** (Insights Book):
+
+```bash
+iw index export --html                 # open architecture.html
+```
+
+The Insights Book shows your architecture, violations grouped by domain, and a
+living documentation score — all from a single local SQLite file. No LLM, no
+servers, no API keys required for steps 1–3.
+
+<details>
+<summary>More CARI Evidence Engine commands</summary>
+
+```bash
 iw index retrieve "authentication"     # ranked file retrieval
 iw index connections "AuthService"     # cross-layer connections + gaps
-iw index check --changed src/auth.ts   # CI drift detection
 iw index layers-infer                  # auto-infer architectural layers
-iw index export --html                 # interactive architecture report
-iw index enrich --budget 20 --provider openai  # selective LLM enrichment (Layer 2)
+iw index clones                        # exact duplicate detection
+iw index circular-imports            # import cycle detection
+iw index hotspot-priority            # high-churn, low-doc files
 ```
+
+</details>
+
+<details>
+<summary>More Intent Engine commands</summary>
+
+```bash
+# Extract rules from an ADR once (requires LLM)
+iw intent extract docs/ADR-001.md --provider openai --output .iw/rules.yaml
+
+# PR mode: only changed files, only high severity
+iw intent check --changed src/auth.ts --severity high --format json
+
+# Living Documentation
+iw intent living                       # coverage, stale docs, terminology
+iw intent score                        # composite A–F score
+```
+
+</details>
 
 ---
 

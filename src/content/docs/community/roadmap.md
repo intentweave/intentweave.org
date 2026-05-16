@@ -80,11 +80,11 @@ Layer 1 — CARI                         (production-ready, $0)
 
 ### Intent Verification (12.x)
 
-`iw verify` — weave the code graph and intent graph together:
+`iw intent` — weave the code graph and intent graph together:
 
 - ✅ **Spec-to-code verification** (12.1) — check that each requirement/decision entity has code grounding; reports grounded, partial, and unimplemented
-- ✅ **Constraint consistency** (12.2) — `iw verify --consistency` detects contradictions across spec documents
-- ✅ **Living documentation score** (12.3) — `iw verify --score` composite 0–100/A–F grade across 4 dimensions (spec coverage, constraint consistency, doc freshness, arch conformance)
+- ✅ **Constraint consistency** (12.2) — `iw intent check --consistency` detects contradictions across spec documents
+- ✅ **Living documentation score** (12.3) — `iw intent score` composite 0–100/A–F grade across 4 dimensions (spec coverage, constraint consistency, doc freshness, arch conformance)
 
 ## Next Up
 

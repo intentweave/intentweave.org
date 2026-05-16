@@ -8,7 +8,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'IntentWeave',
-			description: 'Code + docs + git → a queryable context index. $0 by default.',
+			description: 'CARI: a $0 local workspace index. Intent Guardrails: your ADRs and conventions, enforced in CI.',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/intentweave/intentweave' },
 			],
@@ -35,20 +35,25 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Core (Layer 1 — $0)',
+					label: 'CARI Evidence Engine — always $0',
 					items: [
 						{ label: 'Overview', slug: 'docs/cari/overview' },
 						{ label: 'Build the Index', slug: 'docs/cari/build' },
 						{ label: 'Retrieve', slug: 'docs/cari/retrieve' },
 						{ label: 'Connections & Gaps', slug: 'docs/cari/connections' },
 						{ label: 'Architecture Visualization', slug: 'docs/cari/focus' },
-						{ label: 'Semantic Rule Checking', slug: 'docs/cari/semantic-rules' },
-						{ label: 'Prescriptive Architecture Diagram', slug: 'docs/cari/prescriptive-diagram' },
-						{ label: 'Insights Book', slug: 'docs/cari/insights-book' },
-						{ label: 'CI Drift Check', slug: 'docs/cari/check' },
 						{ label: 'Health Report', slug: 'docs/cari/report' },
 						{ label: 'Incremental Update', slug: 'docs/cari/update' },
 						{ label: 'Internals', slug: 'docs/cari/internals' },
+					],
+				},
+				{
+					label: 'Intent Engine',
+					items: [
+						{ label: 'Semantic Rule Checking', slug: 'docs/cari/semantic-rules' },
+						{ label: 'CI Drift Detection', slug: 'docs/cari/check' },
+						{ label: 'Prescriptive Architecture Diagram', slug: 'docs/cari/prescriptive-diagram' },
+						{ label: 'Insights Book', slug: 'docs/cari/insights-book' },
 					],
 				},
 				{
@@ -73,7 +78,7 @@ export default defineConfig({
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
 						{ label: 'PR Drift Check', slug: 'examples/pr-drift' },
 						{ label: 'Architecture Layers', slug: 'examples/architecture-layers' },
-					{ label: 'Ensure Intent in the Code', slug: 'examples/intent-rule-checking' },
+						{ label: 'Intent Guardrails in CI', slug: 'examples/intent-rule-checking' },
 					],
 				},
 				{
