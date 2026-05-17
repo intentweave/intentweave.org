@@ -25,6 +25,16 @@ Layer 1 — CARI                         (production-ready, $0)
 
 ## Recently Shipped
 
+### Dependency Maintenance & Rust Indexer Design (v0.13.0)
+
+- ✅ **Rust Indexer Port design analysis** — full architecture plan for `packages/cari-native/`
+  Rust binary. Benchmarked: KWG = 69% of 47 s build on 595 files. Phase R1 targets 10–20×
+  speedup (47 s → 3–5 s). Phase R2: NAPI-RS warm incremental daemon.
+  Library choices finalised: `oxc_parser`, `pulldown-cmark`, `rayon`, `rusqlite`, `gix`.
+- ✅ **TypeScript 5.9** — upgraded from ^5.6.0
+- ✅ **Prettier 3.8**, **Turbo 2.9**, **Vitest 2.1.9** — toolchain upgrades
+- ✅ All 16 packages at `0.13.0`
+
 ### Intent Engine — Three-Domain Enforcement (v0.12.0)
 
 - ✅ **`iw intent check --domain structural/behavioral/documentary/all`** — single-pass
@@ -137,11 +147,23 @@ snippets. Depends on enrichment pipeline.
 Track ADRs through state changes (proposed → accepted → deprecated) and detect
 unimplemented decisions.
 
-### Performance — Rust Indexer
+### Performance — Rust Indexer (Phase R1)
 
-10–20× speedup for the KWX+COX pipeline stages on large repos (> 1 000 files). Design
-analysis and benchmarks complete. Entry criterion met: 47 s / 595 files and 52 s / 1 299
-files measured.
+Replace the CARI build pipeline (AX + KWG stages) with a native Rust binary that writes
+the same SQLite schema. The 57 TypeScript query files are unchanged.
+
+**Design complete (v0.13.0):** benchmarks measured, library choices finalised, schema
+compatibility contract defined.
+
+| Phase | Scope | Target speedup |
+|-------|-------|----------------|
+| **R1-a/b** | KWG: Markdown + co-occurrence | **8–15× KWG** (32 s → 2–4 s) |
+| **R1-c** | AX: `oxc_parser` + tree-sitter | **10–20× AX** (11 s → 0.5–1 s) |
+| **R1-d** | TCG: `gix` crate | 1–2× (low priority) |
+| **R1-f** | CLI shim + `cargo-dist` packaging | — |
+| **R1 total** | Full build binary | **10–20× (47 s → 3–5 s)** |
+
+Phase R2: NAPI-RS bridge for warm incremental daemon (optional, later).
 
 ### Ecosystem Integrations
 
@@ -157,95 +179,3 @@ Native plugins and exports for Docusaurus, Starlight, and Obsidian.
 Have ideas? See [Contributing](/community/contributing/) or open a
 [GitHub Discussion](https://github.com/intentweave/intentweave/discussions).
 
-### Plugin Architecture (11.x)
-
-- ✅ **Plugin system** — `PluginRegistry` with auto-discovery, 3 capability types
-  (LLM, persistence, language)
-- ✅ **CypherLite** — zero-dependency Cypher→SQL transpiler for SQLite-backed KG queries
-- ✅ **plugin-kg-lite** — lightweight KG backend using CypherLite + SQLite (no Neo4j needed)
-- ✅ **plugin-kg** — full Neo4j KG backend via `PersistenceCapability`
-- ✅ **plugin-swift** / **plugin-python** — tree-sitter Swift and Python language plugins (fully implemented, not just scaffolded)
-- ✅ **plugin-llm** — OpenAI-based LLM capability
-
-### Architecture Visualization (5.x / 10.x)
-
-- ✅ **Multi-view community detection** — structural, semantic, temporal modes with live switching
-- ✅ **Vertical slice detection** — cross-layer feature slices with interactive highlighting
-- ✅ **Hierarchical sub-layering** — recursive splitting with four-strategy fallback
-- ✅ **Architecture report** — D3-powered HTML report with Layers, Communities, Dependencies views
-- ✅ **Focused architecture view** — Graphviz WASM report centered on a target entity
-- ✅ **LLM layer naming** — descriptive layer and directory names via OpenAI
-- ✅ Layer inference (`layersInfer`) — topological sort of import DAG
-- ✅ Layer check (`layersCheck`) — reverse and skip-layer import violations
-
-### CARI Core (1.x – 9.x)
-
-- ✅ `CariIndex` facade — single-class API for build + query
-- ✅ Entity Bridge — inject external entities for annotation matching
-- ✅ Python AST extraction via `@intentweave/python-parser` (tree-sitter)
-- ✅ Language-agnostic AX dispatch (`LanguageRegistry` + `LanguageAdapter`)
-- ✅ Hub analysis, community detection, surprising connections, rationale extraction
-- ✅ Terminology inconsistency detection
-- ✅ Dependency depth + boundary violation detection
-- ✅ Clone detection (exact + structural), unused exports, circular imports
-- ✅ Module documentation coverage, orphaned sections, per-doc completeness
-- ✅ Cross-group drift detection, TODO/FIXME inventory
-- ✅ Test coverage mapping (`testCoverage()` query)
-- ✅ 31 MCP tools (6 KG + 25 CARI) for GitHub Copilot
-- ✅ Library API (`@intentweave/index` npm package)
-
-### CI & Automation (8.x / 10.x)
-
-- ✅ **Watch mode** — `iw index watch` continuous re-indexing on file changes (debounced, EMFILE-safe)
-- ✅ **CI GitHub Action** — `uses: intentweave/doc-health-action@v1` composite action with living score badge, PR comments, and caching
-- ✅ **Git hooks** — `iw hook install/uninstall/status` for `post-commit` + `post-checkout` hooks
-- ✅ **REST API v1.0.0** — versioned HTTP API (`x-api-version` header), OpenAPI/Swagger UI, bearer auth, 11 endpoint groups
-
-### Selective Semantic Enrichment (11.8)
-
-`iw index enrich` — CARI signals guide targeted LLM extraction, spend tokens only where they matter:
-
-- ✅ **Core engine** — budget-controlled scoring, FX+KX on top-N candidates, KG storage in the same `index.db`
-- ✅ **Diagram validation** — LLM reads Mermaid/ASCII diagrams, CARI validates flows against real import graph (`iw index scan-diagrams`, `arch-check --from-scan`)
-- ✅ **Decision tracking** — enrichment guided by rationale markers; FX extracts `DECIDED_FOR` triples from ADR files
-- ✅ **Contradiction detection** — enrichment targets files flagged by `crossGroupDrift()`; conflicting predicates surfaced as conflicts
-- ✅ **Config-to-docs sync** — enrichment on config files guided by low module coverage; value mismatches detected
-
-### Intent Verification (12.x)
-
-`iw intent` — weave the code graph and intent graph together:
-
-- ✅ **Spec-to-code verification** (12.1) — check that each requirement/decision entity has code grounding; reports grounded, partial, and unimplemented
-- ✅ **Constraint consistency** (12.2) — `iw intent check --consistency` detects contradictions across spec documents
-- ✅ **Living documentation score** (12.3) — `iw intent score` composite 0–100/A–F grade across 4 dimensions (spec coverage, constraint consistency, doc freshness, arch conformance)
-
-## Next Up
-
-### Selective Enrichment — Remaining Use Cases
-
-| Use Case | Status | Notes |
-|---|---|---|
-| Completion backfill | Planned | Requires *generating* new doc content, not just extracting triples |
-| Architecture narrative | Planned | Standalone `iw index narrative` command — LLM prose from layer/community data |
-
-### Language Support
-
-- ✅ Swift AST extraction — `@intentweave/swift-parser` + `@intentweave/plugin-swift` (fully working, tree-sitter)
-- ✅ Python AST extraction — `@intentweave/python-parser` + `@intentweave/plugin-python` (fully working, tree-sitter)
-- Planned: Go AST extraction (tree-sitter)
-- Planned: Rust AST extraction (tree-sitter)
-- Planned: Generic keyword-only fallback for unsupported extensions
-
-### Developer Experience
-
-- VS Code extension with inline drift warnings (planned)
-
-### Intent Verification — Remaining
-
-- Drift alerts pushed to editor/Slack when `iw index watch` detects doc-breaking changes (planned)
-- Natural-language queries over the combined CARI + KG graph without Neo4j (planned)
-
-## Contributing
-
-Have ideas? See [Contributing](/community/contributing/) or open a
-[GitHub Discussion](https://github.com/intentweave/intentweave/discussions).
