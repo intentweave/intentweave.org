@@ -135,8 +135,20 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index dead-features`      | Dead feature detection (unused + undocumented + stale)    |
 | `iw index api-surface`        | API surface changelog (additions, removals, sig changes)  |
 | `iw index focus <target>`     | Focused architecture view around a target entity          |
-| `iw index export --html`      | Interactive standalone HTML architecture report           |
+| `iw index calls`              | Query the call graph (all edges)                          |
+| `iw index calls --caller-file`| Calls from a specific file                                |
+| `iw index calls --callee-name`| All callers of a function                                 |
+| `iw index trace --entry`      | BFS call-path trace from entry-point file                 |
+| `iw index rule-coverage`      | Packages with zero behavioral rules                       |
+| `iw index export --book`      | Insights Book (15+ chapters, primary deliverable)         |
+| `iw index export --html`      | §10.1 interactive standalone HTML architecture report     |
 | `iw index export --focus <t>` | Focused Graphviz SVG architecture report                  |
+| `iw intent check`             | Check all intent domains (structural/behavioral/documentary)|
+| `iw intent check --domain`    | Target one domain: `structural`, `behavioral`, `documentary`, `all` |
+| `iw intent check --baseline`  | Regression gating: fail only if violations increased      |
+| `iw intent extract`           | Extract rules from an ADR via LLM                         |
+| `iw intent living`            | Living documentation health (documentary domain)          |
+| `iw intent score`             | Composite living documentation score (A–F, 4 dimensions)  |
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.

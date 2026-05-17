@@ -1,6 +1,6 @@
 ---
 title: Semantic Rule Checking
-description: Enforce architectural decisions at the AST level — property access chains, function calls, symbol names, import patterns, and custom Cypher queries — without Neo4j or runtime overhead.
+description: Enforce architectural decisions across three domains — structural (import graphs, AST), behavioral (Mermaid sequence/flow diagrams), and documentary (coverage, staleness, terminology) — without Neo4j or runtime overhead.
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -26,13 +26,20 @@ This matters because **import boundaries can be clean while the code still viola
 
 ```bash
 # Extract rules from an ADR
-iw index rules-extract docs/ADR-003.md --provider openai --output .iw/rules.yaml
+iw intent extract docs/ADR-003.md --provider openai --output .iw/rules.yaml
 
-# Check the codebase
-iw index rules-check
+# Check all three domains
+iw intent check
+iw intent check --domain structural    # import + AST rules only
+iw intent check --domain behavioral    # Mermaid sequence/flow rules
+iw intent check --domain documentary   # coverage + stale docs + terminology
+iw intent check --domain all           # explicit all-domains pass
 
 # CI: only changed files, only high severity
-iw index rules-check --changed src/auth.ts --severity high --format json
+iw intent check --changed src/auth.ts --severity high --format json
+
+# Regression gating: fail only if violations increased
+iw intent check --baseline .iw/baseline.json
 ```
 
 ## The `rules.yaml` File

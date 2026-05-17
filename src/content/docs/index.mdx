@@ -30,14 +30,14 @@ import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
 <CardGrid>
   <Card title="CARI Evidence Engine — always $0" icon="seti:db">
     A zero-cost SQLite index built from your code's AST, document keywords, and
-    git history. **No LLM. No servers. No API keys.** 30+ query modes, architecture
-    visualization, community detection, clone detection, and more — in under 3 seconds.
-    **The foundation. Always free. Always local.**
+    git history. **No LLM. No servers. No API keys.** 60+ query modes, architecture
+    visualization, community detection, clone detection, call graph, and more —
+    in under 3 seconds. **The foundation. Always free. Always local.**
   </Card>
   <Card title="Intent Engine" icon="approve-check-circle">
-    Turn your ADRs and conventions into executable rules that run in CI. Catch
-    property-access violations, forbidden call patterns, architecture drift, and
-    documentation staleness — all at $0 after a one-time LLM extraction step.
+    Three enforcement domains in one pass: **structural** (import graphs),
+    **behavioral** (Mermaid sequence/flow rules), and **documentary** (coverage,
+    staleness, terminology). All at $0 after a one-time LLM extraction step.
   </Card>
 </CardGrid>
 
@@ -79,10 +79,11 @@ iw intent check                        # check rules.yaml against the index
 **Step 3 — Deliver** (Insights Book):
 
 ```bash
-iw index export --html                 # open architecture.html
+iw index export --book                 # open insights-book.html
 ```
 
-The Insights Book shows your architecture, violations grouped by domain, and a
+The Insights Book shows your architecture, violations grouped by domain
+(structural / behavioral / documentary), per-ADR flow diagrams, call graph, and a
 living documentation score — all from a single local SQLite file. No LLM, no
 servers, no API keys required for steps 1–3.
 
@@ -107,12 +108,20 @@ iw index hotspot-priority            # high-churn, low-doc files
 # Extract rules from an ADR once (requires LLM)
 iw intent extract docs/ADR-001.md --provider openai --output .iw/rules.yaml
 
+# Enforce all three domains: structural + behavioral + documentary
+iw intent check
+iw intent check --domain behavioral    # Mermaid sequence/flow rules
+iw intent check --domain documentary   # coverage + stale docs + terminology
+
 # PR mode: only changed files, only high severity
 iw intent check --changed src/auth.ts --severity high --format json
 
+# Regression gating: fail only if violations increased
+iw intent check --baseline .iw/baseline.json
+
 # Living Documentation
 iw intent living                       # coverage, stale docs, terminology
-iw intent score                        # composite A–F score
+iw intent score                        # composite A–F score (4 dimensions)
 ```
 
 </details>

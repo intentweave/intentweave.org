@@ -1,7 +1,168 @@
 ---
 title: Insights Book
-description: A self-contained multi-chapter HTML architecture report — prescriptive diagram, per-ADR flow views, violations, coverage, living score, and code health — all in a single shareable file.
+description: A self-contained 15+ chapter HTML deliverable — executive summary, domain violation tables, per-ADR flow diagrams, call graph, living score, and code health — all in one shareable file.
 ---
+
+## What Is the Insights Book?
+
+The **Insights Book** is a multi-chapter, self-contained HTML deliverable that answers
+_"is this project OK?"_ at a glance. It combines every CARI intelligence signal into one
+interactive document — no server, no external dependencies, sharable as a single file.
+
+```bash
+iw index build
+iw index export --book
+open insights-book.html
+```
+
+The output is a fully self-contained HTML file (~1–5 MB). Share it with your team, commit
+it as a CI artifact, or attach it to every PR.
+
+## Quick Start
+
+```bash
+# Minimal — just needs the index
+iw index build
+iw index export --book
+
+# Custom output path
+iw index export --book -o reports/insights-book.html
+
+# With LLM-generated layer names
+iw index export --book --provider openai
+```
+
+## The Chapters
+
+The book opens on **Executive Summary** by default. The sidebar divides chapters into
+four sections.
+
+### Summary
+
+| Chapter | Contents |
+|---------|----------|
+| **Executive Summary** | Living score badge · violation domain pills (structural / behavioral / documentary) · top-3 action items · quick links to all chapters |
+| **Recommendations** | Top-20 cross-domain issues ranked by severity with domain badges (structural = blue, behavioral = purple, documentary = amber) |
+
+### Architecture
+
+| Chapter | Contents |
+|---------|----------|
+| **Layer Architecture** | §17 prescriptive SVG embedded in an iframe — layer bands, allowed/forbidden flow arrows, rule overlays |
+| **Rules Catalog** | Full `rules.yaml` inventory, filterable by domain / severity; Mermaid and Cypher rule indicators |
+| **Documentation & Source** | Three-panel explorer: docs list, source files, per-file annotation evidence |
+| **Architecture** | §10.1 D3 interactive chart with Layers / Violations / Communities / Dependencies tabs |
+| **Per-ADR chapters** | One chapter per ADR rule: Cytoscape.js + dagre flow diagram, CARI import-graph overlay toggles (churn, hub, community), rule panel, per-rule violations |
+
+### Reports
+
+| Chapter | Contents |
+|---------|----------|
+| **Violations** | Domain-grouped: Structural / Behavioral (with confidence badge and WARN mode indicator) / Documentary + Dormant Rules |
+| **Coverage** | Per-layer documentation coverage table with low-coverage warning; **Layer Sankey SVG** — two-column bezier bands (blue = allowed, red = violation, width ∝ import count) when cross-layer flows exist |
+
+### Analytics
+
+| Chapter | Contents |
+|---------|----------|
+| **Living Score** | 4-dimension breakdown: spec grounding · consistency · freshness · architectural conformance |
+| **Code Health** | Exact clone groups, structural clones, circular imports, boundary violations, unused exports |
+| **Hotspots** | High-churn / low-doc priority table, deep dependency chains, hub entities, code communities |
+| **Documentation** | Orphaned sections, per-doc completeness, design rationale inventory, terminology inconsistencies |
+| **Priority Files** | High-churn low-doc files ranked by urgency score |
+| **Tech Debt** | TODO / FIXME / HACK / XXX inventory with file, line, and kind |
+| **Test Coverage** | Symbol-level coverage % and per-directory breakdown |
+| **Call Graph** | Butterfly trace around any entry-point file; entry file selector, mode selector (calls/trace/reverse), depth slider; supports 20 000+ edge corpora |
+
+## Cross-Chapter Navigation
+
+- **Domain pills** in Executive Summary (e.g., "762 documentary") navigate directly to the
+  Violations chapter filtered to that domain.
+- **"Go to chapter →"** links in the Executive Summary quick-links section.
+- Sidebar is always visible; active chapter is highlighted.
+
+## Per-ADR Flow Diagrams
+
+Each rule in `rules.yaml` with a `domain: behavioral` + `mermaid:` block **or** with
+a `expresses` block gets its own chapter with a Cytoscape.js + dagre flow diagram:
+
+- Named components as nodes (layered left-to-right)
+- Directed flows as edges — green for allowed, red dashed for forbidden
+- Overlay toggles: actual import edges, violations, hotspot scores, hub degree, community label
+- Rule metadata: severity, domain, ADR reference, description, violation count
+
+```yaml
+# .iw/rules.yaml — behavioral Mermaid rule
+- id: auth-login-sequence
+  domain: behavioral
+  severity: high
+  source:
+    type: mermaid_inline
+  mermaid: |
+    sequenceDiagram
+      UI->>AuthService: login(credentials)
+      AuthService->>TokenStore: issue(token)
+      AuthService-->>UI: token
+  forbidden: []
+```
+
+## CLI Options
+
+```bash
+iw index export --book [options]
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--book` | *(required)* | Generate the Insights Book |
+| `--rules-config <path>` | `.iw/rules.yaml` | Path to rules.yaml |
+| `-o, --output <path>` | `insights-book.html` | Output file path |
+| `--provider openai` | *(off)* | LLM-generated layer and directory names |
+| `--db <path>` | *(auto)* | Path to index.db |
+
+## Example: CI Artifact
+
+Generate the book as a CI artifact and attach it to every PR:
+
+```yaml
+# .github/workflows/arch.yml
+- name: Generate Insights Book
+  run: |
+    iw index build
+    iw index export --book -o insights-book.html
+
+- name: Upload Insights Book
+  uses: actions/upload-artifact@v4
+  with:
+    name: insights-book
+    path: insights-book.html
+    retention-days: 30
+
+- name: Check Living Score
+  run: |
+    iw intent score --format json > score.json
+    # Fail CI if grade is below C (score < 60)
+    node -e "const s=require('./score.json'); process.exit(s.score < 60 ? 1 : 0)"
+```
+
+## Comparison: Book vs. Other Reports
+
+| Report | Command | What it shows |
+|--------|---------|--------------|
+| **Insights Book** | `iw index export --book` | 15+ chapters: summary, violations, architecture, call graph, living score, code health |
+| **Architecture report** | `iw index export --html` | Inferred layers, community clusters, actual import graph (§10.1 — also embedded in the book) |
+| **Focused view** | `iw index export --focus <target>` | N-hop neighbourhood around one file or symbol |
+
+The Insights Book is the primary deliverable and the right choice for sharing with
+stakeholders, architecture reviews, or quarterly health checks.
+
+## Next Steps
+
+- [Prescriptive Architecture Diagram](/docs/cari/prescriptive-diagram/) — understand the embedded §17 SVG
+- [Semantic Rule Checking](/docs/cari/semantic-rules/) — write rules for behavioral and structural chapters
+- [Health Report](/docs/cari/report/) — run the living score without the full book
+- [CI Drift Check](/docs/cari/check/) — gate CI on rule conformance
+
 
 ## What Is the Insights Book?
 

@@ -137,10 +137,13 @@ Exit code 0 = clean, 1 = drift found (docs may need updating).
 ```bash
 iw index layers-infer                  # auto-infer layers from import graph
 iw index layers-check                  # find layer boundary violations
-iw index export --html                 # interactive architecture report
+iw index export --book                 # Insights Book (15+ chapters)
+iw index export --html                 # §10.1 interactive architecture report (also embedded in --book)
 ```
 
-Generates a standalone HTML file with layered, community, and dependency views.
+`--book` generates a self-contained HTML deliverable with executive summary, per-ADR flow
+diagrams, domain-grouped violations (structural / behavioral / documentary), call graph,
+living score, and code health. `--html` generates the D3 architecture report alone.
 
 ---
 
