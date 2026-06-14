@@ -88,8 +88,8 @@ Or match whatever you set in `NEO4J_AUTH` when starting the container.
 ### Neo4j not needed for CARI
 
 If you only use `iw index` commands, you don't need Neo4j at all.
-Neo4j is only required for: `iw run`, `iw query`, `iw context`, `iw impact`,
-`iw intent living --neo4j`, `iw persist`, `iw xlink`.
+Neo4j is only required for KG MCP tools (`kg_query`, `kg_context`, `kg_impact`,
+etc.) and `iw doc-health --neo4j`.
 
 ---
 
@@ -142,11 +142,11 @@ npx @intentweave/cli <command>
 
 ### Node.js version
 
-IntentWeave requires Node.js ≥ 20:
+IntentWeave requires Node.js ≥ 22.15 (for the built-in `node:sqlite` module):
 
 ```bash
 node -v
-# Should show v20.x or higher
+# Should show v22.15.0 or higher
 ```
 
 ### Cache issues
@@ -156,7 +156,4 @@ If results seem stale:
 ```bash
 # Rebuild from scratch
 iw index build --force
-
-# Or for KG:
-iw run docs/*.md --force
 ```

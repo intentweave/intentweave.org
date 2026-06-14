@@ -99,7 +99,7 @@ Documents ──► IN (chunk) ──► FX (extract) ──► KX (canonicalize
 | Monorepo        | pnpm workspaces + Turbo          |
 | CLI             | Commander.js                     |
 | Server          | Fastify 5                        |
-| Database (CARI) | SQLite via better-sqlite3        |
+| Database (CARI) | SQLite via `node:sqlite` (built-in, Node 22.15+) |
 | Database (KG)   | Neo4j 5                          |
 | AST parsing     | tree-sitter (TS/JS/Swift/Python) |
 | LLM             | OpenAI (gpt-4o-mini), pluggable  |

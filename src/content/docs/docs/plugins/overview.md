@@ -11,7 +11,7 @@ Install only what you need.
 
 | Layer | What You Get | Cost | Requirements |
 |-------|-------------|------|-------------|
-| **Core (CARI)** | 30+ query modes, architecture visualization, CI drift checks, clone detection, community detection, hub analysis, and more | $0 | Node ≥ 20, Git |
+| **Core (CARI)** | 30+ query modes, architecture visualization, CI drift checks, clone detection, community detection, hub analysis, and more | $0 | Node ≥ 22.15, Git |
 | **+ plugin-llm** | LLM-generated layer names, selective enrichment (diagram validation, decision tracking, contradiction detection) | Pay-per-use (OpenAI) | OpenAI API key |
 | **+ plugin-kg-lite** | Cypher queries over a local SQLite-backed knowledge graph — no external database needed | $0 | _(none)_ |
 | **+ plugin-kg** | Full Neo4j persistence, semantic queries, impact analysis, cross-document reasoning | $0 (self-hosted) | Neo4j 5 |
@@ -90,11 +90,16 @@ iw index hubs                      # find god-nodes
 
 ### Decision archaeology / knowledge management
 
+Use the `kg_query`, `kg_context`, and `kg_impact` MCP tools in GitHub Copilot
+after configuring Neo4j credentials:
+
 ```bash
-iw run docs/*.md --track open --provider openai -i --persist -v
-iw query "What decisions were made about authentication?"
-iw impact src/auth/service.ts
+export NEO4J_PASSWORD=intentweave
+export OPENAI_API_KEY=sk-...
+iw mcp --session my-project
 ```
+
+Then ask Copilot: _"What decisions were made about authentication?"_ or _"What is the impact of changing src/auth/service.ts?"_
 
 **Plugins needed:** `plugin-llm` + `plugin-kg`.
 

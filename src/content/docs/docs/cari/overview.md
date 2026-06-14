@@ -29,7 +29,7 @@ code, documentation, and git history into a single queryable database.
 
 ## Why SQLite?
 
-- Ships with Node.js via `better-sqlite3` — no server process
+- Uses Node.js built-in `node:sqlite` (Node 22.15+) — no native compilation, no server process
 - The entire index is one portable file (2–4 MB for typical projects)
 - Queries are pre-written SQL views — no query language to learn
 - Works offline, in CI, in Docker, anywhere Node runs

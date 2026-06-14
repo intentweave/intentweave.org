@@ -24,7 +24,7 @@ npx @intentweave/cli index retrieve "authentication"
 
 | Requirement | Version | Notes                                     |
 | ----------- | ------- | ----------------------------------------- |
-| **Node.js** | ≥ 20    | `node -v` to check                        |
+| **Node.js** | ≥ 22.15 | `node -v` to check — requires Node.js built-in SQLite |
 | **Git**     | any     | For co-change analysis (`iw index build`) |
 
 That's it. CARI needs no database, no API keys, no Docker.

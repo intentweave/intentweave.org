@@ -308,77 +308,10 @@ iw index export --focus <target> [options]
 
 ## Knowledge Graph Commands (require Neo4j)
 
-### `iw run`
-
-Extract knowledge from documents.
-
-```bash
-iw run [files...] [options]
-```
-
-| Option                | Default      | Description                          |
-| --------------------- | ------------ | ------------------------------------ |
-| `-t, --track <track>` | `main`       | `main`, `open`, `both`               |
-| `--provider <name>`   | `smart-mock` | `smart-mock`, `openai`               |
-| `--model <name>`      | `gpt-4o-mini`| OpenAI model                         |
-| `-i, --incremental`   | off          | Content-addressed cache              |
-| `--persist`           | off          | Auto-persist to Neo4j                |
-| `--force`             | off          | Ignore cache                         |
-| `-p, --profile <name>`| `standard`   | Extraction profile                   |
-| `--concurrency <n>`   | `5`          | Parallel LLM calls                   |
-| `--from-fx <source>`  | —            | Skip FX, reuse cached output         |
-| `-v, --verbose`       | off          | Stage details                        |
-
-### `iw query`
-
-Query the knowledge graph.
-
-```bash
-iw query <question> [options]
-iw query --cypher <cypher> [options]
-```
-
-| Option             | Default | Description                    |
-| ------------------ | ------- | ------------------------------ |
-| `-s, --session`    | —       | Neo4j session scope            |
-| `-f, --format`     | `table` | `table`, `json`                |
-| `-o, --output`     | —       | Write to file                  |
-| `-v, --verbose`    | off     | Show generated Cypher          |
-
-### `iw context`
-
-Build RAG context.
-
-```bash
-iw context <topic> [options]
-iw context -e <entity> [options]
-iw context --all [options]
-```
-
-| Option          | Default | Description                      |
-| --------------- | ------- | -------------------------------- |
-| `-s, --session` | —       | Session scope                    |
-| `-e, --entity`  | —       | Seed entity                      |
-| `--hops <n>`    | `2`     | Expansion depth                  |
-| `--all`         | off     | Dump everything                  |
-| `--code-refs`   | off     | Include source references        |
-| `-f, --format`  | `text`  | `text`, `json`                   |
-| `-o, --output`  | —       | Write to file                    |
-
-### `iw impact`
-
-Semantic impact analysis.
-
-```bash
-iw impact <files...> [options]
-```
-
-| Option          | Default | Description         |
-| --------------- | ------- | ------------------- |
-| `-s, --session` | —       | Session scope       |
-| `--hops <n>`    | `2`     | Ripple depth        |
-| `-f, --format`  | `text`  | Output format       |
-| `-o, --output`  | —       | Write to file       |
+KG queries are available via the MCP server (`iw mcp`) using GitHub Copilot tools
+(`kg_query`, `kg_context`, `kg_entities`, `kg_impact`, `kg_doc_health`, `kg_schema`).
+Set `NEO4J_URI`, `NEO4J_USER`, and `NEO4J_PASSWORD` environment variables before
+starting the MCP server.
 
 ### `iw intent living`
 
@@ -405,31 +338,13 @@ iw intent living [files...] [options]
 
 ### `iw persist`
 
-Write to Neo4j.
-
-```bash
-iw persist [run-id] [options]
-```
-
-| Option           | Default | Description                     |
-| ---------------- | ------- | ------------------------------- |
-| `--latest`       | off     | Persist most recent run         |
-| `--file <path>`  | —       | Persist from specific file      |
-| `-v, --verbose`  | off     | Details                         |
+> **Removed.** Persisting to Neo4j via CLI is no longer supported. Use the
+> `kg_*` MCP tools from GitHub Copilot to query an existing Neo4j instance.
 
 ### `iw xlink`
 
-Cross-layer code linking.
-
-```bash
-iw xlink [directory] [options]
-```
-
-| Option           | Default | Description                     |
-| ---------------- | ------- | ------------------------------- |
-| `-s, --session`  | —       | Session scope                   |
-| `--persist`      | off     | Write links to Neo4j            |
-| `-v, --verbose`  | off     | Details                         |
+> **Removed.** Cross-layer code linking is now handled automatically during
+> `iw index build`.
 
 ### `iw mcp`
 
