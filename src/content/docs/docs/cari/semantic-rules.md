@@ -497,7 +497,7 @@ rules for constraints that are _explicitly stated_ in the ADR.
 # .github/workflows/arch.yml
 - name: Check architectural rules
   run: |
-    iw index rules-check \
+    iw intent check \
       --changed "${{ steps.changed.outputs.files }}" \
       --severity high \
       --format json > violations.json
@@ -506,13 +506,35 @@ rules for constraints that are _explicitly stated_ in the ADR.
 
 See [GitHub Actions / CI](/docs/integrations/ci/) for a full workflow example.
 
+## Path Alias Resolution
+
+Projects that use TypeScript path aliases (`@app/*`), Webpack aliases, or Docusaurus `@site`
+get **automatic alias resolution** after every `iw index build`. CARI reads
+`compilerOptions.paths` from `tsconfig.json` and `tsconfig.base.json` (following `extends`
+chains) and rewrites aliased import specifiers in the index before any rule checks run.
+
+Without this, a rule like `no-cross-package-imports` would see `@site/src/foo` as an
+unresolved external import and raise false positives.
+
+For aliases not defined in `tsconfig.json`, add them to `.iw/config.yaml`:
+
+```yaml
+# .iw/config.yaml
+aliases:
+  "@site": "microsite"  # Docusaurus — maps @site/… → microsite/…
+  "@app":  "packages/app/src"
+```
+
+Manual entries win on conflict with auto-detected aliases.
+
 ## MCP Integration
 
-`rules-check` is available as a Copilot tool:
+`intent_check` and `cari_rules_check` are available as Copilot tools:
 
 | MCP Tool | Purpose |
 |----------|---------|
-| `cari_rules_check` | Check rules, optionally for changed files only |
+| `intent_check` | Check all domains (structural / behavioral / documentary) |
+| `cari_rules_check` | Structural domain only (direct) |
 
 ```
 @workspace Does this change violate any ADRs?

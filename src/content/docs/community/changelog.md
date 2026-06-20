@@ -6,7 +6,75 @@ description: Release history and notable changes in IntentWeave.
 import { Aside } from '@astrojs/starlight/components';
 
 This page summarises notable changes and new capabilities by sprint or release.
-The backlog spec that drives each change is referenced as §N.N.
+
+---
+
+## v0.15.4 — Auto-Detect TypeScript Path Aliases
+
+**Released:** 2026-06-20 · [npm](https://www.npmjs.com/package/@intentweave/cli)
+
+`iw index build` now reads `compilerOptions.paths` from `tsconfig.json` and
+`tsconfig.base.json` (following `extends` chains) and automatically rewrites aliased
+import specifiers in the index. Projects using TypeScript path aliases, Webpack aliases,
+or Vite aliases get clean cross-package analysis without any manual configuration.
+
+Manual `aliases` in `.iw/config.yaml` are merged on top and take precedence on conflict.
+
+---
+
+## v0.15.3 — Path Alias Resolution & Extraction Fixes
+
+**Released:** 2026-06-14 · [npm](https://www.npmjs.com/package/@intentweave/cli)
+
+### Added
+
+- **Path alias resolution in `.iw/config.yaml`** — new `aliases` key rewrites import specifiers
+  after index build so that path-aliased imports (Docusaurus `@site`, Webpack `@app`, etc.)
+  resolve to their real workspace-relative paths before cross-package checks run.
+  ```yaml
+  aliases:
+    "@site": "microsite"
+    "@app":  "packages/app/src"
+  ```
+- **`iw intent extract` workspace-structure context** — before calling the LLM, the command now
+  loads up to 30 real file paths from the CARI index and injects them into the system prompt.
+  This prevents the LLM from generating glob patterns like `src/**` that match nothing in a
+  monorepo where all files live under `packages/*/src/**`.
+- **Scope warnings in `iw intent check`** — if a rule's `in:` glob matches zero indexed files,
+  the check now prints a warning rather than silently reporting the rule as clean:
+  ```
+  ⚠  scope warning: avoid-default-exports — in: src/** matched 0 indexed files
+  ```
+- **`variable_assignment` rule accepts `pattern` field** — treats `pattern` as an alias for
+  `value_pattern` so LLM-generated rules are not silently skipped.
+
+### Changed
+
+- **`node:sqlite` migration** — replaced `better-sqlite3` with `node:sqlite` (Node.js 22.15+
+  built-in). Zero native compilation; no C++ toolchain required.
+- **`maxTokens` raised to 8192 in `iw intent extract`** — prevents LLM response truncation
+  when many ADRs are analyzed in a single run.
+
+---
+
+## v0.14.0 — Rust Native Binary
+
+**Released:** 2026-06-01 · [npm](https://www.npmjs.com/package/@intentweave/cli)
+
+The CARI build pipeline now ships a native Rust binary (`cari-build`) for the six
+computationally intensive pipeline stages (AX, KWX, COX, TCG, Annotate, Write). On the
+Backstage monorepo (7,600+ source files, 2,000+ docs), build time dropped from ~110s to
+under 30s. The TypeScript query layer (57 query files) is unchanged.
+
+**Platform binaries:**
+- `@intentweave/cari-native-darwin-arm64`
+- `@intentweave/cari-native-darwin-x64`
+- `@intentweave/cari-native-linux-x64`
+- `@intentweave/cari-native-linux-arm64`
+- `@intentweave/cari-native-win32-x64`
+
+The Rust binary is used automatically when no multi-root or filter options are passed.
+Falls back to the TypeScript pipeline transparently.
 
 ---
 
@@ -15,17 +83,7 @@ The backlog spec that drives each change is referenced as §N.N.
 **Released:** 2026-05-17 · [npm](https://www.npmjs.com/package/@intentweave/cli)
 
 Maintenance release bumping all 16 packages to `0.13.0`. Includes a complete **Rust Indexer Port
-design analysis** now available in the project BACKLOG, plus toolchain upgrades.
-
-### Added
-
-- **Rust Indexer Port design analysis** — detailed architecture plan for replacing the CARI build
-  pipeline with a native Rust binary. Measured bottlenecks: KWG stage = 69% of 47 s total build
-  time on a 595-file corpus. The plan targets a 10–20× speedup (47 s → 3–5 s) using `oxc_parser`,
-  `pulldown-cmark`, `rayon`, `rusqlite`, and `gix`. The 57 TypeScript query files are unchanged.
-  Two implementation phases:
-  - **Phase R1** — Rust build binary (`packages/cari-native/`) replacing AX + KWG + TCG stages
-  - **Phase R2** — optional NAPI-RS bridge for warm incremental daemon
+design analysis** plus toolchain upgrades.
 
 ### Changed
 
@@ -33,7 +91,6 @@ design analysis** now available in the project BACKLOG, plus toolchain upgrades.
 - **Prettier 3.8** — upgraded from `^3.3.0`
 - **Turbo 2.9** — upgraded from `^2.8.14`
 - **Vitest 2.1.9** — upgraded from `^2.1.0`
-- **@types/node** — bumped to `^20.19.41`
 
 ---
 

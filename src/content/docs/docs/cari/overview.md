@@ -88,35 +88,49 @@ packages/
 
 ## All Query Modes
 
-CARI provides 27 built-in query modes — all available via CLI (`iw index <command>`),
+CARI provides 38 built-in query modes — all available via CLI (`iw index <command>`),
 MCP tools (`cari_*`), and the `@intentweave/index` programmatic API:
 
-| Query              | Purpose                                            |
-| ------------------ | -------------------------------------------------- |
-| `retrieve`         | Ranked file retrieval by topic or symbol           |
-| `connections`      | Cross-layer connections + gap detection            |
-| `check`            | CI drift detection for changed files               |
-| `report`           | Corpus-wide health dashboard                       |
-| `clones`           | Exact clone detection (identical body hash)        |
-| `structuralClones` | Type 2 clones (same control flow, different names) |
-| `circularImports`  | Import cycle detection                             |
-| `unusedExports`    | Exported symbols never imported                    |
-| `hotspotPriority`  | High-churn low-doc files ranked by urgency         |
-| `todos`            | TODO/FIXME/HACK/XXX inventory                      |
-| `moduleCoverage`   | Documentation coverage % per directory             |
-| `orphanedSections` | Doc sections with all-ungrounded mentions          |
-| `docCompleteness`  | Per-doc completeness vs. referenced exports        |
-| `crossGroupDrift`  | Cross-group entity coverage conflicts              |
-| `mentionsOf`       | Entity → doc mentions                              |
-| `annotationsFor`   | File → all annotations                             |
-| `testCoverage`     | Test→source mapping + untested exports             |
-| `hubs`             | God-node / hub analysis (degree centrality)        |
-| `communities`      | Community detection (structural / semantic / temporal)  |
-| `surprises`        | Surprising connection ranking (composite score)    |
-| `rationale`        | WHY/NOTE/IMPORTANT/DESIGN rationale inventory      |
-| `terminology`      | Terminology inconsistency detection                |
-| `dependencyDepth`  | Transitive import depth + fan-in/fan-out risk      |
-| `boundaryViolations` | Cross-package internal import detection          |
-| `layersInfer`      | Auto-infer architectural layers from import graph  |
-| `layersCheck`      | Validate imports against layer boundaries          |
-| `export --html`    | Interactive HTML architecture report               |
+| Query                | Purpose                                              |
+| -------------------- | ---------------------------------------------------- |
+| `retrieve`           | Ranked file retrieval by topic or symbol             |
+| `connections`        | Cross-layer connections + gap detection              |
+| `check`              | CI drift detection for changed files                 |
+| `report`             | Corpus-wide health dashboard                         |
+| `clones`             | Exact clone detection (identical body hash)          |
+| `structuralClones`   | Type 2 clones (same control flow, different names)   |
+| `circularImports`    | Import cycle detection                               |
+| `unusedExports`      | Exported symbols never imported                      |
+| `hotspotPriority`    | High-churn low-doc files ranked by urgency           |
+| `todos`              | TODO/FIXME/HACK/XXX inventory                        |
+| `moduleCoverage`     | Documentation coverage % per directory               |
+| `orphanedSections`   | Doc sections with all-ungrounded mentions            |
+| `docCompleteness`    | Per-doc completeness vs. referenced exports          |
+| `crossGroupDrift`    | Cross-group entity coverage conflicts                |
+| `mentionsOf`         | Entity → doc mentions                                |
+| `annotationsFor`     | File → all annotations                               |
+| `testCoverage`       | Test→source mapping + untested exports               |
+| `hubs`               | God-node / hub analysis (degree centrality)          |
+| `communities`        | Community detection (structural / semantic / temporal) |
+| `surprises`          | Surprising connection ranking (composite score)      |
+| `rationale`          | WHY/NOTE/IMPORTANT/DESIGN rationale inventory        |
+| `terminology`        | Terminology inconsistency detection                  |
+| `dependencyDepth`    | Transitive import depth + fan-in/fan-out risk        |
+| `boundaryViolations` | Cross-package internal import detection              |
+| `layersInfer`        | Auto-infer architectural layers from import graph    |
+| `layersCheck`        | Validate imports against layer boundaries            |
+| `focus`              | Focused architecture view around a target entity     |
+| `calls`              | Query the call graph (Phase 4)                       |
+| `trace`              | BFS call-path tracing from an entry-point file       |
+| `ruleCoverage`       | Flag packages with zero behavioral rules             |
+| `namingViolations`   | Naming-convention enforcement                        |
+| `commentCodeRatio`   | Comment-to-code ratio per file                       |
+| `deprecatedCallers`  | Calls to `@deprecated` symbols                       |
+| `internalViolations` | `@internal` / `_`-prefixed boundary violations       |
+| `typeAssertions`     | `as any` and forced type-assertion inventory         |
+| `testIntent`         | Test description ↔ symbol alignment                  |
+| `rulesTrend`         | ADR conformance trend over git history               |
+| `skippedFiles`       | Files excluded from CARI analysis                    |
+| `export --html`      | Interactive D3 architecture report (standalone HTML) |
+| `export --book`      | Insights Book (multi-chapter self-contained HTML)    |
+| `export --focus`     | Focused Graphviz architecture SVG                    |
