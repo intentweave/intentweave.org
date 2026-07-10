@@ -1,0 +1,409 @@
+---
+// Live "Doc ↔ Code" explorer — real self-analysis data from IntentWeave's own
+// CARI index (dogfooded), rendered as a click-through panel. Deliberately
+// restyled to match the site's Starlight theme rather than the dark
+// standalone Insights Book export.
+import demoData from "../data/doc-code-demo.json";
+
+interface DemoDoc {
+  id: string;
+  title: string;
+  path: string;
+  linkedFiles: { file: string; symbols: string[] }[];
+}
+
+interface DemoFile {
+  id: string;
+  path: string;
+  lines: number | null;
+  referencedByDocs: string[];
+  topSymbols: string[];
+  snippet: string | null;
+}
+
+const docs = demoData.docs as DemoDoc[];
+const files = demoData.files as DemoFile[];
+const stats = demoData.stats;
+---
+
+<div class="dce" id="dce-root">
+  <div class="dce-meta">
+    <span><strong>{stats.docs}</strong> docs</span>
+    <span><strong>{stats.files}</strong> source files</span>
+    <span><strong>{stats.annotations.toLocaleString()}</strong> annotations</span>
+    <span class="dce-badge">live self-analysis · {demoData.generatedAt}</span>
+  </div>
+
+  <div class="dce-grid">
+    <div class="dce-col dce-col-docs">
+      <div class="dce-col-header">Documentation</div>
+      <ul class="dce-list" id="dce-doc-list">
+        {
+          docs.map((doc) => (
+            <li>
+              <button
+                class="dce-item"
+                data-doc-id={doc.id}
+                aria-pressed="false"
+              >
+                <span class="dce-item-title">{doc.title}</span>
+                <span class="dce-item-path">{doc.path}</span>
+                <span class="dce-item-count">
+                  {doc.linkedFiles.length} files
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="dce-col dce-col-files">
+      <div class="dce-col-header">Grounded source files</div>
+      <ul class="dce-list" id="dce-file-list">
+        {
+          files.map((file) => (
+            <li>
+              <button
+                class="dce-item"
+                data-file-id={file.id}
+                data-referenced-by={file.referencedByDocs.join(",")}
+                aria-pressed="false"
+              >
+                <span class="dce-item-title">{file.path.split("/").pop()}</span>
+                <span class="dce-item-path">{file.path}</span>
+                <div class="dce-chip-row">
+                  {file.topSymbols.slice(0, 3).map((sym) => (
+                    <span class="dce-chip">{sym}</span>
+                  ))}
+                </div>
+                <span class="dce-item-count">
+                  ↑ {file.referencedByDocs.length} docs
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="dce-col dce-col-detail">
+      <div class="dce-col-header">Evidence</div>
+      <div id="dce-detail" class="dce-detail">
+        <p class="dce-placeholder">
+          Click a doc or source file to see the grounded relationship — the
+          same evidence CARI writes into every Insights Book.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ docs, files }}>
+  const docList = document.getElementById("dce-doc-list");
+  const fileList = document.getElementById("dce-file-list");
+  const detail = document.getElementById("dce-detail");
+
+  const docById = new Map(docs.map((d) => [d.id, d]));
+  const fileById = new Map(files.map((f) => [f.id, f]));
+
+  function clearPressed(container) {
+    container
+      .querySelectorAll("[aria-pressed='true']")
+      .forEach((el) => el.setAttribute("aria-pressed", "false"));
+  }
+
+  function escapeHtml(str) {
+    return str.replace(
+      /[&<>"']/g,
+      (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+          c
+        ],
+    );
+  }
+
+  function highlightFilesForDoc(doc) {
+    const linkedPaths = new Set(doc.linkedFiles.map((lf) => lf.file));
+    fileList.querySelectorAll("[data-file-id]").forEach((btn) => {
+      const file = fileById.get(btn.dataset.fileId);
+      btn.classList.toggle("dce-item-dimmed", !linkedPaths.has(file.path));
+    });
+  }
+
+  function resetFileHighlight() {
+    fileList
+      .querySelectorAll("[data-file-id]")
+      .forEach((btn) => btn.classList.remove("dce-item-dimmed"));
+  }
+
+  function renderDocDetail(doc) {
+    const rows = doc.linkedFiles
+      .map(
+        (lf) => `
+        <div class="dce-evidence-row">
+          <div class="dce-evidence-file">${escapeHtml(lf.file)}</div>
+          <div class="dce-chip-row">
+            ${lf.symbols.map((s) => `<span class="dce-chip">${escapeHtml(s)}</span>`).join("")}
+          </div>
+        </div>`,
+      )
+      .join("");
+    detail.innerHTML = `
+      <h4 class="dce-detail-title">${escapeHtml(doc.title)}</h4>
+      <div class="dce-detail-path">${escapeHtml(doc.path)}</div>
+      <p class="dce-detail-sub">Grounded to ${doc.linkedFiles.length} source files:</p>
+      ${rows}
+    `;
+  }
+
+  function renderFileDetail(file) {
+    const referencingDocs = file.referencedByDocs
+      .map((id) => docById.get(id))
+      .filter(Boolean);
+    const docChips = referencingDocs
+      .map((d) => `<span class="dce-chip dce-chip-doc">${escapeHtml(d.title)}</span>`)
+      .join("");
+    const symChips = file.topSymbols
+      .map((s) => `<span class="dce-chip">${escapeHtml(s)}</span>`)
+      .join("");
+    const snippet = file.snippet
+      ? `<pre class="dce-snippet"><code>${escapeHtml(file.snippet)}</code></pre>`
+      : "";
+    detail.innerHTML = `
+      <h4 class="dce-detail-title">${escapeHtml(file.path.split("/").pop())}</h4>
+      <div class="dce-detail-path">${escapeHtml(file.path)}</div>
+      <p class="dce-detail-sub">Referenced by ${referencingDocs.length} doc${
+        referencingDocs.length === 1 ? "" : "s"
+      }:</p>
+      <div class="dce-chip-row">${docChips}</div>
+      <p class="dce-detail-sub">Top grounded symbols:</p>
+      <div class="dce-chip-row">${symChips}</div>
+      ${snippet}
+    `;
+  }
+
+  docList.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-doc-id]");
+    if (!btn) return;
+    const doc = docById.get(btn.dataset.docId);
+    clearPressed(docList);
+    btn.setAttribute("aria-pressed", "true");
+    clearPressed(fileList);
+    highlightFilesForDoc(doc);
+    renderDocDetail(doc);
+  });
+
+  fileList.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-file-id]");
+    if (!btn) return;
+    const file = fileById.get(btn.dataset.fileId);
+    clearPressed(fileList);
+    btn.setAttribute("aria-pressed", "true");
+    clearPressed(docList);
+    resetFileHighlight();
+    renderFileDetail(file);
+  });
+</script>
+
+<style>
+  .dce {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-sidebar, var(--sl-color-gray-7));
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .dce-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    padding: 0 0.25rem 0.75rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    margin-bottom: 0.75rem;
+  }
+
+  .dce-meta strong {
+    color: var(--sl-color-white);
+    font-size: 0.95rem;
+  }
+
+  .dce-badge {
+    margin-left: auto;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high, var(--sl-color-accent));
+    border-radius: 999px;
+    padding: 0.15rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .dce-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.3fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .dce-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dce-col-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .dce-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .dce-item {
+    width: 100%;
+    text-align: left;
+    background: var(--sl-color-bg);
+    border: 1px solid var(--sl-color-gray-6);
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    transition:
+      border-color 0.15s,
+      opacity 0.15s;
+    font-family: inherit;
+  }
+
+  .dce-item:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .dce-item[aria-pressed="true"] {
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 1px var(--sl-color-accent);
+  }
+
+  .dce-item-dimmed {
+    opacity: 0.35;
+  }
+
+  .dce-item-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--sl-color-white);
+  }
+
+  .dce-item-path {
+    font-size: 0.72rem;
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+    color: var(--sl-color-gray-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dce-item-count {
+    font-size: 0.7rem;
+    color: var(--sl-color-accent);
+    font-weight: 600;
+  }
+
+  .dce-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.15rem 0;
+  }
+
+  .dce-chip {
+    font-size: 0.68rem;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+    border-radius: 0.3rem;
+    padding: 0.1rem 0.4rem;
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+  }
+
+  .dce-chip-doc {
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high, var(--sl-color-accent));
+    font-family: inherit;
+  }
+
+  .dce-detail {
+    background: var(--sl-color-bg);
+    border: 1px solid var(--sl-color-gray-6);
+    border-radius: 0.5rem;
+    padding: 0.9rem 1rem;
+    min-height: 420px;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .dce-placeholder {
+    color: var(--sl-color-gray-3);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .dce-detail-title {
+    margin: 0 0 0.15rem;
+    font-size: 1rem;
+  }
+
+  .dce-detail-path {
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.75rem;
+  }
+
+  .dce-detail-sub {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sl-color-gray-3);
+    margin: 0.75rem 0 0.35rem;
+  }
+
+  .dce-evidence-row {
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--sl-color-gray-6);
+  }
+
+  .dce-evidence-file {
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+    font-size: 0.78rem;
+    color: var(--sl-color-white);
+    margin-bottom: 0.25rem;
+  }
+
+  .dce-snippet {
+    margin-top: 0.75rem;
+    background: var(--sl-color-gray-7, var(--sl-color-bg-sidebar));
+    border: 1px solid var(--sl-color-gray-6);
+    border-radius: 0.4rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+</style>

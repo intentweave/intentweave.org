@@ -1,0 +1,575 @@
+{
+  "generatedAt": "2026-07-10",
+  "sourceRepo": "intentweave/intentweave",
+  "stats": {
+    "docs": 6,
+    "files": 10,
+    "annotations": 1054
+  },
+  "docs": [
+    {
+      "id": "docs-layered-graph-architecture-md",
+      "title": "Layered Graph Architecture",
+      "path": "docs/LAYERED-GRAPH-ARCHITECTURE.md",
+      "linkedFiles": [
+        {
+          "file": "packages/core/src/types/tcg.ts",
+          "symbols": [
+            "date",
+            "edges",
+            "filePath",
+            "changeType",
+            "linesAdded"
+          ]
+        },
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "risk",
+            "checkTests",
+            "totalSymbols",
+            "moduleSpecifier",
+            "importedNames"
+          ]
+        },
+        {
+          "file": "packages/index/src/facade.ts",
+          "symbols": [
+            "calls",
+            "WorkspaceRoot",
+            "todos",
+            "rationale",
+            "discoverFiles"
+          ]
+        },
+        {
+          "file": "packages/core/src/weave/types.ts",
+          "symbols": [
+            "version",
+            "avgMemberCount",
+            "stats",
+            "id",
+            "kind"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/index.ts",
+          "symbols": [
+            "ReviewStatus",
+            "EntityType",
+            "objectValue",
+            "createdAt",
+            "profiles"
+          ]
+        },
+        {
+          "file": "packages/core/src/transcripts/types.ts",
+          "symbols": [
+            "file",
+            "SourceLocation",
+            "files",
+            "full"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docs-phase-d-spec-md",
+      "title": "Phase D Spec",
+      "path": "docs/PHASE-D-SPEC.md",
+      "linkedFiles": [
+        {
+          "file": "packages/core/src/types/tcg.ts",
+          "symbols": [
+            "date",
+            "filePath",
+            "shortHash",
+            "authorName",
+            "authorEmail"
+          ]
+        },
+        {
+          "file": "packages/core/src/transcripts/types.ts",
+          "symbols": [
+            "count",
+            "score",
+            "file",
+            "updatedAt",
+            "total"
+          ]
+        },
+        {
+          "file": "packages/core/src/weave/types.ts",
+          "symbols": [
+            "version",
+            "confidence"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/index.ts",
+          "symbols": [
+            "ReviewStatus",
+            "Entity"
+          ]
+        },
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "driftCount",
+            "drift"
+          ]
+        },
+        {
+          "file": "packages/cli/src/commands/indexBuild.ts",
+          "symbols": [
+            "layerIndicesFromScope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "-github-copilot-instructions-md",
+      "title": "Copilot Instructions",
+      "path": ".github/copilot-instructions.md",
+      "linkedFiles": [
+        {
+          "file": "packages/index/src/facade.ts",
+          "symbols": [
+            "terminologyInconsistency",
+            "rulesCheck",
+            "buildFromPaths",
+            "dependencyDepth",
+            "layersCheck"
+          ]
+        },
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "IwConfig",
+            "RulesViolation",
+            "mermaid",
+            "RuleDefinition",
+            "ruleDomain"
+          ]
+        },
+        {
+          "file": "packages/core/src/weave/types.ts",
+          "symbols": [
+            "confidence",
+            "aliases",
+            "type",
+            "kind",
+            "deprecated"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/tcg.ts",
+          "symbols": [
+            "minCoChanges",
+            "severity",
+            "filePath"
+          ]
+        },
+        {
+          "file": "packages/core/src/transcripts/types.ts",
+          "symbols": [
+            "files",
+            "full",
+            "paths"
+          ]
+        },
+        {
+          "file": "packages/index/src/export/prescriptiveReport.ts",
+          "symbols": [
+            "PrescriptiveViolation",
+            "InsightsBookData"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "changelog-md",
+      "title": "Changelog",
+      "path": "CHANGELOG.md",
+      "linkedFiles": [
+        {
+          "file": "packages/index/src/facade.ts",
+          "symbols": [
+            "retrieve",
+            "testCoverage",
+            "rulesCheck",
+            "focus",
+            "layersInfer"
+          ]
+        },
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "idfScore",
+            "value_pattern",
+            "violations",
+            "context_import",
+            "except_symbol"
+          ]
+        },
+        {
+          "file": "packages/cli/src/commands/indexBuild.ts",
+          "symbols": [
+            "rebuildFtsIndexes",
+            "runCariBuild",
+            "layerIndicesFromImportPattern",
+            "parseLayersYaml"
+          ]
+        },
+        {
+          "file": "packages/index/src/export/prescriptiveReport.ts",
+          "symbols": [
+            "InsightsRulesCatalog",
+            "InsightsCodeHealth",
+            "InsightsCallGraph",
+            "terminology"
+          ]
+        },
+        {
+          "file": "packages/core/src/plugin.ts",
+          "symbols": [
+            "LanguageCapability",
+            "PersistenceCapability",
+            "LlmCapability",
+            "persist"
+          ]
+        },
+        {
+          "file": "packages/core/src/transcripts/types.ts",
+          "symbols": [
+            "files",
+            "paths",
+            "mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "readme-md",
+      "title": "README",
+      "path": "README.md",
+      "linkedFiles": [
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "include",
+            "entityId",
+            "resolution",
+            "allowSkipLayer",
+            "limitSymbols"
+          ]
+        },
+        {
+          "file": "packages/core/src/weave/types.ts",
+          "symbols": [
+            "deprecated",
+            "runId",
+            "type",
+            "kind"
+          ]
+        },
+        {
+          "file": "packages/core/src/transcripts/types.ts",
+          "symbols": [
+            "files",
+            "mode",
+            "paths"
+          ]
+        },
+        {
+          "file": "packages/core/src/plugin.ts",
+          "symbols": [
+            "dependencies",
+            "provider"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/tcg.ts",
+          "symbols": [
+            "severity",
+            "filePath"
+          ]
+        },
+        {
+          "file": "packages/index/src/facade.ts",
+          "symbols": [
+            "communities"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docs-library-api-md",
+      "title": "Library API",
+      "path": "docs/LIBRARY-API.md",
+      "linkedFiles": [
+        {
+          "file": "packages/index/src/types.ts",
+          "symbols": [
+            "outputPath",
+            "ExternalEntity",
+            "entityId",
+            "totalExported",
+            "coveragePercent"
+          ]
+        },
+        {
+          "file": "packages/index/src/facade.ts",
+          "symbols": [
+            "CariIndex",
+            "CariStageProgress",
+            "onProgress",
+            "CariConfig",
+            "registerEntities"
+          ]
+        },
+        {
+          "file": "packages/index/src/writer.ts",
+          "symbols": [
+            "registerExternalEntities",
+            "buildIndex"
+          ]
+        },
+        {
+          "file": "packages/core/src/weave/types.ts",
+          "symbols": [
+            "version"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/index.ts",
+          "symbols": [
+            "ReviewStatus"
+          ]
+        },
+        {
+          "file": "packages/core/src/types/tcg.ts",
+          "symbols": [
+            "coChangeCount"
+          ]
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "id": "packages-index-src-facade-ts",
+      "path": "packages/index/src/facade.ts",
+      "lines": 1171,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "testCoverage",
+        "terminologyInconsistency",
+        "todos",
+        "rationale",
+        "layersCheck",
+        "CariStageProgress"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * CariIndex — High-level facade for the Code-Aware Retrieval Index.\n *\n * Provides a consumer-friendly API that wraps pipeline orchestration,\n * DB lifecycle, and typed query methods. Consumers call `CariIndex.build()`\n * or `CariIndex.load()` and get a ready-to-query instance.\n *\n * @example\n * ```typescript\n * import { CariIndex } from '@intentweave/index';\n *\n * // Build from scratch\n * const index = await CariIndex.build({\n *   paths: ['docs/', 'packages/'],\n *   workspaceRoot: process.cwd(),"
+    },
+    {
+      "id": "packages-index-src-types-ts",
+      "path": "packages/index/src/types.ts",
+      "lines": 2907,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "driftCount",
+        "entityId",
+        "drift",
+        "allowSkipLayer",
+        "totalExported",
+        "minLayers"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * CARI (Code-Aware Retrieval Index) Types\n *\n * Lightweight types for the SQLite-based retrieval index.\n * Consumed by agents, CI, and editors — no Neo4j required.\n */\n\n// =============================================================================\n// Annotation (doc span → code symbol)\n// =============================================================================\n\n/**\n * How a doc mention was matched to a code symbol.\n */\nexport type MatchType = \"exact\" | \"slug\" | \"token\" | \"heading\" | \"ungrounded\";"
+    },
+    {
+      "id": "packages-core-src-weave-types-ts",
+      "path": "packages/core/src/weave/types.ts",
+      "lines": 537,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "kind",
+        "deprecated",
+        "confidence",
+        "aliases",
+        "version",
+        "type"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * Weave Types\n *\n * Type definitions for the WX (Weave/Canonicalization) stage.\n * Implements the two-layer identity model:\n * - cgId = provenance identity (artifact-scoped, stable across re-extractions)\n * - canonicalId = workspace identity (role-scoped, unified across artifacts)\n */\n\nimport type { ArtifactRole, EntityType } from \"./normalize.js\";\n\n// =============================================================================\n// Evidence Types (First-Class)\n// =============================================================================\n"
+    },
+    {
+      "id": "packages-core-src-types-index-ts",
+      "path": "packages/core/src/types/index.ts",
+      "lines": 411,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "Entity",
+        "ReviewStatus",
+        "annotations",
+        "EntityType",
+        "objectValue",
+        "createdAt"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * Core Types for IntentWeave\n *\n * These types are the foundation of the knowledge graph model.\n * This is the SINGLE SOURCE OF TRUTH for entity types.\n *\n * @version 2.0.0 - Unified schema (no serverInteractive/coreRich split)\n */\n\n// Stage output types\nexport * from \"./stages.js\";\n\n// KWG (Keyword Graph) types — Phase A evidence graph\nexport * from \"./kwg.js\";\n"
+    },
+    {
+      "id": "packages-core-src-types-tcg-ts",
+      "path": "packages/core/src/types/tcg.ts",
+      "lines": 420,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "severity",
+        "edges",
+        "filePath",
+        "changeType",
+        "linesAdded",
+        "linesRemoved"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * TCG (Temporal Change Graph) Types — Phase B\n *\n * The TCG is the temporal dimension of the IntentWeave knowledge graph.\n * It extracts git history signals: co-change relationships, hotspot\n * detection, ownership mapping, and staleness scoring — all without\n * LLM calls ($0).\n *\n * Pipeline: TCX (commits) → COC (co-change) → HOT (hotspots) → OWN (ownership) → STL (staleness)\n *\n * @see PHASE-B-SPEC.md\n * @see LAYERED-GRAPH-ARCHITECTURE.md §4.6\n * @version 0.1\n */\n"
+    },
+    {
+      "id": "packages-core-src-transcripts-types-ts",
+      "path": "packages/core/src/transcripts/types.ts",
+      "lines": 391,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-library-api-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "file",
+        "files",
+        "paths",
+        "full",
+        "mode",
+        "SourceLocation"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * Transcript System Types\n *\n * Canonical types for chat/conversation artifacts and adapter contracts.\n * All adapters produce TranscriptMessage[] in the same format.\n */\n\n// =============================================================================\n// Core Message Types\n// =============================================================================\n\n/**\n * Message role - what purpose a message serves in the transcript.\n * Orthogonal to speaker (who said it).\n *"
+    },
+    {
+      "id": "packages-cli-src-commands-indexbuild-ts",
+      "path": "packages/cli/src/commands/indexBuild.ts",
+      "lines": 8559,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "layerIndicesFromScope",
+        "buildPrescriptiveReportData",
+        "rebuildFtsIndexes",
+        "runCariBuild",
+        "layerIndicesFromImportPattern",
+        "parseLayersYaml"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * iw index build — Build the Code-Aware Retrieval Index (CARI).\n *\n * Thin CLI wrapper over `buildFromPaths()` from @intentweave/index.\n * All pipeline orchestration lives in the facade — this file only\n * handles argument parsing and formatted console output.\n *\n * Output: .iw/index.db\n *\n * Usage:\n *   iw index build docs/ -s my-project -v\n *   iw index build docs/ -s my-project --depth full -v\n *\n * @version 0.2\n */"
+    },
+    {
+      "id": "packages-core-src-plugin-ts",
+      "path": "packages/core/src/plugin.ts",
+      "lines": 202,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md",
+        "docs-phase-d-spec-md"
+      ],
+      "topSymbols": [
+        "persist",
+        "dependencies",
+        "provider",
+        "registerMcpTools",
+        "LanguageCapability",
+        "PersistenceCapability"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * Plugin System — Types & Interfaces\n *\n * Defines the IWPlugin interface and capability contracts that plugins\n * implement. Core features consume capabilities without depending on\n * specific plugins.\n *\n * @module plugin\n */\n\n// Re-export the existing LLMProvider so plugins can reference it\n// without importing from interfaces.ts directly.\nimport type { LLMProvider } from \"./interfaces.js\";\n\n// ============================================================================="
+    },
+    {
+      "id": "packages-index-src-export-prescriptivereport-ts",
+      "path": "packages/index/src/export/prescriptiveReport.ts",
+      "lines": 2597,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-layered-graph-architecture-md"
+      ],
+      "topSymbols": [
+        "InsightsCallGraph",
+        "PrescriptiveViolation",
+        "PrescriptiveCariOverlay",
+        "InsightsBookData",
+        "InsightsRulesCatalog",
+        "InsightsCodeHealth"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * 17.1 Prescriptive Architecture Report — SVG Renderer\n *\n * Renders a deterministic, top-down \"should-be\" architecture view:\n * - Layers are drawn top-down (consumers/entrypoints at top)\n * - Allowed edges (derived defaults) in green\n * - Forbidden/violating edges in red\n * - Optional rule-expressed elements inside layer containers\n */\n\nexport interface PrescriptiveElementNode {\n  name: string;\n  kind: \"component\" | \"class\" | \"method\" | \"symbol\";\n  layerName: string;\n  ruleId?: string;"
+    },
+    {
+      "id": "packages-index-src-writer-ts",
+      "path": "packages/index/src/writer.ts",
+      "lines": 1008,
+      "referencedByDocs": [
+        "-github-copilot-instructions-md",
+        "changelog-md",
+        "readme-md",
+        "docs-library-api-md"
+      ],
+      "topSymbols": [
+        "buildIndex",
+        "resolveTargetFile",
+        "writeCoOccurrences",
+        "snapshotConformance",
+        "writePropertyAccesses",
+        "registerExternalEntities"
+      ],
+      "snippet": "// Copyright 2025-2026 Benjamin Becker\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * CARI Index Writer\n *\n * Consumes stage outputs (AX, KWX, COX, TCG) and writes them\n * into the SQLite index. Batch inserts (500/tx) for performance.\n */\n\nimport Database from \"@intentweave/sqlite-compat\";\nimport * as path from \"path\";\nimport * as fs from \"fs\";\n\nimport { initSchema } from \"./schema.js\";\nimport { rulesCheckFromDb } from \"./queries/rulesCheck.js\";\nimport type {\n  IndexBuildOptions,"
+    }
+  ]
+}

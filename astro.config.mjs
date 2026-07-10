@@ -74,6 +74,7 @@ export default defineConfig({
 				{
 					label: 'Use Cases',
 					items: [
+						{ label: 'Live Demo: Doc ↔ Code Map', slug: 'examples/live-doc-code-map' },
 						{ label: 'Auth Topic Retrieval', slug: 'examples/auth-retrieval' },
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
 						{ label: 'PR Drift Check', slug: 'examples/pr-drift' },

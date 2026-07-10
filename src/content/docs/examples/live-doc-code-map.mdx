@@ -1,0 +1,34 @@
+---
+title: "Live Demo: Doc ↔ Code Explorer"
+description: Click a doc or a source file to see the real grounded relationship CARI extracted from IntentWeave's own repository.
+---
+
+import DocCodeExplorer from "../../../components/DocCodeExplorer.astro";
+
+Every doc-to-code relationship below comes from IntentWeave analyzing **its own repository** —
+the same evidence that would show up on the "Documentation & Source" chapter of your own
+[Insights Book](/docs/cari/insights-book/). No LLM, no manual tagging: CARI grounds doc
+mentions (headings, bold terms, code identifiers) to real exported symbols via AST + IDF
+scoring, entirely from the SQLite index.
+
+<DocCodeExplorer />
+
+## How This Works
+
+1. **`iw index build`** parses every source file with tree-sitter and extracts exported
+   symbols (functions, classes, types, interfaces) into the `symbols` table.
+2. Every Markdown doc is scanned for headings, bold spans, code spans, and identifier-like
+   body text. Each mention is matched against the symbol dictionary and written to the
+   `annotations` table with a confidence score (IDF-penalized so common words like `file`
+   or `date` don't dominate).
+3. **`iw index annotations-for <doc>`** and **`cari_annotations_for`** (MCP) surface this
+   exact relationship — the panel above is just those two queries, aggregated and rendered.
+
+```bash
+# Reproduce this locally, on your own repo
+iw index build
+iw index annotations-for docs/ARCHITECTURE.md --min-confidence 0.7
+```
+
+Try it against your own docs — the grounding confidence, the symbol list, and the reverse
+"referenced by N docs" view are all live, computed in under a second, with zero API calls.
