@@ -7,6 +7,8 @@ import { Aside } from '@astrojs/starlight/components';
 
 # IntentWeave vs. ArchUnitTS
 
+*Part of the [IntentWeave comparisons](/compare/overview/) series.*
+
 <Aside type="note">
 This page is maintained by the IntentWeave team. ArchUnitTS is a genuinely well-built library —
 we've tried to represent it fairly. If something here is inaccurate or out of date,
@@ -83,9 +85,9 @@ IntentWeave's rules engine adds:
   that's since changed.
 - **ADR extraction (optional LLM step)** — `iw index rules-extract` drafts a `rules.yaml` straight
   from a written ADR, instead of every rule being hand-written as a test.
-- **RAG context for AI coding agents** — `iw index context-pack` hands Copilot/Claude a
-  token-budgeted, ranked bundle of files, rules, and doc drift — entirely outside what an
-  architecture *testing* library is designed to do.
+- **RAG context for AI coding agents** — `iw index context-pack` hands your AI coding agent —
+  Copilot, Claude, or any MCP client — a token-budgeted, ranked bundle of files, rules, and doc
+  drift — entirely outside what an architecture *testing* library is designed to do.
 
 ## Rule syntax, side by side
 
@@ -157,6 +159,6 @@ iw init
 iw index build          # < 3 seconds, zero API calls
 ```
 
-See the [Rules Catalog live on IntentWeave's own repo](https://intentweave.org/examples/live-rules-catalog/),
-or read the [Semantic Rule Checking reference](https://intentweave.org/docs/cari/semantic-rules/) for
+See the [Rules Catalog live on IntentWeave's own repo](/examples/live-rules-catalog/),
+or read the [Semantic Rule Checking reference](/docs/cari/semantic-rules/) for
 the full rule-type list.

@@ -89,6 +89,15 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'Compare',
+					items: [
+						{ label: 'Overview', slug: 'compare/overview' },
+						{ label: 'vs. Semgrep', slug: 'compare/vs-semgrep' },
+						{ label: 'vs. ArchUnitTS', slug: 'compare/vs-arcunitts' },
+						{ label: 'vs. dependency-cruiser', slug: 'compare/vs-dependency-cruiser' },
+					],
+				},
+				{
 					label: 'Architecture',
 					items: [
 						{ label: 'Overview', slug: 'architecture/overview' },

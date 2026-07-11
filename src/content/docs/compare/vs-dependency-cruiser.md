@@ -7,6 +7,8 @@ import { Aside } from '@astrojs/starlight/components';
 
 # IntentWeave vs. dependency-cruiser
 
+*Part of the [IntentWeave comparisons](/compare/overview/) series.*
+
 <Aside type="note">
 This page is maintained by the IntentWeave team. We use dependency-cruiser ourselves in some
 projects and think it's a genuinely good tool — we've tried to represent it fairly. If something
@@ -75,9 +77,9 @@ domains dependency-cruiser doesn't cover at all:
   reference code that's since changed.
 - **ADR extraction (optional LLM step)** — `iw index rules-extract` reads a written ADR and drafts
   a `rules.yaml` for you, instead of requiring every rule to be hand-authored.
-- **RAG context for AI coding agents** — `iw index context-pack` hands Copilot/Claude a
-  token-budgeted, ranked bundle of files, rules, and doc drift for a query — something entirely
-  outside dependency-cruiser's scope.
+- **RAG context for AI coding agents** — `iw index context-pack` hands your AI coding agent —
+  Copilot, Claude, or any MCP client — a token-budgeted, ranked bundle of files, rules, and doc
+  drift for a query — something entirely outside dependency-cruiser's scope.
 
 ## Rule syntax, side by side
 
@@ -147,6 +149,6 @@ iw init
 iw index build          # < 3 seconds, zero API calls
 ```
 
-See the [Rules Catalog live on IntentWeave's own repo](https://intentweave.org/examples/live-rules-catalog/),
-or read the [Semantic Rule Checking reference](https://intentweave.org/docs/cari/semantic-rules/) for
+See the [Rules Catalog live on IntentWeave's own repo](/examples/live-rules-catalog/),
+or read the [Semantic Rule Checking reference](/docs/cari/semantic-rules/) for
 the full rule-type list.
