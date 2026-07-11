@@ -43,6 +43,7 @@ export default defineConfig({
 						{ label: 'Overview', slug: 'docs/cari/overview' },
 						{ label: 'Build the Index', slug: 'docs/cari/build' },
 						{ label: 'Retrieve', slug: 'docs/cari/retrieve' },
+						{ label: 'Adaptive Context Package', slug: 'docs/cari/context-pack' },
 						{ label: 'Connections & Gaps', slug: 'docs/cari/connections' },
 						{ label: 'Architecture Visualization', slug: 'docs/cari/focus' },
 						{ label: 'Health Report', slug: 'docs/cari/report' },
@@ -79,6 +80,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Live Demo: Doc ↔ Code Map', slug: 'examples/live-doc-code-map' },
 						{ label: 'Live Demo: Rules Catalog', slug: 'examples/live-rules-catalog' },
+						{ label: 'Live Demo: Adaptive Context Package', slug: 'examples/live-context-pack' },
 						{ label: 'Auth Topic Retrieval', slug: 'examples/auth-retrieval' },
 						{ label: 'Hidden Coupling', slug: 'examples/hidden-coupling' },
 						{ label: 'PR Drift Check', slug: 'examples/pr-drift' },

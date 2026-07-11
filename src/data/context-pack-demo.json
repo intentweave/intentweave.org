@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-07-11",
+  "sourceRepo": "intentweave/intentweave",
+  "example": {
+    "query": "context-pack ranking noise",
+    "anchorFile": "packages/index/src/queries/contextPack.ts",
+    "budget": 2000,
+    "modes": {
+      "off": [
+        { "path": "docs/PLAN-ADAPTIVITY-CONTEXT-PACKAGE.md", "score": 3.93, "role": "doc", "reason": "annotation match" },
+        { "path": "CHANGELOG.md", "score": 3.39, "role": "doc", "reason": "annotation match" },
+        { "path": "packages/core/src/errors.ts", "score": 2.25, "role": "code", "reason": "annotated symbol: context" },
+        { "path": "packages/core/src/interfaces.ts", "score": 2.25, "role": "code", "reason": "annotated symbol: index" },
+        { "path": "packages/index/src/queries/contextPack.ts", "score": 1.2, "role": "code", "reason": "annotated symbol: contextPack" },
+        { "path": "docs/LIBRARY-API.md", "score": 1.06, "role": "doc", "reason": "annotation + co-occurrence" },
+        { "path": "docs/LAYERED-GRAPH-ARCHITECTURE.md", "score": 0.94, "role": "doc", "reason": "annotation + co-occurrence" },
+        { "path": "docs/PRODUCT-CONCEPT.md", "score": 0.94, "role": "doc", "reason": "annotation: \"noise reduction strategy\"" },
+        { "path": "packages/core/src/types/kwg.ts", "score": 0.75, "role": "code", "reason": "annotated symbol: mentions" },
+        { "path": "packages/index/src/export/prescriptiveReport.ts", "score": 0.75, "role": "code", "reason": "annotated symbol: documentation" },
+        { "path": "packages/core/src/types/hooks.ts", "score": 0.75, "role": "code", "reason": "annotated symbol: strategy" },
+        { "path": "packages/index/src/__tests__/topology.test.ts", "score": 0.12, "role": "code", "reason": "annotation: \"Ranking\"" },
+        { "path": "packages/index/src/queries/surprises.ts", "score": 0.12, "role": "code", "reason": "annotation: \"Ranking\"" },
+        { "path": ".github/pull_request_template.md", "score": 0, "role": "doc", "reason": "FTS fallback — co-occurs with \"added\"" },
+        { "path": "docs/ADR-001-INTENT-ENGINE.md", "score": 0, "role": "doc", "reason": "FTS fallback" },
+        { "path": ".github/copilot-instructions.md", "score": 0, "role": "doc", "reason": "FTS fallback" },
+        { "path": ".github/prompts/focused-architecture.prompt.md", "score": 0, "role": "doc", "reason": "FTS fallback" },
+        { "path": ".github/skills/iw-drift-detection/SKILL.md", "score": 0, "role": "doc", "reason": "FTS fallback" },
+        { "path": "README.md", "score": 0, "role": "doc", "reason": "FTS fallback" }
+      ],
+      "conservative": [
+        { "path": "docs/PLAN-ADAPTIVITY-CONTEXT-PACKAGE.md", "score": 3.93, "role": "doc", "reason": "annotation match" },
+        { "path": "CHANGELOG.md", "score": 3.39, "role": "doc", "reason": "annotation match" },
+        { "path": "packages/core/src/errors.ts", "score": 2.25, "role": "code", "reason": "annotated symbol: context" },
+        { "path": "packages/core/src/interfaces.ts", "score": 2.25, "role": "code", "reason": "annotated symbol: index" },
+        { "path": "packages/index/src/queries/check.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/queries/connections.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/queries/index.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/queries/retrieve.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/queries/shared.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/types.ts", "score": 1.96, "role": "code", "reason": "anchor-neighbor: import", "boosted": true },
+        { "path": "packages/index/src/queries/archCheck.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/archReport.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/boundaryViolations.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/calls.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/capsuleWriter.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/clones.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/commentCodeRatio.ts", "score": 1.37, "role": "code", "reason": "anchor-neighbor: same folder", "boosted": true },
+        { "path": "packages/index/src/queries/contextPack.ts", "score": 1.2, "role": "code", "reason": "annotated symbol: contextPack" },
+        { "path": "docs/LIBRARY-API.md", "score": 1.06, "role": "doc", "reason": "annotation + co-occurrence" },
+        { "path": "docs/LAYERED-GRAPH-ARCHITECTURE.md", "score": 0.94, "role": "doc", "reason": "annotation + co-occurrence" }
+      ]
+    }
+  },
+  "evalMetrics": {
+    "topK": 20,
+    "repos": [
+      {
+        "name": "intentweave",
+        "off": { "noisyPathSharePct": 0, "anchorHitRatePct": 100, "latencyP50": 3.4, "latencyP95": 8.2 },
+        "conservative": { "noisyPathSharePct": 0, "anchorHitRatePct": 100, "latencyP50": 7.5, "latencyP95": 17.9 }
+      },
+      {
+        "name": "backstage",
+        "off": { "noisyPathSharePct": 21, "anchorHitRatePct": 0, "latencyP50": 27.3, "latencyP95": 55.8 },
+        "conservative": { "noisyPathSharePct": 0, "anchorHitRatePct": 88.9, "latencyP50": 35.9, "latencyP95": 113.6 }
+      },
+      {
+        "name": "codegraphchat-v2",
+        "off": { "noisyPathSharePct": 14, "anchorHitRatePct": 70, "latencyP50": 100.1, "latencyP95": 443.9 },
+        "conservative": { "noisyPathSharePct": 3.7, "anchorHitRatePct": 90, "latencyP50": 111.3, "latencyP95": 523.2 }
+      }
+    ]
+  }
+}

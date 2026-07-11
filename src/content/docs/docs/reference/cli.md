@@ -101,6 +101,33 @@ Incremental index update.
 iw index update [-v]
 ```
 
+### `iw index context-pack`
+
+Composite, token-budgeted RAG bundle (files + symbols + rules + connections + rationale + drift)
+for LLM prompt injection, with adaptive ranking. See [Adaptive Context Package](/docs/cari/context-pack/).
+
+```bash
+iw index context-pack --query <text> [options]
+```
+
+| Option                | Default        | Description                                                 |
+| --------------------- | -------------- | ------------------------------------------------------------ |
+| `--query <text>`      | —              | Natural-language topic or task description                   |
+| `--files <paths...>`  | —              | Files being edited/changed — anchors drift + symbol lookup    |
+| `--entity <name>`     | —              | Anchor on a specific symbol/component                          |
+| `--budget <n>`        | `4000`         | Approximate token budget (max `12000`)                        |
+| `--sections <list>`   | all            | `files,symbols,rules,connections,rationale,drift`             |
+| `--adaptive <mode>`   | `conservative` | `off`, `conservative`, `aggressive`                            |
+| `--adaptive-explain`  | off            | Include per-file scoring diagnostics                          |
+
+### `iw index eval`
+
+Measure context-pack quality (noisy-path share, anchor hit rate, latency) on a fixed query set.
+
+```bash
+iw index eval --queries .iw/eval/queries.json --adaptive conservative
+```
+
 ### CARI Analysis Subcommands
 
 All analysis queries are available as `iw index` subcommands:

@@ -1,0 +1,326 @@
+---
+// Live "Adaptive Context Package" explorer — real `iw index context-pack`
+// output from IntentWeave's own self-analysis, comparing --adaptive=off
+// (raw FTS/annotation ranking) against --adaptive=conservative (Phase B
+// repo-shape path priors + Phase C anchor-aware neighborhood boosting).
+// Data captured from a live run against this repo's own .iw/index.db —
+// not synthetic. Restyled to the site's Starlight theme.
+import demoData from "../data/context-pack-demo.json";
+
+interface FileEntry {
+  path: string;
+  score: number;
+  role: "code" | "doc";
+  reason: string;
+  boosted?: boolean;
+}
+
+const example = demoData.example;
+const offFiles = example.modes.off as FileEntry[];
+const consFiles = example.modes.conservative as FileEntry[];
+const repos = demoData.evalMetrics.repos;
+---
+
+<div class="cpe" id="cpe-root">
+  <div class="cpe-meta">
+    <span>
+      query: <code>"{example.query}"</code>
+    </span>
+    <span>
+      anchor: <code>{example.anchorFile}</code>
+    </span>
+    <span class="cpe-badge">live self-analysis · {demoData.generatedAt}</span>
+  </div>
+
+  <div class="cpe-toggle" role="tablist">
+    <button class="cpe-tab" data-mode="off" aria-pressed="true">
+      --adaptive=off
+    </button>
+    <button class="cpe-tab" data-mode="conservative" aria-pressed="false">
+      --adaptive=conservative
+    </button>
+  </div>
+
+  <p class="cpe-hint" id="cpe-hint">
+    Raw FTS + annotation ranking. Notice the zero-score files near the bottom —
+    generic term matches with no real relevance (PR templates, unrelated ADRs,
+    skill files).
+  </p>
+
+  <ol class="cpe-list" id="cpe-list">
+    {
+      offFiles.map((f, idx) => (
+        <li class="cpe-row" data-role={f.role}>
+          <span class="cpe-rank">#{idx + 1}</span>
+          <code class="cpe-path">{f.path}</code>
+          <span class="cpe-score">{f.score.toFixed(2)}</span>
+          <span class="cpe-reason">{f.reason}</span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="cpe-metrics">
+    <div class="cpe-metrics-title">
+      Eval results across 3 repos (<code>iw index eval</code>, real M2 validation reports)
+    </div>
+    <table class="cpe-table">
+      <thead>
+        <tr>
+          <th>Repo</th>
+          <th>Noisy-path share (off → conservative)</th>
+          <th>Anchor hit rate (off → conservative)</th>
+          <th>Latency p50 / p95 (conservative)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          repos.map((r) => (
+            <tr>
+              <td><code>{r.name}</code></td>
+              <td>
+                <span class="cpe-metric-before">{r.off.noisyPathSharePct}%</span>
+                <span class="cpe-metric-arrow">→</span>
+                <span class="cpe-metric-after">{r.conservative.noisyPathSharePct}%</span>
+              </td>
+              <td>
+                <span class="cpe-metric-before">{r.off.anchorHitRatePct}%</span>
+                <span class="cpe-metric-arrow">→</span>
+                <span class="cpe-metric-after">{r.conservative.anchorHitRatePct}%</span>
+              </td>
+              <td>{r.conservative.latencyP50}ms / {r.conservative.latencyP95}ms</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script define:vars={{ offFiles, consFiles }}>
+  const listEl = document.getElementById("cpe-list");
+  const hintEl = document.getElementById("cpe-hint");
+  const tabs = document.querySelectorAll("#cpe-root .cpe-tab");
+
+  const hints = {
+    off: `Raw FTS + annotation ranking. Notice the zero-score files near the bottom — generic term matches with no real relevance (PR templates, unrelated ADRs, skill files).`,
+    conservative: `Phase C anchor-aware boosting promotes real import-neighbors and same-folder files of the anchor (contextPack.ts) to the top — check.ts, connections.ts, retrieve.ts, shared.ts, types.ts are its actual dependencies. The FTS-noise tail from the "off" run is gone.`,
+  };
+
+  function escapeHtml(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function render(mode) {
+    const files = mode === "off" ? offFiles : consFiles;
+    listEl.innerHTML = files
+      .map(
+        (f, idx) => `
+        <li class="cpe-row${f.boosted ? " cpe-row-boosted" : ""}" data-role="${f.role}">
+          <span class="cpe-rank">#${idx + 1}</span>
+          <code class="cpe-path">${escapeHtml(f.path)}</code>
+          <span class="cpe-score">${f.score.toFixed(2)}</span>
+          <span class="cpe-reason">${escapeHtml(f.reason)}${f.boosted ? ' <span class="cpe-boost-tag">boosted</span>' : ""}</span>
+        </li>`,
+      )
+      .join("");
+    hintEl.textContent = hints[mode];
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.setAttribute("aria-pressed", "false"));
+      tab.setAttribute("aria-pressed", "true");
+      render(tab.getAttribute("data-mode"));
+    });
+  });
+</script>
+
+<style>
+  .cpe {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-sidebar, var(--sl-color-gray-7));
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .cpe-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.75rem;
+    align-items: center;
+  }
+
+  .cpe-meta code {
+    color: var(--sl-color-gray-1);
+    background: var(--sl-color-gray-6);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.3rem;
+    font-size: var(--sl-text-xs);
+  }
+
+  .cpe-badge {
+    margin-left: auto;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-accent-high, var(--sl-color-accent));
+  }
+
+  .cpe-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cpe-tab {
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    cursor: pointer;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg);
+    color: var(--sl-color-gray-2);
+  }
+
+  .cpe-tab[aria-pressed="true"] {
+    background: var(--sl-color-accent-low);
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+    font-weight: 600;
+  }
+
+  .cpe-hint {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+    margin: 0 0 0.75rem;
+  }
+
+  .cpe-list {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-height: 26rem;
+    overflow-y: auto;
+  }
+
+  .cpe-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr 3rem;
+    grid-template-areas: "rank path score" ". reason reason";
+    gap: 0.15rem 0.6rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.35rem;
+    align-items: baseline;
+    font-size: var(--sl-text-xs);
+  }
+
+  .cpe-row-boosted {
+    background: var(--sl-color-accent-low);
+  }
+
+  .cpe-rank {
+    grid-area: rank;
+    color: var(--sl-color-gray-4);
+  }
+
+  .cpe-path {
+    grid-area: path;
+    background: none;
+    color: var(--sl-color-gray-1);
+    font-size: var(--sl-text-xs);
+  }
+
+  .cpe-score {
+    grid-area: score;
+    text-align: right;
+    color: var(--sl-color-gray-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cpe-reason {
+    grid-area: reason;
+    color: var(--sl-color-gray-4);
+    font-size: var(--sl-text-xs);
+  }
+
+  .cpe-boost-tag {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 0.75rem;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-bg);
+    font-weight: 600;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+  }
+
+  .cpe-metrics {
+    border-top: 1px solid var(--sl-color-gray-5);
+    padding-top: 0.75rem;
+  }
+
+  .cpe-metrics-title {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+    margin-bottom: 0.5rem;
+  }
+
+  .cpe-metrics-title code {
+    background: var(--sl-color-gray-6);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.3rem;
+  }
+
+  .cpe-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--sl-text-xs);
+  }
+
+  .cpe-table th {
+    text-align: left;
+    color: var(--sl-color-gray-3);
+    font-weight: 600;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .cpe-table td {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+  }
+
+  .cpe-metric-before {
+    color: var(--sl-color-gray-4);
+  }
+
+  .cpe-metric-arrow {
+    margin: 0 0.3rem;
+    color: var(--sl-color-gray-4);
+  }
+
+  .cpe-metric-after {
+    color: var(--sl-color-accent-high, var(--sl-color-accent));
+    font-weight: 600;
+  }
+
+  @media (min-width: 40rem) {
+    .cpe-row {
+      grid-template-columns: 2.5rem 22rem 3rem 1fr;
+      grid-template-areas: "rank path score reason";
+    }
+  }
+</style>

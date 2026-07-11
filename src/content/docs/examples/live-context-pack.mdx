@@ -1,0 +1,48 @@
+---
+title: "Live Demo: Adaptive Context Package"
+description: Real `iw index context-pack` output comparing --adaptive=off vs --adaptive=conservative, with real M2 validation metrics across three repos.
+---
+
+import ContextPackExplorer from "../../../components/ContextPackExplorer.astro";
+
+`iw index context-pack` builds a single, token-budgeted RAG bundle — ranked files, symbols,
+architecture rules, cross-layer connections, rationale, and doc drift — in one call, so you
+can hand an LLM real context instead of letting it guess. The **adaptive ranking** layer
+reorders that bundle using signals CARI already has: your import graph and directory shape.
+
+The example below is a real run against IntentWeave's own `.iw/index.db` — same query,
+same anchor file, two adaptive modes. Toggle between them to see the ranking change.
+
+<ContextPackExplorer />
+
+## How This Works
+
+1. **Baseline (`--adaptive=off`)** ranks files by annotation match, FTS relevance, and
+   co-occurrence only — the same scoring `iw index retrieve` has always used.
+2. **Repo-shape adaptation (Phase B)** downweights low-signal and "meta" directories
+   (`.changeset/`, `.specstory/`, `archive/`, `node_modules/`, etc.) using per-directory
+   annotation density computed straight from the `annotations` table — no config needed,
+   though `.iw/config.yaml` lets you pin exceptions for paths you always want surfaced.
+3. **Anchor-aware adaptation (Phase C)** boosts files that are *actually* connected to the
+   file(s) you pass via `--files`: exact anchor (1.5×), same folder (1.2×), same package
+   (1.1×), 1-hop import-neighbor (1.05×) — all read directly from the `imports` table CARI
+   already builds. In the demo above, `check.ts`, `connections.ts`, `retrieve.ts`,
+   `shared.ts`, and `types.ts` all get promoted because they're real imports of the anchor
+   file, `contextPack.ts`.
+
+Both are shipped and on by default (`conservative` mode). Intent classification, per-section
+confidence budgeting, and a feedback-loop cache are specced in the roadmap but not yet
+implemented — see [Adaptive Context Package](/docs/cari/context-pack/) for the full rollout plan.
+
+```bash
+# Reproduce this locally, on your own repo
+iw index build
+iw index context-pack \
+  --query "context-pack ranking noise" \
+  --files packages/index/src/queries/contextPack.ts \
+  --adaptive conservative --adaptive-explain \
+  --sections files --format json
+
+# Measure it on a fixed query set
+iw index eval --queries .iw/eval/queries.json --adaptive conservative
+```
