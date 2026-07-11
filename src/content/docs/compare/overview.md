@@ -18,7 +18,7 @@ call-graph checks, doc↔code drift, and RAG context — none of which the other
 | Tool | Primary focus | Where IntentWeave overlaps | Where IntentWeave goes further |
 |---|---|---|---|
 | [Semgrep](/compare/vs-semgrep/) | Security vulnerability scanning (SAST), 30+ languages | Custom AST pattern rules | Layer/import rules as a first-class concept, behavioral call-graph rules, doc↔code drift, ADR extraction, RAG context |
-| [ArchUnitTS](/compare/vs-arcunitts/) | Architecture rules as unit tests, classic OO metrics | Import/layer boundary rules | AST-level rules with taint tracking, custom graph queries, behavioral call-graph rules, doc↔code drift, ADR extraction, RAG context |
+| [ArchUnitTS](/compare/vs-archunitts/) | Architecture rules as unit tests, classic OO metrics | Import/layer boundary rules | AST-level rules with taint tracking, custom graph queries, behavioral call-graph rules, doc↔code drift, ADR extraction, RAG context |
 | [dependency-cruiser](/compare/vs-dependency-cruiser/) | Import graph validation & visualization | Import/dependency boundary rules, circular dependency detection | AST-level rules with taint tracking, custom graph queries, behavioral call-graph rules, doc↔code drift, ADR extraction, RAG context |
 
 ## What's Consistently Outside These Tools' Scope
