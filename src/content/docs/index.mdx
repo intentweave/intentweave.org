@@ -4,18 +4,18 @@ description: "CARI: a $0 local workspace index. Intent Guardrails: your ADRs and
 template: splash
 hero:
   title: Know your codebase. Enforce your intent.
-  tagline: "Two products for engineering teams — a $0 local index and ADR-level guardrails that run in CI."
+  tagline: "AI agents and busy developers can implement code that quietly breaks your architecture — and nobody notices until review. IntentWeave builds a local evidence index from your code and docs, then enforces your ADRs and conventions in CI. No LLM required to run it, no servers, no API keys."
   image:
     dark: ../../assets/logo-dark.svg
     light: ../../assets/logo-light.svg
   actions:
-    - text: Build your index
+    - text: Try it in 30 seconds
       link: /docs/getting-started/
       icon: right-arrow
       variant: primary
-    - text: Enforce your ADRs
-      link: /docs/cari/semantic-rules/
-      icon: approve-check-circle
+    - text: See it live on our own repo
+      link: /examples/live-doc-code-map/
+      icon: laptop
       variant: secondary
     - text: View on GitHub
       link: https://github.com/intentweave/intentweave
@@ -24,37 +24,6 @@ hero:
 ---
 
 import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
-
-## Two Products, One Platform
-
-<CardGrid>
-  <Card title="CARI Evidence Engine — always $0" icon="seti:db">
-    A zero-cost SQLite index built from your code's AST, document keywords, and
-    git history. **No LLM. No servers. No API keys.** 60+ query modes, architecture
-    visualization, community detection, clone detection, call graph, and more —
-    in under 3 seconds. **The foundation. Always free. Always local.**
-  </Card>
-  <Card title="Intent Engine" icon="approve-check-circle">
-    Three enforcement domains in one pass: **structural** (import graphs),
-    **behavioral** (Mermaid sequence/flow rules), and **documentary** (coverage,
-    staleness, terminology). All at $0 after a one-time LLM extraction step.
-  </Card>
-</CardGrid>
-
-<CardGrid>
-  <Card title="Semantic Enrichment (optional)" icon="star">
-    Selectively apply LLM extraction to the files CARI flags as highest-value.
-    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
-    diagram validation, and cross-doc contradiction detection.
-  </Card>
-  <Card title="Knowledge Graph (optional)" icon="open-book">
-    Persist to Neo4j for full-scale semantic queries and impact analysis. CypherLite
-    lets the same queries run against both SQLite and Neo4j — swap backends without
-    changing code.
-  </Card>
-</CardGrid>
-
----
 
 ## Quick Start
 
@@ -125,6 +94,37 @@ iw intent score                        # composite A–F score (4 dimensions)
 ```
 
 </details>
+
+---
+
+## How It Works, In Practice: Two Products, One Platform
+
+<CardGrid>
+  <Card title="CARI Evidence Engine — always $0" icon="seti:db">
+    A zero-cost SQLite index built from your code's AST, document keywords, and
+    git history. **No LLM. No servers. No API keys.** 60+ query modes, architecture
+    visualization, community detection, clone detection, call graph, and more —
+    in under 3 seconds. **The foundation. Always free. Always local.**
+  </Card>
+  <Card title="Intent Engine" icon="approve-check-circle">
+    Three enforcement domains in one pass: **structural** (import graphs),
+    **behavioral** (Mermaid sequence/flow rules), and **documentary** (coverage,
+    staleness, terminology). All at $0 after a one-time LLM extraction step.
+  </Card>
+</CardGrid>
+
+<CardGrid>
+  <Card title="Semantic Enrichment (optional)" icon="star">
+    Selectively apply LLM extraction to the files CARI flags as highest-value.
+    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
+    diagram validation, and cross-doc contradiction detection.
+  </Card>
+  <Card title="Knowledge Graph (optional)" icon="open-book">
+    Persist to Neo4j for full-scale semantic queries and impact analysis. CypherLite
+    lets the same queries run against both SQLite and Neo4j — swap backends without
+    changing code.
+  </Card>
+</CardGrid>
 
 ---
 
