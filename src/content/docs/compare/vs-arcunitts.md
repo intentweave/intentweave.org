@@ -5,7 +5,7 @@ description: How IntentWeave's Rules Catalog compares to ArchUnitTS, the TypeScr
 
 import { Aside } from '@astrojs/starlight/components';
 
-# IntentWeave vs. ArchUnitTS
+---
 
 *Part of the [IntentWeave comparisons](/compare/overview/) series.*
 
