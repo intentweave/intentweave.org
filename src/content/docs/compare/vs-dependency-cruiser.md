@@ -1,0 +1,152 @@
+---
+title: IntentWeave vs. dependency-cruiser
+description: How IntentWeave's Rules Catalog compares to dependency-cruiser for enforcing import boundaries in JavaScript and TypeScript — and when it makes sense to use both.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+# IntentWeave vs. dependency-cruiser
+
+<Aside type="note">
+This page is maintained by the IntentWeave team. We use dependency-cruiser ourselves in some
+projects and think it's a genuinely good tool — we've tried to represent it fairly. If something
+here is inaccurate or out of date, [open an issue](https://github.com/intentweave/intentweave/issues).
+</Aside>
+
+**TL;DR:** dependency-cruiser is a mature, focused tool for validating and visualizing your
+import graph — circular dependencies, orphans, forbidden paths, license checks. IntentWeave
+covers that same ground, plus AST-level rules (property access, function calls, taint tracking),
+behavioral rules checked against your real call graph, doc↔code drift detection, and grounding
+context for AI coding agents. If import boundaries are the *only* thing you need enforced,
+dependency-cruiser is a proven, single-purpose choice. If you also want to catch violations that
+don't show up in the import graph — or you want your ADRs enforced, not just described — that's
+where IntentWeave adds a layer on top.
+
+## What dependency-cruiser does well
+
+dependency-cruiser has been around for years and it shows — in a good way. A few things it's
+genuinely strong at:
+
+- **Zero-config start.** `depcruise --init` scaffolds a sensible rule set (no circular deps, no
+  orphans, no deprecated core modules) without you writing anything by hand.
+- **Rich output formats.** dot/GraphViz, HTML, Mermaid, and CI-specific reporters (TeamCity,
+  Azure DevOps annotations, and more) — genuinely useful for producing a dependency graph you can
+  drop into a wiki or a PR comment.
+- **Broad module system support.** ES6, CommonJS, and AMD, across JavaScript, TypeScript, and
+  CoffeeScript.
+- **Extras beyond plain forbidden/allowed rules.** Orphan detection, "reachable" dead-code
+  analysis, license-compatibility checks, and dependents-count rules (`numberOfDependentsMoreThan`
+  and friends) are all built in.
+- **It's free and local.** No server, no account, no LLM — same philosophy as IntentWeave's core.
+
+If your actual problem is "stop people importing the data layer from the UI" and "flag circular
+imports before they cause a bundler headache," dependency-cruiser solves that well, today, with a
+huge existing user base behind it.
+
+## Where IntentWeave goes further
+
+dependency-cruiser's rules operate on one thing: the **import graph** — which file requires or
+imports which. That's a real and useful signal, but it has a blind spot: a file can have
+completely legal imports and still violate your architecture, because the violation happens
+*inside* the code, not in the `import` statement.
+
+```js
+// apps/ui/src/components/ItemCard.tsx
+import { formatDate } from "../utils"; // ✅ legal import, dependency-cruiser is happy
+
+// but inside the function body:
+const path = item.resource.path;       // ❌ UI reaching into internal fields —
+                                        //    invisible to import-graph analysis
+```
+
+IntentWeave's rules engine works at the AST level, not just the import level, and adds a few
+domains dependency-cruiser doesn't cover at all:
+
+- **AST-level rule types** — `property_access`, `call`, `symbol_name`, `variable_assignment`, and
+  intra-function `taint_propagation`, so you can flag things like "UI components must never touch
+  `.resource.path`, even indirectly through a local variable."
+- **Custom graph queries** — a `cypher` rule type runs CypherLite queries directly against
+  IntentWeave's SQLite index for checks the built-in rule types can't express, without requiring
+  Neo4j.
+- **Behavioral rules** — Mermaid sequence diagrams in your docs can be checked against the real
+  call graph, so "the diagram in your docs *is* the spec" instead of just decoration.
+- **Doc↔code grounding and drift detection** — dependency-cruiser has no concept of documentation
+  at all. IntentWeave grounds every doc mention to real exported symbols and flags docs that
+  reference code that's since changed.
+- **ADR extraction (optional LLM step)** — `iw index rules-extract` reads a written ADR and drafts
+  a `rules.yaml` for you, instead of requiring every rule to be hand-authored.
+- **RAG context for AI coding agents** — `iw index context-pack` hands Copilot/Claude a
+  token-budgeted, ranked bundle of files, rules, and doc drift for a query — something entirely
+  outside dependency-cruiser's scope.
+
+## Rule syntax, side by side
+
+Same rule — "the UI layer must never import the data layer" — in both tools:
+
+**dependency-cruiser** (`.dependency-cruiser.js`):
+
+```js
+module.exports = {
+  forbidden: [
+    {
+      name: "no-ui-to-db",
+      severity: "error",
+      from: { path: "^apps/ui" },
+      to: { path: "^packages/data" },
+    },
+  ],
+};
+```
+
+**IntentWeave** (`.iw/rules.yaml`):
+
+```yaml
+rules:
+  - id: no-ui-to-db
+    severity: high
+    forbidden:
+      - type: import_pattern
+        pattern: "packages/data/**"
+        in: "apps/ui/**"
+```
+
+Structurally almost identical — this is the one domain where the two tools genuinely overlap. The
+difference shows up once you need a rule dependency-cruiser has no vocabulary for, like flagging a
+specific property access or tracking a tainted variable across a function.
+
+## Feature comparison
+
+| Capability | dependency-cruiser | IntentWeave |
+|---|:---:|:---:|
+| Import/dependency boundary rules | ✅ | ✅ |
+| Circular dependency detection | ✅ | ✅ |
+| Orphan / dead-code detection | ✅ | ✅ (combined with unused-export + stale-doc signals) |
+| Dependency graph visualization | ✅ (dot, HTML, Mermaid) | ✅ (interactive HTML report) |
+| AST-level rules (property access, calls, taint) | ❌ | ✅ |
+| Custom graph queries (Cypher-style, no Neo4j) | ❌ | ✅ |
+| Behavioral rules vs. real call graph | ❌ | ✅ |
+| Doc↔code grounding & drift detection | ❌ | ✅ |
+| ADR → rules extraction (LLM-assisted) | ❌ | ✅ (optional) |
+| RAG context for AI coding agents | ❌ | ✅ |
+| Free, local core, no LLM required | ✅ | ✅ |
+| Language support | JS, TS, CoffeeScript | TS/JS core (Swift, Python via plugins) |
+
+## Can I use both?
+
+Yes, and for teams with dependency-cruiser already wired into CI, that's often the simplest path —
+keep it for circular-dependency and orphan checks if it's working for you, and add IntentWeave for
+everything it doesn't cover: AST-level rules, behavioral checks, doc drift, and RAG context. They
+don't conflict; `import_pattern` rules just duplicate ground dependency-cruiser already has covered.
+
+## Try it in 30 seconds
+
+```bash
+npm install -g @intentweave/cli
+cd your-project
+iw init
+iw index build          # < 3 seconds, zero API calls
+```
+
+See the [Rules Catalog live on IntentWeave's own repo](https://intentweave.org/examples/live-rules-catalog/),
+or read the [Semantic Rule Checking reference](https://intentweave.org/docs/cari/semantic-rules/) for
+the full rule-type list.
