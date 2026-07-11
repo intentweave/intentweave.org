@@ -1,0 +1,116 @@
+{
+  "generatedAt": "2026-07-11",
+  "sourceRepo": "intentweave/intentweave",
+  "stats": {
+    "rules": 5,
+    "totalRulesInRepo": 15,
+    "violations": 5
+  },
+  "rules": [
+    {
+      "id": "arch-core-is-foundation",
+      "domain": "structural",
+      "severity": "high",
+      "mode": "error",
+      "description": "@intentweave/core is the foundation layer. It must not import from any higher-level package (analyzer, index, cli, server-core, server-open). A violation creates a dependency cycle that makes the platform un-treeshakeable and prevents independent use of core types.",
+      "mermaid": null,
+      "forbidden": [
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/analyzer",
+          "in": "packages/core/**",
+          "except": []
+        },
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/index",
+          "in": "packages/core/**",
+          "except": []
+        },
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/cli",
+          "in": "packages/core/**",
+          "except": []
+        },
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/server-core",
+          "in": "packages/core/**",
+          "except": []
+        },
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/server-open",
+          "in": "packages/core/**",
+          "except": []
+        }
+      ],
+      "violationCount": 0,
+      "sampleViolation": null
+    },
+    {
+      "id": "arch-no-upward-index",
+      "domain": "structural",
+      "severity": "high",
+      "mode": "error",
+      "description": "@intentweave/index (CARI Evidence Engine) must not import from @intentweave/cli. The index is a library layer below the CLI. An upward import would create a cycle and prevent use of @intentweave/index in contexts outside the CLI (MCP servers, plugins, CI scripts).",
+      "mermaid": null,
+      "forbidden": [
+        {
+          "type": "import_pattern",
+          "pattern": "@intentweave/cli",
+          "in": "packages/index/src/**",
+          "except": [
+            "packages/index/src/**/__tests__/**",
+            "packages/index/src/**/*.spec.ts",
+            "packages/index/src/**/*.test.ts"
+          ]
+        }
+      ],
+      "violationCount": 0,
+      "sampleViolation": null
+    },
+    {
+      "id": "bdd-build-pipeline-required-stages",
+      "domain": "behavioral",
+      "severity": "high",
+      "mode": "error",
+      "description": "The CARI build pipeline (buildFromPaths in facade.ts) must run all four required stages in order: AST extraction (runAxStage), IDF scoring (computeIdf), annotation matching (annotate), and SQLite write (buildIndex). Skipping any stage breaks the index: - No runAxStage: no symbols, no call graph, empty index - No computeIdf: all terms score equally, annotations are noisy - No annotate: doc mentions never linked to code symbols - No buildIndex: pipeline runs but nothing is persisted Verified via Phase 4 call graph (0.95 confidence / error) when call data is present; falls back to import graph (0.70 / warn) otherwise.",
+      "mermaid": "sequenceDiagram\n  buildFromPaths->>runAxStage: extract AST symbols + call edges\n  buildFromPaths->>computeIdf: compute per-term IDF scores\n  buildFromPaths->>annotate: match doc mentions to code symbols\n  buildFromPaths->>buildIndex: write completed index to SQLite\n",
+      "forbidden": [],
+      "violationCount": 1,
+      "sampleViolation": {
+        "detail": "[mermaid:must_call] \"buildFromPaths\" never calls \"computeIdf\" (confidence 0.95, call graph). Sequence diagram requires: \"buildFromPaths ->> computeIdf: compute per-term IDF scores\"",
+        "confidence": 0.95,
+        "filePath": "packages/index/src/facade.ts"
+      }
+    },
+    {
+      "id": "bdd-writer-complete-pipeline",
+      "domain": "behavioral",
+      "severity": "high",
+      "mode": "error",
+      "description": "The index writer (buildIndex in writer.ts) must run its full write sequence on every build: schema init, symbols, annotations, imports, and the Phase 4 call graph. Critical invariants: - initSchema first: missing tables corrupt subsequent writes - writeSymbols: foundation for all CARI queries - writeAnnotations: without them, retrieve/connections return nothing - writeCalls: Phase 4 behavioral checks require call edges (must_call) Verified via Phase 4 call graph (0.95 confidence / error) when call data is present; falls back to import graph (0.70 / warn) otherwise.",
+      "mermaid": "sequenceDiagram\n  buildIndex->>initSchema: create tables if not exist\n  buildIndex->>writeSymbols: persist extracted code symbols\n  buildIndex->>writeAnnotations: persist doc-to-symbol annotation links\n  buildIndex->>writeImports: persist import graph edges\n  buildIndex->>writeCalls: persist call graph edges (Phase 4)\n",
+      "forbidden": [],
+      "violationCount": 4,
+      "sampleViolation": {
+        "detail": "[mermaid:must_call] \"buildIndex\" never calls \"writeSymbols\" (confidence 0.95, call graph). Sequence diagram requires: \"buildIndex ->> writeSymbols: persist extracted code symbols\"",
+        "confidence": 0.95,
+        "filePath": "packages/index/src/writer.ts"
+      }
+    },
+    {
+      "id": "bdd-rules-check-db-lifecycle",
+      "domain": "behavioral",
+      "severity": "high",
+      "mode": "warn",
+      "description": "The intent check entry-point (rulesCheck in queries/rulesCheck.ts) must open the SQLite database via openIndex() before calling rulesCheckFromDb(). openIndex() configures WAL mode, busy_timeout, and read pragmas. Bypassing it risks reading a locked DB or leaving WAL files open. Verified via Phase 4 call graph (0.95 confidence) when call data is present; falls back to import graph check (0.70) otherwise.",
+      "mermaid": "sequenceDiagram\n  rulesCheck->>openIndex: open DB with WAL mode + read pragmas\n  rulesCheck->>rulesCheckFromDb: run structural + behavioral + documentary checks\n",
+      "forbidden": [],
+      "violationCount": 0,
+      "sampleViolation": null
+    }
+  ]
+}

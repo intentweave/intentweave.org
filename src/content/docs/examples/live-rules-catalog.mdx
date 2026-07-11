@@ -1,0 +1,54 @@
+---
+title: "Live Demo: Rules Catalog"
+description: Real structural and behavioral intent rules from IntentWeave's own rules.yaml, with Mermaid sequence diagrams parsed and live violation counts from the last self-check.
+---
+
+import RulesCatalogExplorer from "../../../components/RulesCatalogExplorer.astro";
+
+These are real entries from IntentWeave's own [`.iw/rules.yaml`](https://github.com/intentweave/intentweave/blob/main/.iw/rules.yaml) —
+the same file that powers `iw intent check` in this repo's CI. Two **structural** rules
+enforce package layer isolation (import graph); three **behavioral** rules use inline
+Mermaid sequence diagrams to assert the CARI build pipeline calls its stages in order.
+Violation counts and the sample evidence below are from the most recent `iw intent check --domain all` run.
+
+<RulesCatalogExplorer />
+
+## How This Works
+
+1. **Structural rules** (`type: import_pattern`) are checked against the import graph
+   CARI already builds during `iw index build` — zero LLM calls, sub-second.
+2. **Behavioral rules** express intent as an inline Mermaid `sequenceDiagram`. CARI parses
+   it with a zero-dependency regex extractor (no `@mermaid-js/parser`, no DOM) and checks
+   each edge against the `symbol_calls` table (Phase 4 call graph, 0.95 confidence) — or
+   falls back to the import graph (0.70 confidence, warn) when call-graph data isn't
+   available yet.
+3. Every violation carries a `detail` string that names the exact caller/callee pair and
+   file — the same evidence surfaced in `iw intent check`, the Insights Book's Rules Catalog
+   chapter, and the `cari_rules_check` MCP tool.
+
+```yaml
+# .iw/rules.yaml — behavioral rule, checked via the call graph
+- id: bdd-writer-complete-pipeline
+  domain: behavioral
+  severity: high
+  mode: error
+  source:
+    type: mermaid_inline
+  mermaid: |
+    sequenceDiagram
+      buildIndex->>initSchema: create tables if not exist
+      buildIndex->>writeSymbols: persist extracted code symbols
+      buildIndex->>writeAnnotations: persist doc-to-symbol annotation links
+      buildIndex->>writeImports: persist import graph edges
+      buildIndex->>writeCalls: persist call graph edges (Phase 4)
+  forbidden: []
+```
+
+```bash
+# Reproduce this locally, on your own rules.yaml
+iw intent check --domain all --format json
+```
+
+See the full [Semantic Rule Checking](/docs/cari/semantic-rules/) reference for every
+rule type, or the [Insights Book](/docs/cari/insights-book/) for the complete catalog
+of all 15 rules in this repo, with filters by domain and severity.

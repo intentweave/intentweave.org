@@ -1,0 +1,401 @@
+---
+// Live "Rules Catalog" explorer — real intent rules from IntentWeave's own
+// .iw/rules.yaml, with Mermaid sequence diagrams parsed and rendered
+// zero-dependency (same regex parser as the Insights Book export), plus
+// real violation counts from the last `iw intent check` run. Restyled to
+// match the site's Starlight theme rather than the standalone Insights
+// Book's dark sidebar look.
+import demoData from "../data/rules-catalog-demo.json";
+
+interface ForbiddenClause {
+  type: string;
+  pattern?: string;
+  in?: string;
+  except: string[];
+}
+
+interface SampleViolation {
+  detail: string;
+  confidence: number;
+  filePath: string;
+}
+
+interface DemoRule {
+  id: string;
+  domain: "structural" | "behavioral" | "documentary";
+  severity: "high" | "medium" | "low";
+  mode: "error" | "warn";
+  description: string;
+  mermaid: string | null;
+  forbidden: ForbiddenClause[];
+  violationCount: number;
+  sampleViolation: SampleViolation | null;
+}
+
+const rules = demoData.rules as DemoRule[];
+const stats = demoData.stats;
+
+// Zero-dependency Mermaid sequence-diagram edge parser — same approach
+// used by `iw index export --book` (no @mermaid-js/parser, no DOM).
+function parseMermaidEdges(
+  src: string,
+): Array<{ from: string; to: string; label?: string }> {
+  const edges: Array<{ from: string; to: string; label?: string }> = [];
+  const lines = src.split(/\r?\n/);
+  const clean = (s: string) =>
+    s
+      .trim()
+      .replace(/^\[|\]$/g, "")
+      .replace(/^\(|\)$/g, "");
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("%%") || line === "sequenceDiagram") continue;
+    const seq = line.match(/^([\w.-]+)\s*[-=]+>{1,2}\s*([\w.-]+)\s*(?::\s*(.+))?$/);
+    if (seq) {
+      edges.push({ from: clean(seq[1]), to: clean(seq[2]), label: seq[3]?.trim() });
+    }
+  }
+  return edges;
+}
+
+const severityLabel = { high: "HIGH", medium: "MEDIUM", low: "LOW" };
+---
+
+<div class="rce" id="rce-root">
+  <div class="rce-meta">
+    <span><strong>{stats.rules}</strong> of {stats.totalRulesInRepo} rules shown</span>
+    <span><strong>{stats.violations}</strong> live violations</span>
+    <span class="rce-badge">live self-check · {demoData.generatedAt}</span>
+  </div>
+
+  <div class="rce-list">
+    {
+      rules.map((rule) => {
+        const edges = rule.mermaid ? parseMermaidEdges(rule.mermaid) : [];
+        return (
+          <div class="rce-card" data-domain={rule.domain} data-severity={rule.severity}>
+            <div class="rce-card-header">
+              <span class={`rce-pill rce-sev-${rule.severity}`}>
+                {severityLabel[rule.severity]}
+              </span>
+              <span class="rce-pill rce-domain">{rule.domain.toUpperCase()}</span>
+              <span class={`rce-pill rce-mode-${rule.mode}`}>{rule.mode.toUpperCase()}</span>
+              <code class="rce-id">{rule.id}</code>
+              {rule.violationCount > 0 ? (
+                <span class="rce-violation-count">
+                  ⚠ {rule.violationCount} violation{rule.violationCount === 1 ? "" : "s"}
+                </span>
+              ) : (
+                <span class="rce-violation-clean">✓ clean</span>
+              )}
+            </div>
+
+            <p class="rce-description">{rule.description}</p>
+
+            {edges.length > 0 && (
+              <div class="rce-mermaid">
+                <div class="rce-mermaid-title">Mermaid Render</div>
+                {edges.map((e, idx) => (
+                  <div class="rce-edge-row">
+                    <span class="rce-chip rce-chip-from">{e.from}</span>
+                    <span class="rce-arrow">→</span>
+                    <span class="rce-chip rce-chip-to">{e.to}</span>
+                    {e.label && <span class="rce-edge-label">{e.label}</span>}
+                    <span class="rce-edge-num">#{idx + 1}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {rule.forbidden.length > 0 && (
+              <div class="rce-forbidden">
+                <div class="rce-forbidden-title">Forbidden Import Patterns</div>
+                <table class="rce-table">
+                  <thead>
+                    <tr>
+                      <th>Pattern</th>
+                      <th>Scope</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rule.forbidden.map((f) => (
+                      <tr>
+                        <td><code>{f.pattern}</code></td>
+                        <td><code>{f.in}</code></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {rule.sampleViolation && (
+              <div class="rce-sample">
+                <div class="rce-sample-title">
+                  Live violation (confidence {rule.sampleViolation.confidence.toFixed(2)})
+                </div>
+                <div class="rce-sample-file">{rule.sampleViolation.filePath}</div>
+                <div class="rce-sample-detail">{rule.sampleViolation.detail}</div>
+              </div>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</div>
+
+<style>
+  .rce {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-sidebar, var(--sl-color-gray-7));
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .rce-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    padding: 0 0.25rem 0.75rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    margin-bottom: 0.75rem;
+  }
+
+  .rce-meta strong {
+    color: var(--sl-color-white);
+    font-size: 0.95rem;
+  }
+
+  .rce-badge {
+    margin-left: auto;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high, var(--sl-color-accent));
+    border-radius: 999px;
+    padding: 0.15rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .rce-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .rce-card {
+    background: var(--sl-color-bg);
+    border: 1px solid var(--sl-color-gray-6);
+    border-radius: 0.6rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .rce-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .rce-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+
+  .rce-sev-high {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .rce-sev-medium {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .rce-sev-low {
+    background: #e0f2fe;
+    color: #075985;
+  }
+
+  .rce-domain {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+  }
+
+  .rce-mode-error {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .rce-mode-warn {
+    background: #fef9c3;
+    color: #854d0e;
+  }
+
+  .rce-id {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+  }
+
+  .rce-violation-count {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #b91c1c;
+  }
+
+  .rce-violation-clean {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--sl-color-accent);
+  }
+
+  .rce-description {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+    margin: 0 0 0.7rem;
+  }
+
+  .rce-mermaid,
+  .rce-forbidden,
+  .rce-sample {
+    margin-top: 0.6rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.5rem;
+  }
+
+  .rce-mermaid {
+    background: var(--sl-color-accent-low);
+    border: 1px solid var(--sl-color-accent);
+  }
+
+  .rce-mermaid-title,
+  .rce-forbidden-title,
+  .rce-sample-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .rce-edge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    background: var(--sl-color-bg);
+    border: 1px solid var(--sl-color-gray-6);
+    border-radius: 0.4rem;
+    padding: 0.35rem 0.55rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .rce-edge-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .rce-chip {
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+  }
+
+  .rce-chip-from {
+    background: #cffafe;
+    color: #155e75;
+  }
+
+  .rce-chip-to {
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+
+  .rce-arrow {
+    color: var(--sl-color-gray-3);
+    font-size: 0.75rem;
+  }
+
+  .rce-edge-label {
+    font-size: 0.72rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .rce-edge-num {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--sl-color-gray-4);
+  }
+
+  .rce-forbidden {
+    background: var(--sl-color-gray-7, var(--sl-color-bg-sidebar));
+    border: 1px solid var(--sl-color-gray-6);
+  }
+
+  .rce-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+  }
+
+  .rce-table th {
+    text-align: left;
+    color: var(--sl-color-gray-3);
+    font-weight: 600;
+    padding: 0.25rem 0.4rem;
+    border-bottom: 1px solid var(--sl-color-gray-6);
+  }
+
+  .rce-table td {
+    padding: 0.3rem 0.4rem;
+    border-bottom: 1px solid var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+  }
+
+  .rce-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .rce-table code {
+    font-size: 0.71rem;
+  }
+
+  .rce-sample {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+
+  :root[data-theme="dark"] .rce-sample {
+    background: #2a1414;
+    border-color: #7f1d1d;
+  }
+
+  .rce-sample-title {
+    color: #b91c1c;
+  }
+
+  .rce-sample-file {
+    font-family: var(--__sl-font-mono, ui-monospace, monospace);
+    font-size: 0.72rem;
+    color: var(--sl-color-gray-2);
+    margin-bottom: 0.3rem;
+  }
+
+  .rce-sample-detail {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--sl-color-gray-2);
+  }
+</style>
