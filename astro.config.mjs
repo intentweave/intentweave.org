@@ -8,7 +8,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'IntentWeave',
-			description: 'CARI: a $0 local workspace index. Intent Guardrails: your ADRs and conventions, enforced in CI.',
+			description: 'IntentWeave enforces your ADRs in CI — catching architecture violations AI agents and busy developers introduce. $0 core, no LLM or servers required.',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/intentweave/intentweave' },
 			],
