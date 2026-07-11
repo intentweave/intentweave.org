@@ -1,5 +1,5 @@
 ---
-title: CARI Overview
+title: Code-Aware Retrieval Index (CARI) Overview
 description: What is the Code-Aware Retrieval Index and why does it exist?
 ---
 

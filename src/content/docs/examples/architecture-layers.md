@@ -1,6 +1,6 @@
 ---
-title: Architecture Analysis & Visualization
-description: Auto-infer layers, validate boundaries, and generate an interactive architecture report.
+title: Architecture Layer & Boundary Validation
+description: See how IntentWeave auto-infers your codebase's architectural layers, flags import boundary violations, and builds an interactive dependency report in seconds.
 ---
 
 ## The Problem

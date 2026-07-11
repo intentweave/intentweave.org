@@ -1,6 +1,6 @@
 ---
-title: "Example: PR Drift Check"
-description: Catching stale documentation before it ships with iw index check.
+title: Catch Stale Documentation Before It Ships
+description: See how iw index check flags documentation affected by a pull request's code changes, so reviewers catch drift automatically in CI before it merges.
 ---
 
 ## Scenario

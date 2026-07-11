@@ -1,6 +1,6 @@
 ---
-title: "Example: Auth Topic Retrieval"
-description: Finding all files related to authentication using iw index retrieve.
+title: Find Every File Related to Authentication
+description: See IntentWeave's iw index retrieve rank every file connected to authentication — code, docs, and tests — in one ranked list, no manual grepping required.
 ---
 
 ## Scenario

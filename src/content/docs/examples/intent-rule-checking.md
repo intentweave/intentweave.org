@@ -1,6 +1,6 @@
 ---
-title: Ensure Intent in the Code (Semantic Rule Checking)
-description: Transform Architectural Decision Records (ADRs) and architectural intent into enforceable code constraints to block rogue AI agents and enforce consistency natively.
+title: Turn ADRs into Enforceable Code Rules
+description: See how IntentWeave extracts Architectural Decision Records into rules.yaml and checks them in CI in milliseconds — no Neo4j or LLM required to enforce them.
 ---
 
 ## The Problem

@@ -1,5 +1,5 @@
 ---
-title: CARI Technical Specification
+title: Code-Aware Retrieval Index (CARI) Spec
 description: Detailed specification for the Code-Aware Retrieval Index.
 ---
 

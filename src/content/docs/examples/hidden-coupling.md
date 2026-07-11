@@ -1,6 +1,6 @@
 ---
-title: "Example: Hidden Coupling"
-description: Discovering relationships that code doesn't formalize using connections + gaps.
+title: Uncover Hidden Coupling Between Files
+description: See how IntentWeave surfaces relationships your imports miss — doc co-mentions and git co-changes — to flag hidden coupling with no direct import.
 ---
 
 ## Scenario
