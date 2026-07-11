@@ -1,0 +1,150 @@
+---
+title: IntentWeave vs. Semgrep
+description: How IntentWeave's AST-level rules compare to Semgrep's custom pattern and taint rules — and why they're more complementary than competing.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+# IntentWeave vs. Semgrep
+
+<Aside type="note">
+This page is maintained by the IntentWeave team. Semgrep is a mature, widely-used tool and we've
+tried to represent it fairly. If something here is inaccurate or out of date,
+[open an issue](https://github.com/intentweave/intentweave/issues).
+</Aside>
+
+**TL;DR:** Semgrep is a general-purpose static analysis engine built primarily for security
+scanning (SAST) — a massive community rule registry, 30+ languages, and genuinely more powerful
+taint tracking than IntentWeave's (interprocedural, crossing function boundaries; IntentWeave's is
+intra-function only). It has no first-class concept of import graphs, architecture layers,
+documentation, or call-graph behavior. IntentWeave's AST-level rules cover a narrower slice of what
+Semgrep can express, but are purpose-built for architecture governance — layer rules, behavioral
+call-graph checks, doc↔code drift, ADR extraction, and RAG context — bundled with a persistent
+local evidence index rather than a stateless scanner. These tools solve different primary
+problems and, for most teams, are more complementary than competing.
+
+## What Semgrep does well
+
+Semgrep is one of the most established static analysis tools in the industry, and for good reason:
+
+- **Interprocedural taint tracking.** Sources, sinks, sanitizers, and propagators can be defined
+  once and Semgrep follows tainted data across function boundaries — more powerful than
+  IntentWeave's `taint_propagation`, which is intra-function only.
+- **Real autofix.** A rule can carry a `fix` or `fix-regex` that actually rewrites the offending
+  code, not just a suggestion string.
+- **30+ languages** with a huge, community-maintained rule registry covering OWASP Top 10, CWE
+  categories, and framework-specific vulnerability patterns.
+- **Mature tooling ecosystem** — IDE integrations, pre-commit hooks, CI actions, and (via the
+  Semgrep AppSec Platform) findings management, PR comments, and ticketing integrations for teams
+  that need to triage results at scale.
+- **Battle-tested pattern language.** `pattern`, `pattern-either`, `pattern-not`, and
+  `metavariable-regex` cover a lot of ground for custom detections beyond security, including
+  ad hoc architecture rules — plenty of teams already write Semgrep rules to flag forbidden
+  imports or calls, even though Semgrep has no first-class "layer" concept for it.
+
+If your primary need is security vulnerability scanning across a polyglot codebase, or you want
+interprocedural taint tracking that follows data across many function calls, Semgrep is the more
+capable tool for that job, full stop.
+
+## Where IntentWeave goes further
+
+Semgrep's rule engine is powerful but general-purpose — it has no built-in vocabulary for
+"architecture." A layer-boundary rule in Semgrep is just a pattern match against an import
+statement's path, hand-written the same way you'd write a security rule; there's no import graph,
+no layer inference, and no persistent index to query afterward. IntentWeave is built around a
+different core: a local SQLite index of your code's AST, docs, and git history that many query
+types share.
+
+- **Import/layer boundary rules as a first-class concept** — `import_pattern` rules, automatic
+  layer inference, and an ASCII/HTML conformance report, instead of hand-rolled path patterns with
+  no shared graph behind them.
+- **Behavioral rules against the real call graph** — Mermaid sequence diagrams checked against
+  which functions actually call which, in what order. Semgrep's dataflow analysis works within and
+  across functions for taint, but has no concept of "does the code follow this documented
+  sequence."
+- **Custom graph queries** — a `cypher` rule type runs CypherLite queries against the same index,
+  for checks (like "every exported function must have a corresponding test") that don't reduce to
+  a single pattern match.
+- **Doc↔code grounding and drift detection** — Semgrep only looks at code. IntentWeave grounds doc
+  mentions to real exported symbols and flags docs referencing code that's since changed.
+- **ADR extraction (optional LLM step)** — `iw index rules-extract` drafts a `rules.yaml` from a
+  written ADR, instead of every rule being hand-authored from scratch.
+- **RAG context for AI coding agents** — `iw index context-pack` hands Copilot/Claude a
+  token-budgeted, ranked bundle of files, rules, and doc drift — outside a SAST scanner's scope
+  entirely.
+
+## Rule syntax, side by side
+
+Same rule — "UI components must not access `item.resource.path`, even indirectly" — in both tools:
+
+**Semgrep** (`.semgrep/no-internal-field-access.yaml`):
+
+```yaml
+rules:
+  - id: no-internal-field-access-in-ui
+    languages: [typescript, tsx]
+    severity: ERROR
+    message: "UI components must not access item.resource.path directly"
+    paths:
+      include:
+        - "apps/ui/src/**"
+    pattern: $ITEM.resource.path
+```
+
+**IntentWeave** (`.iw/rules.yaml`):
+
+```yaml
+rules:
+  - id: no-internal-field-access-in-ui
+    severity: high
+    forbidden:
+      - type: property_access
+        chain: "**.resource.path"
+        in: "apps/ui/src/**"
+        taint_propagation: true   # flags uses of vars assigned from the access, intra-function
+```
+
+Both can express this rule directly. For a version that must also follow the tainted value across
+function calls, Semgrep's `mode: taint` with `pattern-propagators` is the more capable option —
+IntentWeave's `taint_propagation` stops at the function boundary.
+
+## Feature comparison
+
+| Capability | Semgrep | IntentWeave |
+|---|:---:|:---:|
+| AST pattern matching (property access, calls) | ✅ | ✅ |
+| Taint tracking | ✅ Interprocedural | ✅ Intra-function only |
+| Autofix | ✅ Rewrites code | Suggestion text only |
+| Language support | 30+ languages | TS/JS core (+ Swift, Python plugins) |
+| Community rule registry | ✅ Large, security-focused | — |
+| Import/layer boundary rules as first-class concept | ❌ (ad hoc patterns) | ✅ |
+| Behavioral rules vs. real call graph | ❌ | ✅ |
+| Custom graph queries (Cypher-style, no Neo4j) | ❌ | ✅ |
+| Doc↔code grounding & drift detection | ❌ | ✅ |
+| ADR → rules extraction (LLM-assisted) | ❌ | ✅ (optional) |
+| RAG context for AI coding agents | ❌ | ✅ |
+| Architecture/dependency visualization | ❌ | ✅ |
+| Free, local, no account required | ✅ CLI/engine — team findings management is a paid platform tier | ✅ Always free, local |
+| Primary focus | Security vulnerability detection | Architecture/intent governance + doc grounding |
+
+## Can I use both?
+
+Yes — probably more so than with the other tools on this page. Semgrep and IntentWeave aren't
+really solving the same problem: Semgrep is a security scanner that some teams also point at
+architecture patterns; IntentWeave is an architecture-and-documentation evidence layer that also
+happens to catch some code-level issues. Running Semgrep for security across your whole stack and
+IntentWeave for TS/JS architecture governance, doc drift, and RAG context is a common, sensible
+combination — not a choice between the two.
+
+## Try it in 30 seconds
+
+```bash
+npm install -g @intentweave/cli
+cd your-project
+iw init
+iw index build          # < 3 seconds, zero API calls
+```
+
+See the [Rules Catalog live on IntentWeave's own repo](https://intentweave.org/examples/live-rules-catalog/),
+or read the [Semantic Rule Checking reference](https://intentweave.org/docs/cari/semantic-rules/) for
+the full rule-type list.
