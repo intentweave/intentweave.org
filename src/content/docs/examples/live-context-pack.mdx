@@ -1,6 +1,15 @@
 ---
 title: "Live Demo: Adaptive Context Package"
 description: Real `iw index context-pack` output comparing --adaptive=off vs --adaptive=conservative, with real M2 validation metrics across three repos.
+head:
+  - tag: meta
+    attrs:
+      property: og:image
+      content: https://intentweave.org/og/live-context-pack.png
+  - tag: meta
+    attrs:
+      name: twitter:image
+      content: https://intentweave.org/og/live-context-pack.png
 ---
 
 import ContextPackExplorer from "../../../components/ContextPackExplorer.astro";
@@ -14,6 +23,20 @@ The example below is a real run against IntentWeave's own `.iw/index.db` — sam
 same anchor file, two adaptive modes. Toggle between them to see the ranking change.
 
 <ContextPackExplorer />
+
+IntentWeave's own repo already sits at 0% noise / 100% hit rate without adaptation — it's
+small and well-curated, so there's little for adaptive ranking to fix. The real gains show up
+on larger, messier repos like Backstage and codegraphchat-v2. `codegraphchat-v2`'s p95
+latency (523ms) is higher than the sub-100ms figure quoted elsewhere on this site for a single
+`iw index retrieve` query — that's expected: `context-pack` composes multiple sections (files,
+rules, connections, rationale, doc drift) in one call, not a single ranked-retrieval query.
+
+The eval methodology, target thresholds, and boost algorithm are documented in
+[the adaptivity rollout plan](https://github.com/intentweave/intentweave/blob/main/docs/PLAN-ADAPTIVITY-CONTEXT-PACKAGE.md) —
+the same spec these numbers were measured against. The raw per-repo query sets
+(`.iw/eval/queries.json`) are currently local fixtures, not yet published; if you want to
+reproduce the Backstage/codegraphchat-v2 numbers independently, [open an issue](https://github.com/intentweave/intentweave/issues)
+and we'll publish the fixture.
 
 ## How This Works
 

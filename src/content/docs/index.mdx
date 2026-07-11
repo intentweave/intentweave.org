@@ -29,21 +29,26 @@ import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
 
 No sales deck. This is IntentWeave analyzing its own repository, live — click around.
 
-<CardGrid>
-  <Card title="Context Package (RAG)" icon="rocket">
-    A single, token-budgeted RAG bundle ranked by your real import graph and repo
-    shape — not vibes. Same query, adaptive ranking promotes real import-neighbors,
-    zero extra LLM calls.
+<Card title="Context Package (RAG)" icon="rocket">
+  <img class="demo-thumb" src="/og/live-context-pack-thumb.png" alt="Adaptive Context Package demo — ranked file list toggling between --adaptive=off and --adaptive=conservative" width="600" height="315" loading="lazy" />
 
-    [Explore the context package →](/examples/live-context-pack/)
-  </Card>
+  Same query returns better neighbors as your repo evolves, zero extra LLM calls.
+
+  [Explore the context package →](/examples/live-context-pack/)
+</Card>
+
+<CardGrid>
   <Card title="Doc ↔ Code Map" icon="document">
+    <img class="demo-thumb" src="/og/live-doc-code-map-thumb.png" alt="Doc ↔ Code Map demo — documentation, grounded source files, and evidence columns" width="600" height="315" loading="lazy" />
+
     Every doc, grounded to real code. 1,054 annotations, zero LLM calls, computed
     in under a second.
 
     [Explore the map →](/examples/live-doc-code-map/)
   </Card>
   <Card title="Rules Catalog" icon="approve-check-circle">
+    <img class="demo-thumb" src="/og/live-rules-catalog-thumb.png" alt="Rules Catalog demo — structural rule card with forbidden import patterns table" width="600" height="315" loading="lazy" />
+
     Structural and behavioral rules, checked against your real call graph — not
     just your imports.
 
