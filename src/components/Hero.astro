@@ -115,6 +115,11 @@ const pillars = [
 	@layer starlight.core {
 		.hero {
 			display: grid;
+			/* minmax(0, 1fr) instead of the implicit "auto" track: without a hard 0
+			   minimum, the single grid column can size itself to the max-content width
+			   of its children (the .stack column) and overflow the viewport on narrow
+			   screens instead of shrinking to fit. */
+			grid-template-columns: minmax(0, 1fr);
 			align-items: center;
 			gap: 1rem;
 			padding-bottom: 1rem;
@@ -169,7 +174,11 @@ const pillars = [
 
 	.pillars {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		/* min(15rem, 100%) prevents the auto-fit track-count calculation from
+		   overflowing narrow (mobile) containers — without the min() clamp,
+		   some browsers size auto-fit tracks against an incorrect (too-wide)
+		   available space when the grid is a flex item with no definite width. */
+		grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
 		gap: 1rem;
 		width: 100%;
 		max-width: 62rem;
@@ -235,7 +244,7 @@ const pillars = [
 	@media (min-width: 50rem) {
 		@layer starlight.core {
 			.hero {
-				grid-template-columns: 7fr 4fr;
+				grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
 				gap: 3%;
 				padding-block: clamp(2.5rem, calc(1rem + 10vmin), 10rem);
 			}
