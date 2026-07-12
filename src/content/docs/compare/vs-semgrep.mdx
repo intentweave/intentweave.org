@@ -14,22 +14,26 @@ tried to represent it fairly. If something here is inaccurate or out of date,
 </Aside>
 
 **TL;DR:** Semgrep is a general-purpose static analysis engine built primarily for security
-scanning (SAST) — a massive community rule registry, 30+ languages, and genuinely more powerful
-taint tracking than IntentWeave's (interprocedural, crossing function boundaries; IntentWeave's is
-intra-function only). It has no first-class concept of import graphs, architecture layers,
-documentation, or call-graph behavior. IntentWeave's AST-level rules cover a narrower slice of what
-Semgrep can express, but are purpose-built for architecture governance — layer rules, behavioral
-call-graph checks, doc↔code drift, ADR extraction, and RAG context — bundled with a persistent
-local evidence index rather than a stateless scanner. These tools solve different primary
-problems and, for most teams, are more complementary than competing.
+scanning (SAST) — a massive community rule registry, 30+ languages, and interprocedural taint
+tracking that follows tainted data across function calls. IntentWeave's taint tracking is
+intra-function by design: it's built to catch a boundary value getting reassigned and used two
+lines later — the pattern architecture rules care about — not general security dataflow across
+your whole call stack. IntentWeave also has no first-class concept Semgrep does: import graphs,
+architecture layers, documentation, or call-graph behavior aren't in Semgrep's scope at all.
+IntentWeave's AST-level rules cover a narrower slice of what Semgrep can express, but are
+purpose-built for architecture governance — layer rules, behavioral call-graph checks, doc↔code
+drift, ADR extraction, and RAG context — bundled with a persistent local evidence index rather
+than a stateless scanner. These tools answer different questions and, for most teams, are more
+complementary than competing.
 
 ## What Semgrep does well
 
 Semgrep is one of the most established static analysis tools in the industry, and for good reason:
 
 - **Interprocedural taint tracking.** Sources, sinks, sanitizers, and propagators can be defined
-  once and Semgrep follows tainted data across function boundaries — more powerful than
-  IntentWeave's `taint_propagation`, which is intra-function only.
+  once and Semgrep follows tainted data across function boundaries — genuinely hard to build well,
+  and the right tool if you need general security dataflow analysis (SQL injection, XSS, and
+  similar) rather than an architecture-boundary check.
 - **Real autofix.** A rule can carry a `fix` or `fix-regex` that actually rewrites the offending
   code, not just a suggestion string.
 - **30+ languages** with a huge, community-maintained rule registry covering OWASP Top 10, CWE
@@ -69,9 +73,9 @@ types share.
   mentions to real exported symbols and flags docs referencing code that's since changed.
 - **ADR extraction (optional LLM step)** — `iw index rules-extract` drafts a `rules.yaml` from a
   written ADR, instead of every rule being hand-authored from scratch.
-- **RAG context for AI coding agents** — `iw index context-pack` hands your AI coding agent —
-  Copilot, Claude, or any MCP client — a token-budgeted, ranked bundle of files, rules, and doc
-  drift — outside a SAST scanner's scope entirely.
+- **RAG context for AI coding agents** — `iw index context-pack` hands Copilot/Claude a
+  token-budgeted, ranked bundle of files, rules, and doc drift — outside a SAST scanner's scope
+  entirely.
 
 ## Rule syntax, side by side
 
@@ -104,16 +108,18 @@ rules:
         taint_propagation: true   # flags uses of vars assigned from the access, intra-function
 ```
 
-Both can express this rule directly. For a version that must also follow the tainted value across
-function calls, Semgrep's `mode: taint` with `pattern-propagators` is the more capable option —
-IntentWeave's `taint_propagation` stops at the function boundary.
+Both can express this rule directly. IntentWeave's `taint_propagation` stops at the function
+boundary by design — it's scoped to catching architecture-boundary violations, not general
+security dataflow. For a rule that must follow a tainted value across function calls as a security
+concern (SQL injection, XSS, and similar), Semgrep's `mode: taint` with `pattern-propagators` is
+the right tool for that job.
 
 ## Feature comparison
 
 | Capability | Semgrep | IntentWeave |
 |---|:---:|:---:|
 | AST pattern matching (property access, calls) | ✅ | ✅ |
-| Taint tracking | ✅ Interprocedural | ✅ Intra-function only |
+| Taint tracking | ✅ Interprocedural (security-focused) | ✅ Intra-function (architecture-boundary-focused) |
 | Autofix | ✅ Rewrites code | Suggestion text only |
 | Language support | 30+ languages | TS/JS core (+ Swift, Python plugins) |
 | Community rule registry | ✅ Large, security-focused | — |
