@@ -5,7 +5,7 @@ description: See how IntentWeave extracts Architectural Decision Records into ru
 
 ## The Problem
 
-Vibe-coding AI agents and busy developers can easily implement against architectural decisions. While standard CI tools catch formatting and linting errors, they don't catch deviations from architectural intent. IntentWeave bridges this gap by turning your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring Neo4j or LLMs in your CI pipeline.
+Vibe-coding AI agents and busy developers can implement code that quietly breaks your architectural decisions. While standard CI tools catch formatting and linting errors, they don't catch deviations from architectural intent. IntentWeave bridges this gap by turning your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring Neo4j or LLMs in your CI pipeline.
 
 ## 1. Extract and Enforce ADRs
 
