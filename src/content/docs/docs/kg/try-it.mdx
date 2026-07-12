@@ -1,13 +1,16 @@
 ---
 title: Try It — Knowledge Graph Quick Start
-description: Set up Neo4j and run your first knowledge extraction in 5 minutes.
+description: Query a Neo4j knowledge graph with GitHub Copilot via MCP tools.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-  This requires Docker (for Neo4j) and an OpenAI API key. If you just want to
-  try IntentWeave, start with [CARI](/docs/getting-started/) — no dependencies needed.
+  The Knowledge Graph tools are **read-only queries against an existing Neo4j
+  graph**. IntentWeave does not currently ship a CLI command that ingests
+  documents into Neo4j from scratch — see [Populating the
+  graph](#populating-the-graph) below. If you just want to try IntentWeave,
+  start with [CARI](/docs/getting-started/) — no Neo4j or LLM required.
 </Aside>
 
 ## 1. Start Neo4j
@@ -21,120 +24,81 @@ docker run -d --name neo4j \
 
 Verify it's running: open [http://localhost:7474](http://localhost:7474) in your browser.
 
-## 2. Set Environment Variables
+## 2. Install the KG Plugin
 
 ```bash
+iw plugin add kg
+```
+
+This installs `@intentweave/plugin-kg`, which gives the CLI and MCP server a
+Neo4j-backed persistence capability. (`iw plugin add kg-lite` installs a
+zero-config SQLite/CypherLite backend instead, if you don't want to run Neo4j.)
+
+## 3. Set Environment Variables
+
+```bash
+export NEO4J_URI=bolt://localhost:7687
 export NEO4J_PASSWORD=codegraph
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=sk-...   # only needed for natural-language queries
 ```
 
-## 3. Initialize Your Workspace
+## 4. Start the MCP Server
 
 ```bash
-cd /path/to/your/project
-iw init
+iw mcp --session my-project
 ```
 
-## 4. Run the Extraction Pipeline
+## 5. Query from GitHub Copilot
 
-```bash
-iw run docs/*.md --track open --provider openai -i -v
-```
+With the MCP server running, use these tools directly from GitHub Copilot chat
+(or any MCP client):
 
-**What happens:**
-1. Documents are chunked (~16k chars/chunk)
-2. OpenAI extracts entity-relationship triples per chunk
-3. Entities and predicates are canonicalized
-4. Cross-document entities are deduplicated
+| Tool             | Purpose                                                    |
+| ---------------- | ----------------------------------------------------------- |
+| `kg_query`       | Natural-language or raw Cypher query against the graph     |
+| `kg_context`     | Build RAG context (topic-based or entity-seeded) for a prompt |
+| `kg_entities`    | List / search canonical entities                            |
+| `kg_impact`      | Semantic impact analysis for a set of changed files         |
+| `kg_doc_health`  | Documentation freshness against the graph                   |
+| `kg_schema`      | Graph schema — node labels, relationship types, predicates   |
 
-The `-i` flag enables incremental caching — re-runs skip unchanged files.
+Example prompts once the graph is populated:
 
-## 5. Persist to Neo4j
+- *"Use kg_query to tell me what decisions were made about the database."*
+- *"Use kg_context to build context on authentication architecture, 3 hops."*
+- *"Use kg_impact to see what's affected by changes to src/auth.ts."*
 
-```bash
-iw persist --latest -v
-```
-
-## 6. Query
-
-### Natural language
-
-```bash
-iw query "What are the main components?" -s my-project
-iw query "What decisions were made about the database?" -s my-project -v
-```
-
-### Raw Cypher
-
-```bash
-iw query --cypher "MATCH (n:Canon:Entity) RETURN n.name, n.type LIMIT 20"
-iw query --cypher "MATCH ()-[r:CANON_REL]->() RETURN r.predicate, count(*) ORDER BY count(*) DESC"
-```
-
-## 7. Build RAG Context
-
-```bash
-# Topic-based
-iw context "authentication architecture" -s my-project
-
-# Entity-seeded (expand 3 hops from a specific entity)
-iw context -e "React" --hops 3 -s my-project
-```
-
-## 8. Impact Analysis
-
-```bash
-iw impact src/auth.ts -s my-project
-```
-
-Traces which entities, decisions, and risks are affected by changing a file.
-
-## 9. Documentation Health
+## 6. Documentation Health (Full KG Mode)
 
 ```bash
 # CARI mode (default — no Neo4j needed)
 iw intent living
 
-# Full KG mode (requires Neo4j)
-iw intent living --neo4j -s my-project
+# Full KG mode (requires Neo4j, reads existing graph data)
+iw doc-health --neo4j -s my-project
 ```
 
-Detects stale references, structural drift, and contradictions.
-The default CARI mode reads the local SQLite index; add `--neo4j` for the full knowledge-graph analysis.
+The default CARI mode reads the local SQLite index; `--neo4j` adds cross-checks
+against the knowledge graph, if one is populated for that session.
 
-## Tips
+## Populating the Graph
 
-- Use `smart-mock` provider for testing without API costs: `--provider smart-mock`
-- The `--from-fx` flag lets you re-run only canonicalization: `--from-fx <run-id>`
-- Output as JSON for programmatic use: `-f json -o results.json`
-- Re-runs are fast: `iw run` with `-i` skips files whose content hasn’t changed
+IntentWeave's KG tools are query-only today. The commands that used to extract
+documents and persist them into Neo4j (`iw run`, `iw persist`) have been
+removed as part of scoping the product around the CARI Evidence Engine and
+Intent Engine (see the [`iw persist` entry](/docs/reference/cli/#iw-persist)
+in the CLI reference).
 
-## Programmatic API
-
-```typescript
-import { runPipeline, persistToNeo4j, queryKg } from "@intentweave/cli";
-
-// Run extraction (equivalent to iw run docs/*.md --track open --provider openai)
-await runPipeline({
-  paths: ["docs/"],
-  track: "open",
-  provider: "openai",
-  incremental: true,
-});
-
-// Persist latest run to Neo4j (equivalent to iw persist --latest)
-await persistToNeo4j({ latest: true, verbose: true });
-
-// Query the knowledge graph
-const answer = await queryKg({
-  question: "What are the main components?",
-  space: "my-project",
-});
-console.log(answer.text);
-```
+If you want to populate a graph to query, you currently need to write the
+entities and relationships yourself (e.g. via Cypher against the schema
+described in [Knowledge Graph — What It Is](/docs/kg/overview/#what-gets-extracted)),
+or point the KG tools at a Neo4j instance already populated by your own
+tooling. There is no supported IntentWeave CLI/MCP path to ingest from
+scratch yet.
 
 ## Next Steps
 
+- [Knowledge Graph — What It Is](/docs/kg/overview/) — data model and when to use it
 - [CLI Reference](/docs/reference/cli/) — full command documentation
-- [Architecture Overview](/architecture/overview/) — how the pipeline works
+- [Architecture Overview](/architecture/overview/) — how CARI and the KG fit together
 - [CARI Quick Start](/docs/getting-started/) — zero-dependency local index

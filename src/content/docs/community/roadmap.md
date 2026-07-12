@@ -7,7 +7,9 @@ description: What's planned for IntentWeave.
 
 IntentWeave ships **three composable layers** of code intelligence. Layer 1 (CARI) is
 **production-ready** with 1532 tests passing across 80 test files and 16 packages.
-Layer 2 (Selective Enrichment) is **shipped** — `iw index enrich` is live. Layer 3 (Intent
+Layer 2 (Selective Enrichment) is **partially available** — the `cari_enrich` MCP tool
+scores files for enrichment candidacy today (dry-run only; full LLM extraction isn't
+yet wired up to a CLI command). Layer 3 (Intent
 Verification) is **shipped** — `iw intent check` runs all three enforcement domains
 (structural / behavioral / documentary) at $0 after a one-time LLM rule-extraction step.
 
@@ -17,8 +19,8 @@ Verification) is **shipped** — `iw intent check` runs all three enforcement do
 Layer 3 — Intent Verification          (shipped)
   iw intent check: structural + behavioral + documentary domains
   Insights Book: 15+ chapter HTML deliverable
-Layer 2 — Selective Semantic Enrichment (shipped)
-  iw index enrich — budget-controlled LLM on CARI-selected targets
+Layer 2 — Selective Semantic Enrichment (partially available)
+  cari_enrich MCP tool — dry-run scoring of CARI-selected targets
 Layer 1 — CARI                         (production-ready, $0)
   AST + keywords + git + SQLite → 60+ query modes
 ```

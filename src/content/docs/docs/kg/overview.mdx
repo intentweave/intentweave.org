@@ -30,10 +30,10 @@ Relationship: Team DECIDED_FOR JWT
 Relationship: Team DECIDED_AGAINST Session-based auth
 ```
 
-You can then query:
+You can then query it via the `kg_query` MCP tool (GitHub Copilot or any MCP client):
 
-```bash
-iw query "What decisions were made about authentication?"
+```
+kg_query(question: "What decisions were made about authentication?")
 
 # → JWT was chosen over session-based auth for the authentication system
 # → Reasons: statelessness, horizontal scaling, API compatibility
@@ -41,12 +41,17 @@ iw query "What decisions were made about authentication?"
 
 ## How It Works
 
-### Pipeline: IN → FX → KX → GX
+### Extraction Pipeline: IN → FX → KX → GX
 
 1. **IN** — Chunks documents (semantic markdown splitting, ~16k chars/chunk)
 2. **FX** — LLM extracts raw entity-relationship triples per chunk
 3. **KX** — Canonicalizes entities and predicates into a consistent schema (30 predicate types)
 4. **GX** — Cross-document entity deduplication (exact + fuzzy merge)
+
+This extraction pipeline is not currently exposed as a CLI or MCP command — it
+describes how the graph data model is structured. Today, IntentWeave's KG tools
+are **read-only querying** (`kg_query`, `kg_context`, `kg_impact`, `kg_entities`,
+`kg_doc_health`, `kg_schema`) against a Neo4j instance you populate yourself.
 
 ### What Gets Extracted
 

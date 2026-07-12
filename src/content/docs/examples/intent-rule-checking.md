@@ -61,7 +61,7 @@ iw index arch-check --from-scan docs/ARCHITECTURE.md --provider openai --strict
 
 ### Validate using pre-computed Diagrams
 
-If you are already running Layer 2 Semantic Enrichment (`iw index enrich`), you can skip the LLM call entirely during the checks:
+If you are already using the `cari_enrich` MCP tool's enrichment output, you can skip the LLM call entirely during the checks:
 
 ```bash
 # Validate using pre-extracted diagram triples hidden inside your local index.db
