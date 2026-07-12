@@ -187,12 +187,13 @@ iw intent score                        # composite A–F score (4 dimensions)
     LLM reads ASCII art and Mermaid diagrams in your docs, extracts component
     flows, and CARI validates them against the actual import graph. The diagram
     in your docs **is** the architecture spec — no YAML config needed.
-    Run `iw index enrich` then `iw index arch-check --from-diagrams`.
+    Run `iw index arch-check --from-scan docs/*.md --provider openai`.
   </Card>
   <Card title="Decision Tracking" icon="open-book">
     Selective LLM extraction finds decisions in your ADRs and docs. CARI checks
     which decisions have code grounding and which are unimplemented or stale.
-    Run `iw index enrich --provider openai`.
+    Available via the `cari_enrich` MCP tool, which scores files by impact
+    (hotspots, orphans, hubs, coverage gaps) for LLM enrichment candidacy.
   </Card>
   <Card title="Dead Feature Detection" icon="close">
     Combine unused exports, undocumented symbols, and stale files to surface
@@ -257,14 +258,14 @@ Translate intent from plain-text markdown and check it in CI milliseconds later.
 
 ```bash
 # LLM-assisted: Extract architectural constraints from an ADR into .iw/rules.yaml
-iw index rules-extract docs/ADR-003.md --provider openai --output .iw/rules.yaml
+iw intent extract docs/ADR-003.md --provider openai --output .iw/rules.yaml
 
 # CI Validation: Check if the codebase violates any architectural rules
-iw index rules-check --changed src/auth.ts --severity high --format text
+iw intent check --changed src/auth.ts --severity high --format text
 ```
 
-* **`rules-extract` options:** `--provider` (e.g. openai), `--output` (specify rules file path).
-* **`rules-check` options:** `--changed <files>` (incremental CI mode), `--severity <level>` (filter by high/medium/low), `--rule-id <id>` (check specific rule), `--format <format>` (json/text).
+* **`iw intent extract` options:** `--provider` (e.g. openai), `--output` (specify rules file path).
+* **`iw intent check` options:** `--changed <files>` (comma-separated, incremental CI mode), `--severity <level>` (filter by high/medium/low), `--rule-id <id>` (check specific rule), `--format <format>` (json/text). Runs as `iw index rules-check` under the hood — see the [CLI Reference](/docs/reference/cli/) for every option.
 
 ### 2. Architecture Diagram Validation
 
@@ -345,7 +346,7 @@ IntentWeave grows with your needs. Start free, add capabilities when you need th
 ```
 $0, zero config                    + LLM (budget-controlled)             + Neo4j (full scale)
 ─────────────────                  ──────────────────────                 ────────────────────
-iw index build                     iw index enrich --budget 20           iw run docs/*.md --persist
+iw index build                     iw plugin add llm                     iw plugin add kg
   → 30+ code intelligence queries    → decision tracking                   → full KG queries
   → architecture visualization       → diagram validation                  → impact analysis
   → CI drift detection                → contradiction detection             → semantic search

@@ -204,12 +204,28 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index export --book`      | Insights Book (15+ chapters, primary deliverable)         |
 | `iw index export --html`      | §10.1 interactive standalone HTML architecture report     |
 | `iw index export --focus <t>` | Focused Graphviz SVG architecture report                  |
+| `iw index rules-check`        | Canonical command behind `iw intent check` (same options) |
+| `iw index rules-extract`      | Canonical command behind `iw intent extract` (same options) |
+| `iw index scan-diagrams`      | Canonical command behind `iw intent scan` (same options)  |
+| `iw index rules-trend`        | ADR conformance trend over git history                    |
+| `iw index arch-check`         | Validate imports against a diagram/YAML architecture spec — `--from-scan <paths>` (LLM diagram scan, no config needed), `--from-diagrams` (use enriched triples), `--strict`, `--refresh` |
+| `iw index deprecated-callers` | Active callers of `@deprecated` symbols                    |
+| `iw index internal-violations`| `@internal`/`_`-prefix boundary violations across packages |
+| `iw index type-assertions`    | Inventory of `as any` / double / angle-bracket casts       |
+| `iw index test-intent`        | Test descriptions that no longer match real symbols        |
 | `iw intent check`             | Check all intent domains (structural/behavioral/documentary)|
 | `iw intent check --domain`    | Target one domain: `structural`, `behavioral`, `documentary`, `all` |
 | `iw intent check --baseline`  | Regression gating: fail only if violations increased      |
 | `iw intent extract`           | Extract rules from an ADR via LLM                         |
+| `iw intent scan`              | Scan diagrams (Mermaid/PlantUML) for architecture components |
 | `iw intent living`            | Living documentation health (documentary domain)          |
 | `iw intent score`             | Composite living documentation score (A–F, 4 dimensions)  |
+
+`iw intent check`, `iw intent extract`, and `iw intent scan` are thin aliases —
+`iw index rules-check`, `iw index rules-extract`, and `iw index scan-diagrams` are the
+underlying commands and accept the same options. `arch-check`, `deprecated-callers`,
+`internal-violations`, `type-assertions`, and `test-intent` have no `iw intent` alias;
+use the `iw index` form directly.
 
 All subcommands support `--db <path>` and `-f, --format <text|json>`.
 Some also accept `-n, --limit` or `--kind`.
