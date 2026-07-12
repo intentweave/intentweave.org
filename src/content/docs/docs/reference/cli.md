@@ -133,6 +133,33 @@ Measure context-pack quality (noisy-path share, anchor hit rate, latency) on a f
 iw index eval --queries .iw/eval/queries.json --adaptive conservative
 ```
 
+### `iw intent check`
+
+Check architectural rules across three domains.
+
+```bash
+iw intent check                              # all domains
+iw intent check --domain structural          # import + AST rules only
+iw intent check --domain behavioral          # Mermaid sequence/flow rules
+iw intent check --domain documentary         # coverage + stale docs + terminology
+iw intent check --domain all                 # explicit all-domains pass
+
+# CI: changed files only, high severity (comma-separated, no spaces)
+iw intent check --changed src/auth.ts,src/auth/jwt.ts --severity high --format json
+
+# Regression gating
+iw intent check --baseline .iw/baseline.json
+```
+
+| Option                 | Default          | Description                                       |
+| ---------------------- | ---------------- | -------------------------------------------------- |
+| `--domain <d>`         | `all`            | `structural`, `behavioral`, `documentary`, `all`   |
+| `--severity <level>`   | `info`           | Minimum: `info`, `medium`, `high`                  |
+| `--changed <files>`    | —                | Comma-separated list of changed files (no spaces)  |
+| `--config <path>`      | `.iw/rules.yaml` | Path to rules config                               |
+| `--baseline <path>`    | —                | Regression gating: fail only on new violations     |
+| `--format <f>`         | `text`           | `text`, `json`, `github`                           |
+
 ### CARI Analysis Subcommands
 
 All analysis queries are available as `iw index` subcommands:
@@ -343,7 +370,8 @@ iw index export --focus <target> [options]
 Run an ad-hoc [CypherLite](/docs/cari/semantic-rules/) query directly against the CARI graph
 projection — a second layer on top of the 30+
 built-in queries, for questions they don't cover. No Neo4j, no LLM — only `.iw/index.db`.
-This is distinct from `iw query --cypher`, which queries a Neo4j-backed knowledge graph.
+This queries the CARI SQLite projection only. For the separate LLM-powered Knowledge Graph
+(Neo4j), use the `kg_query` MCP tool instead — see below.
 
 ```bash
 iw index cypher <query> [options]

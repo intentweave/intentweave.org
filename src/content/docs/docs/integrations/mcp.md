@@ -40,7 +40,8 @@ VS Code Copilot will auto-discover the server and make the tools available in ch
 
 ## CARI Tools
 
-These tools work with the local SQLite index — no Neo4j or LLM needed.
+These tools work with the local SQLite index — no Neo4j needed. Most also need no LLM;
+a few (e.g. `cari_layers_name`) optionally call one for naming/labeling.
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
