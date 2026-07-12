@@ -76,14 +76,19 @@ iw index connections <entity> [options]
 CI drift detection.
 
 ```bash
-iw index check [options]
+iw index check [changed...] [options]
 ```
 
-| Option                | Default   | Description                        |
-| --------------------- | --------- | ---------------------------------- |
-| `--changed <files...>`| —         | Changed files                      |
-| `--severity <level>`  | `info`    | `info`, `warning`, `critical`      |
-| `-f, --format`        | `text`    | `text`, `json`, `github`           |
+| Option                | Default   | Description                         |
+| --------------------- | --------- | ------------------------------------ |
+| `[changed...]`        | —         | Changed files (positional, not a flag) |
+| `--severity <level>`  | `info`    | `info`, `warning`, `critical`        |
+| `-f, --format`        | `text`    | `text`, `json`, `github`             |
+
+```bash
+iw index check src/auth/service.ts src/auth/jwt.ts
+iw index check $(git diff --name-only origin/main...HEAD) --format github
+```
 
 ### `iw index report`
 
@@ -167,6 +172,8 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index calls --callee-name`| All callers of a function                                 |
 | `iw index trace --entry`      | BFS call-path trace from entry-point file                 |
 | `iw index rule-coverage`      | Packages with zero behavioral rules                       |
+| `iw index cypher <query>`     | Ad-hoc CypherLite graph query over the CARI projection     |
+| `iw index schema`             | Graph node/relationship schema + built-in query templates  |
 | `iw index export --book`      | Insights Book (15+ chapters, primary deliverable)         |
 | `iw index export --html`      | §10.1 interactive standalone HTML architecture report     |
 | `iw index export --focus <t>` | Focused Graphviz SVG architecture report                  |
@@ -331,9 +338,39 @@ iw index export --focus <target> [options]
 | `--max-nodes <n>`    | `20`                 | Maximum nodes                            |
 | `-o, --output`       | `focus.html`         | Output file path                         |
 
----
+### `iw index cypher`
 
-## Knowledge Graph Commands (require Neo4j)
+Run an ad-hoc [CypherLite](/docs/cari/semantic-rules/) query directly against the CARI graph
+projection — a second layer on top of the 30+
+built-in queries, for questions they don't cover. No Neo4j, no LLM — only `.iw/index.db`.
+This is distinct from `iw query --cypher`, which queries a Neo4j-backed knowledge graph.
+
+```bash
+iw index cypher <query> [options]
+iw index schema                    # node labels, relationships, built-in templates
+```
+
+| Option                | Default        | Description                                                |
+| --------------------- | -------------- | ------------------------------------------------------------ |
+| `--db <path>`         | `.iw/index.db` | Path to CARI index                                            |
+| `-p, --param <kv...>` | —              | Query parameters as `key=value` pairs                         |
+| `--template <id>`     | —              | Run a named built-in template (alternative to `@:` prefix)    |
+| `--list-templates`    | off            | List all available query templates and exit                   |
+| `-f, --format`        | `table`        | `table`, `json`, or `csv`                                      |
+| `--limit <n>`         | `50`           | Max rows to display                                            |
+| `--show-sql`          | off            | Print the generated SQL before results                         |
+
+```bash
+iw index cypher "MATCH (a:SYMBOL)-[:CALLS]->(b:SYMBOL) RETURN a.name, b.name LIMIT 10"
+iw index cypher --list-templates
+iw index cypher @:callers-of --param calleeName=validateToken
+iw index cypher --template co-changed-with --param file=src/auth.ts --format json
+```
+
+Node labels: `FILE`, `SYMBOL`, `DOCSPAN`, `TODO`, `RATIONALE`, `SEMANTIC`. Relationship
+types: `IMPORTS`, `DEFINES`, `CALLS`, `ANNOTATED_BY`, `HAS_TODO`, `HAS_RATIONALE`,
+`SUMMARIZED_BY`, `CO_OCCURS`, `CO_CHANGES`. Run `iw index schema` (or `--format json`)
+for the full property reference and current template list.
 
 KG queries are available via the MCP server (`iw mcp`) using GitHub Copilot tools
 (`kg_query`, `kg_context`, `kg_entities`, `kg_impact`, `kg_doc_health`, `kg_schema`).

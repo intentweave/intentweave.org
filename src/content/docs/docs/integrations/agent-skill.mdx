@@ -1,0 +1,83 @@
+---
+title: Agent Skill (Claude Code, Copilot, Cursor)
+description: Scaffold a SKILL.md so AI coding agents discover and use the iw CLI automatically, without an MCP server.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`iw init` can scaffold an **agent skill file** — a `SKILL.md` that teaches AI coding
+agents with shell access (Claude Code, GitHub Copilot, Cursor, or any other
+skill-aware agent) to call `iw` on their own. No MCP server, no extra config on the
+agent side — the agent discovers the file the same way it discovers any other skill
+in the repository.
+
+<Aside type="tip">
+  Already using [MCP](/docs/integrations/mcp/)? The skill file and MCP tools are
+  complementary: MCP works for chat clients that support tool servers (like VS Code
+  Copilot Chat); the skill file works for agents that only read files and run shell
+  commands, and don't need a running process.
+</Aside>
+
+## Why a skill file
+
+Without it, an agent working in a repo with an IntentWeave index has no way to know
+`iw` exists unless a human tells it to run a command and pastes the output back into
+chat. A skill file closes that gap: the agent reads it once, then grounds its own
+answers in `iw index context-pack`/`retrieve` before guessing, and checks its own
+diffs against `iw intent check`/`iw index check` before calling a task done.
+
+## Install it
+
+```bash
+cd your-project
+iw init             # prompts interactively [Y/n] (auto-skipped in CI / non-TTY)
+```
+
+Or skip the prompt:
+
+```bash
+iw init --skill      # force-install, no prompt
+iw init --skip-skill # force-skip, no prompt
+```
+
+This writes **identical content** to two locations, so both Claude Code and
+GitHub Copilot pick it up without extra configuration:
+
+- `.claude/skills/intentweave/SKILL.md`
+- `.github/skills/intentweave/SKILL.md`
+
+## What the agent is told to do
+
+The skill file's frontmatter `description` is the discovery surface most agents use
+to decide when to load it — it triggers on the presence of `.iw/index.db` or
+`.iw/rules.yaml` in the repository. The body then walks the agent through:
+
+1. **A setup check** — confirm `iw --version` works (or fall back to
+   `npx @intentweave/cli`), and build the index if `.iw/index.db` doesn't exist yet.
+2. **Grounding before writing code** — run `iw index context-pack` / `iw index retrieve`
+   / `iw index connections` before touching unfamiliar code, instead of guessing
+   architecture from a partial read.
+3. **Rule checking before finishing** — run `iw intent check --changed <files>` against
+   the files it touched, and surface violations rather than silently ignoring them.
+4. **Doc-drift checking** — run `iw index check <files>` after renaming or moving a
+   symbol, and update any documentation it flags.
+5. **Ad-hoc graph queries** — fall back to `iw index cypher` / `iw index schema` for
+   questions the built-in queries don't cover (see [CLI Reference](/docs/reference/cli/#iw-index-cypher)).
+6. **Extracting rules from an ADR** — the one workflow that costs money (LLM call),
+   explicitly gated on the agent asking first.
+
+It also tells the agent what the index **doesn't** cover — for example, that the
+`taint_propagation` rule type only tracks data flow within a single function — so it
+doesn't over-trust the output.
+
+## Canonical source
+
+The template lives in the IntentWeave monorepo at
+[`packages/cli/assets/skill/SKILL.md`](https://github.com/intentweave/intentweave/blob/main/packages/cli/assets/skill/SKILL.md)
+and is copied verbatim by `iw init` — it isn't regenerated or templated per-project.
+
+## Next Steps
+
+- [Copilot / MCP Integration](/docs/integrations/mcp/) — the complementary tool-server path
+- [CLI Reference](/docs/reference/cli/) — every command the skill file uses
+- [Getting Started](/docs/getting-started/) — build the index the skill file relies on

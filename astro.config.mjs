@@ -73,6 +73,7 @@ export default defineConfig({
 					items: [
 						{ label: 'GitHub Actions / CI', slug: 'docs/integrations/ci' },
 						{ label: 'Copilot / MCP', slug: 'docs/integrations/mcp' },
+						{ label: 'Agent Skill (Claude Code, Cursor)', slug: 'docs/integrations/agent-skill' },
 					],
 				},
 				{

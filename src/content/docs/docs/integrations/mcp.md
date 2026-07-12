@@ -9,6 +9,10 @@ The **Model Context Protocol** (MCP) lets AI agents like GitHub Copilot call
 external tools. IntentWeave exposes its index queries as MCP tools, so Copilot
 can search your code index, find connections, and check drift — all from chat.
 
+Prefer an agent that reads files and runs shell commands instead of connecting to a
+tool server (Claude Code, Cursor)? See the [Agent Skill](/docs/integrations/agent-skill/)
+page instead — same underlying `iw` CLI, no running MCP server required.
+
 ## Setup
 
 ### 1. Start the MCP server
@@ -67,6 +71,8 @@ These tools work with the local SQLite index — no Neo4j or LLM needed.
 | `cari_layers_check` | Validate imports against layer config | `allowSkipLayer?` |
 | `cari_layers_name` | LLM-generated layer & directory names | `provider`, `model?`, `api_key?` |
 | `cari_focus` | Focused architecture view around a target | `target`, `hops?`, `maxNodes?` |
+| `cari_cypher` | Ad-hoc CypherLite query over the CARI graph projection | `query`, `limit?` |
+| `cari_graph_schema` | CARI graph schema — node/relationship types, query templates | _(none)_ |
 
 All CARI tools are also available as CLI subcommands (e.g., `iw index clones`).
 See the [CLI Reference](/docs/reference/cli/) for the full command list.
@@ -89,6 +95,7 @@ Ask Copilot:
 - **"Name my layers with AI"** → Copilot calls `cari_layers_name` with provider="openai"
 - **"Show communities by git history"** → Copilot calls `cari_communities` with mode="temporal"
 - **"Show me the architecture around auth.ts"** → Copilot calls `cari_focus` with target="auth.ts"
+- **"Which files call `validateToken`?"** → Copilot calls `cari_cypher` with a query, or `iw index cypher @:callers-of --param calleeName=validateToken`
 
 ## Knowledge Graph Tools (Optional)
 
@@ -118,3 +125,4 @@ iw mcp [options]
 
 - [CARI Overview](/docs/cari/overview/) — understand what the tools query
 - [CI Integration](/docs/integrations/ci/) — automate with GitHub Actions
+- [Agent Skill](/docs/integrations/agent-skill/) — the file-based alternative for Claude Code / Cursor
