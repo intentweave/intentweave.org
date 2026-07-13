@@ -13,7 +13,7 @@ those docs ship stale.
 
 ```bash
 # Simulate: check which docs are affected by the PR's changed files
-iw index check --changed src/auth/service.ts src/auth/jwt.ts
+iw index check src/auth/service.ts src/auth/jwt.ts
 ```
 
 ## Output (text)
@@ -39,7 +39,7 @@ Exit code: `1` (drift detected)
 
 ```bash
 iw index check \
-  --changed src/auth/service.ts src/auth/jwt.ts \
+  src/auth/service.ts src/auth/jwt.ts \
   --format github
 ```
 
@@ -54,7 +54,7 @@ These annotations appear directly in the PR diff on GitHub.
 ## Output (JSON)
 
 ```bash
-iw index check --changed src/auth/service.ts --format json
+iw index check src/auth/service.ts --format json
 ```
 
 ```json
@@ -97,7 +97,7 @@ jobs:
       - run: npx @intentweave/cli init && npx @intentweave/cli index build
       - run: |
           npx @intentweave/cli index check \
-            --changed $(git diff --name-only origin/main...HEAD) \
+            $(git diff --name-only origin/main...HEAD) \
             --format github
 ```
 
@@ -108,7 +108,7 @@ cd your-project
 iw init && iw index build
 
 # Check against your current uncommitted changes
-iw index check --changed $(git diff --name-only)
+iw index check $(git diff --name-only)
 ```
 
 ## Programmatic API
@@ -118,7 +118,7 @@ import { CariIndex } from "@intentweave/index";
 
 const index = CariIndex.load(".iw/index.db");
 
-// Same as: iw index check --changed src/auth/service.ts
+// Same as: iw index check src/auth/service.ts
 const drift = index.check({
   changed: ["src/auth/service.ts", "src/auth/jwt.ts"],
 });

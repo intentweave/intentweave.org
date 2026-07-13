@@ -61,7 +61,7 @@ Each row is a use case. Columns show which plugins are needed. Core is always in
 ```bash
 iw index build                     # Core only — $0, < 3 seconds
 iw index export --html             # architecture report
-iw index check --changed $(git diff --name-only HEAD~1)
+iw index check $(git diff --name-only HEAD~1)
 ```
 
 **Plugins needed:** none.

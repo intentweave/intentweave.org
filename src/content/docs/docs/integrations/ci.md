@@ -70,7 +70,7 @@ Two lines to add drift detection to any GitHub Actions workflow:
 
 ```yaml
 - run: npx @intentweave/cli index build
-- run: npx @intentweave/cli index check --changed $(git diff --name-only origin/main...HEAD)
+- run: npx @intentweave/cli index check $(git diff --name-only origin/main...HEAD)
 ```
 
 Exit code 0 = clean, 1 = drift found.
@@ -103,7 +103,7 @@ jobs:
       - name: Check documentation drift
         run: |
           npx @intentweave/cli index check \
-            --changed $(git diff --name-only origin/main...HEAD) \
+            $(git diff --name-only origin/main...HEAD) \
             --format github
 ```
 
@@ -141,7 +141,7 @@ doc-drift:
   script:
     - npx @intentweave/cli init
     - npx @intentweave/cli index build
-    - npx @intentweave/cli index check --changed $(git diff --name-only origin/main...HEAD)
+    - npx @intentweave/cli index check $(git diff --name-only origin/main...HEAD)
   only:
     - merge_requests
 ```
@@ -153,7 +153,7 @@ Any CI system that supports Node.js can run the same commands:
 ```bash
 npx @intentweave/cli init
 npx @intentweave/cli index build
-npx @intentweave/cli index check --changed <list-of-changed-files>
+npx @intentweave/cli index check <list-of-changed-files...>
 ```
 
 The exit code tells you whether drift was detected.

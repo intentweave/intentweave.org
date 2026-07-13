@@ -79,11 +79,13 @@ CI drift detection.
 iw index check [changed...] [options]
 ```
 
-| Option                | Default   | Description                         |
-| --------------------- | --------- | ------------------------------------ |
-| `[changed...]`        | —         | Changed files (positional, not a flag) |
-| `--severity <level>`  | `info`    | `info`, `warning`, `critical`        |
-| `-f, --format`        | `text`    | `text`, `json`, `github`             |
+| Option                     | Default        | Description                            |
+| -------------------------- | -------------- | ---------------------------------------- |
+| `[changed...]`             | —              | Changed files (positional, not a flag) |
+| `--severity <level>`       | `info`         | `info`, `warning`, `critical`          |
+| `-f, --format`             | `text`         | `text`, `json`, `github`               |
+| `--exclude <patterns...>`  | —              | Exclude findings matching these globs  |
+| `--db <path>`              | `.iw/index.db` | Path to CARI index                     |
 
 ```bash
 iw index check src/auth/service.ts src/auth/jwt.ts

@@ -152,7 +152,7 @@ Shows documentation coverage, stale docs, hidden couplings, and undocumented dep
 ### CI drift check
 
 ```bash
-iw index check --changed $(git diff --name-only origin/main...HEAD)
+iw index check $(git diff --name-only origin/main...HEAD)
 ```
 
 Exit code 0 = clean, 1 = drift found (docs may need updating).

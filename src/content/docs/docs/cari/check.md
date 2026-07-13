@@ -6,18 +6,20 @@ description: Detect stale documentation in your CI pipeline.
 ## Usage
 
 ```bash
-iw index check [options]
+iw index check <changed...> [options]
 ```
 
 Identifies documents that reference changed code and may need updating.
 
 ## Options
 
-| Option                | Default   | Description                        |
-| --------------------- | --------- | ---------------------------------- |
-| `--changed <files...>`| —         | Files changed in PR/commit         |
-| `--severity <level>`  | `info`    | Minimum: `info`, `warning`, `critical` |
-| `-f, --format`        | `text`    | Output: `text`, `json`, `github`   |
+| Option                  | Default   | Description                              |
+| ------------------------ | --------- | ------------------------------------------ |
+| `<changed...>`          | —         | Changed files (positional, not a flag)   |
+| `--severity <level>`    | `info`    | Minimum: `info`, `warning`, `critical`   |
+| `-f, --format`          | `text`    | Output: `text`, `json`, `github`         |
+| `--exclude <patterns...>` | —      | Exclude findings matching these globs    |
+| `--db <path>`           | `.iw/index.db` | Path to CARI index                  |
 
 ## How It Works
 
@@ -38,7 +40,7 @@ Identifies documents that reference changed code and may need updating.
 ### Basic check
 
 ```bash
-iw index check --changed src/auth/service.ts src/auth/jwt.ts
+iw index check src/auth/service.ts src/auth/jwt.ts
 
 # ⚠ docs/auth.md references AuthService (12 annotations) — may need updating
 # ⚠ docs/api.md references JwtValidator (3 annotations) — may need updating
@@ -48,7 +50,7 @@ iw index check --changed src/auth/service.ts src/auth/jwt.ts
 
 ```bash
 iw index check \
-  --changed $(git diff --name-only origin/main...HEAD) \
+  $(git diff --name-only origin/main...HEAD) \
   --format github
 
 # ::warning file=docs/auth.md::References changed code: AuthService (12 annotations)
@@ -62,7 +64,7 @@ Use `--format json` to get machine-readable output. Each entry corresponds to on
 linking that doc to the changed symbols (via `CariIndex.annotationsForFile()`):
 
 ```bash
-iw index check --changed src/auth.ts --format json
+iw index check src/auth.ts --format json
 
 # [
 #   {
@@ -78,7 +80,7 @@ iw index check --changed src/auth.ts --format json
 
 ```bash
 # Only show critical drift (many references to heavily-changed code)
-iw index check --changed src/ --severity critical
+iw index check src/ --severity critical
 ```
 
 ## GitHub Actions Integration
@@ -106,7 +108,7 @@ jobs:
       - name: Check documentation drift
         run: |
           iw index check \
-            --changed $(git diff --name-only origin/main...HEAD) \
+            $(git diff --name-only origin/main...HEAD) \
             --format github
 ```
 
@@ -122,7 +124,7 @@ import { CariIndex } from "@intentweave/index";
 
 const index = CariIndex.load(".iw/index.db");
 
-// Equivalent to: iw index check --changed src/auth.ts --severity warning
+// Equivalent to: iw index check src/auth.ts --severity warning
 const drift = index.check({
   changed: ["src/auth.ts", "src/auth/jwt.ts"],
   severity: "warning",
