@@ -147,15 +147,9 @@ iw intent score                        # composite A–F score (4 dimensions)
 </CardGrid>
 
 <CardGrid>
-  <Card title="Semantic Enrichment (optional)" icon="star">
-    Selectively apply LLM extraction to the files CARI flags as highest-value.
-    Budget-controlled, stored in the same SQLite index. Unlocks decision tracking,
-    diagram validation, and cross-doc contradiction detection.
-  </Card>
-  <Card title="Knowledge Graph (optional)" icon="open-book">
-    Persist to Neo4j for full-scale semantic queries and impact analysis. CypherLite
-    lets the same queries run against both SQLite and Neo4j — swap backends without
-    changing code.
+  <Card title="Graph queries (optional)" icon="open-book">
+    `plugin-kg-lite` stores a graph in a local SQLite file, so the `kg_*` MCP tools
+    can query it. No external database is needed.
   </Card>
 </CardGrid>
 
@@ -190,10 +184,9 @@ iw intent score                        # composite A–F score (4 dimensions)
     Run `iw index arch-check --from-scan docs/*.md --provider openai`.
   </Card>
   <Card title="Decision Tracking" icon="open-book">
-    Selective LLM extraction finds decisions in your ADRs and docs. CARI checks
-    which decisions have code grounding and which are unimplemented or stale.
-    Available via the `cari_enrich` MCP tool, which scores files by impact
-    (hotspots, orphans, hubs, coverage gaps) for LLM enrichment candidacy.
+    Rules written from your ADRs are checked on every change with
+    `iw intent check`. CARI reports the files most worth reviewing, and the
+    `cari_enrich` MCP tool ranks them by hotspots, orphans, hubs, and coverage gaps.
   </Card>
   <Card title="Dead Feature Detection" icon="close">
     Combine unused exports, undocumented symbols, and stale files to surface
@@ -201,7 +194,7 @@ iw intent score                        # composite A–F score (4 dimensions)
   </Card>
   <Card title="Plugin Architecture" icon="setting">
     Install only what you need. Core ships zero-cost. Add LLM capability,
-    Neo4j persistence, or language support (Swift, Python) as plugins.
+    SQLite graph queries, or language support (Swift, Python) as plugins.
     `iw plugin add llm` — done.
   </Card>
 </CardGrid>
@@ -250,7 +243,7 @@ SQL — sub-100ms latency. The entire pipeline is local and deterministic.
 
 ## Ensure the Intent in the Code (Semantic Rule Checking 0.11.0)
 
-Vibe-coding AI agents and busy developers can easily implement against architectural decisions. IntentWeave turns your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring Neo4j or LLMs in your CI.
+Vibe-coding AI agents and busy developers can easily implement against architectural decisions. IntentWeave turns your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring LLMs in your CI.
 
 ### 1. Extract and Enforce ADRs
 
@@ -276,7 +269,7 @@ Let the diagram *be* the specification. Extract component flows directly from Me
 iw index arch-check --from-scan docs/ARCHITECTURE.md --provider openai --strict
 ```
 
-* **`arch-check` options:** `--from-scan <paths>` (extract on-the-fly), `--from-diagrams` (use previously enriched `.db` diagrams), `--strict` (fail on undocumented flows), `--refresh` (ignore cache).
+* **`arch-check` options:** `--from-scan <paths>` (extract on-the-fly), `--strict` (fail on undocumented flows), `--refresh` (ignore cache).
 
 ### 3. Built-in Intent Enforcements (Zero Config)
 
@@ -344,18 +337,17 @@ fully functional without this — heuristic labels are used by default.
 IntentWeave grows with your needs. Start free, add capabilities when you need them:
 
 ```
-$0, zero config                    + LLM (budget-controlled)             + Neo4j (full scale)
-─────────────────                  ──────────────────────                 ────────────────────
-iw index build                     iw plugin add llm                     iw plugin add kg
-  → 30+ code intelligence queries    → decision tracking                   → full KG queries
-  → architecture visualization       → diagram validation                  → impact analysis
-  → CI drift detection                → contradiction detection             → semantic search
-  → clone detection                   → config-to-docs sync                → cross-doc reasoning
-  → community detection               → same SQLite index                  → Neo4j persistence
+$0, zero config                    + LLM (layer names)                   + plugin-kg-lite (SQLite graph)
+─────────────────                  ──────────────────────                 ───────────────────────────────
+iw index build                     iw plugin add llm                     iw plugin add kg-lite
+  → 30+ code intelligence queries    → LLM-named architecture layers       → graph queries (kg_* MCP tools)
+  → architecture visualization       → same SQLite index                   → Cypher over a local graph file
+  → CI drift detection                                                    → no external database
+  → clone detection
+  → community detection
 ```
 
-No lock-in — each layer is independently useful and stores results in formats you own
-(SQLite files, Neo4j database).
+No lock-in — each layer is independently useful and stores results in SQLite files you own.
 
 <CardGrid>
   <Card title="Contributing" icon="open-book">

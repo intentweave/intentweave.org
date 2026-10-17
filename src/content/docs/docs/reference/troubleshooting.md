@@ -54,45 +54,6 @@ For most projects, `iw index build` takes 1–3 seconds. If it's slow:
 
 ---
 
-## Neo4j Issues (Knowledge Graph)
-
-### "Neo4j connection refused"
-
-```
-Error: Connection refused to bolt://localhost:7687
-```
-
-**Fix:** Start Neo4j:
-
-```bash
-docker run -d --name neo4j \
-  -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/codegraph \
-  neo4j:5
-```
-
-### "Authentication failed"
-
-```
-Error: Neo4j authentication failed
-```
-
-**Fix:** Set the password environment variable:
-
-```bash
-export NEO4J_PASSWORD=codegraph
-```
-
-Or match whatever you set in `NEO4J_AUTH` when starting the container.
-
-### Neo4j not needed for CARI
-
-If you only use `iw index` commands, you don't need Neo4j at all.
-Neo4j is only required for KG MCP tools (`kg_query`, `kg_context`, `kg_impact`,
-etc.) and `iw doc-health --neo4j`.
-
----
-
 ## MCP Issues
 
 ### Copilot doesn't see IntentWeave tools
@@ -120,7 +81,7 @@ etc.) and `iw doc-health --neo4j`.
 ### MCP tools return errors
 
 - **CARI tools** (`cari_retrieve`, etc.): Run `iw index build` first
-- **KG tools** (`kg_query`, etc.): Start Neo4j and set `NEO4J_PASSWORD`
+- **KG tools** (`kg_query`, etc.): install the graph plugin with `iw plugin add kg-lite`
 
 ---
 

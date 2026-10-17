@@ -64,8 +64,6 @@ export default defineConfig({
 					label: 'Plugins',
 					items: [
 						{ label: 'Overview & Combinations', slug: 'docs/plugins/overview' },
-						{ label: 'Knowledge Graph', slug: 'docs/kg/overview' },
-						{ label: 'Try the KG', slug: 'docs/kg/try-it' },
 					],
 				},
 				{

@@ -40,7 +40,7 @@ VS Code Copilot will auto-discover the server and make the tools available in ch
 
 ## CARI Tools
 
-These tools work with the local SQLite index — no Neo4j needed. Most also need no LLM;
+These tools work with the local SQLite index. Most need no LLM;
 a few (e.g. `cari_layers_name`) optionally call one for naming/labeling.
 
 | Tool | Purpose | Key Parameters |
@@ -100,15 +100,14 @@ Ask Copilot:
 
 ## Knowledge Graph Tools (Optional)
 
-If you have Neo4j running, additional tools are available:
+With `plugin-kg-lite` installed (`iw plugin add kg-lite`), these tools query the SQLite graph:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `kg_query` | Natural language or Cypher query | `question`, `cypher?`, `limit?` |
 | `kg_context` | Build RAG context from graph | `topic?`, `entity?`, `hops?` |
 | `kg_entities` | List/search entities | `type?`, `search?`, `limit?` |
-| `kg_impact` | Semantic impact analysis | `files`, `hops?` |
-| `kg_doc_health` | Documentation freshness (requires Neo4j) | `files?` |
+| `kg_doc_health` | Documentation freshness | `files?` |
 | `kg_schema` | Graph schema description | _(none)_ |
 
 ## MCP Server Options

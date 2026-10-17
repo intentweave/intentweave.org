@@ -73,7 +73,7 @@ IntentWeave's rules engine adds:
   `variable_assignment`, and intra-function `taint_propagation`, so a forbidden access is still
   flagged even after it's assigned to a local variable and used indirectly.
 - **Custom graph queries** — a `cypher` rule type runs CypherLite queries directly against
-  IntentWeave's SQLite index for checks no built-in rule type can express, without Neo4j.
+  IntentWeave's SQLite index for checks no built-in rule type can express.
 - **Diagrams checked against the call graph, not just the import graph** — IntentWeave validates
   Mermaid *sequence* diagrams against which functions actually call which, in what order —
   narrower than ArchUnitTS/ts-arch's PlantUML slice-diagram checks, which validate component-level
@@ -134,7 +134,7 @@ today.
 | Nx-native project graph support | ✅ | Generic monorepo/alias support (tsconfig paths, Webpack, Docusaurus) |
 | Diagram-vs-code validation | ✅ (PlantUML vs. import graph) | ✅ (Mermaid vs. import graph *and* vs. call graph) |
 | AST-level rules with taint tracking | Limited (class-member deps only) | ✅ |
-| Custom graph queries (Cypher-style, no Neo4j) | ❌ | ✅ |
+| Custom graph queries (Cypher-style) | ❌ | ✅ |
 | Doc↔code grounding & drift detection | ❌ | ✅ |
 | ADR → rules extraction (LLM-assisted) | ❌ | ✅ (optional) |
 | RAG context for AI coding agents | ❌ | ✅ |

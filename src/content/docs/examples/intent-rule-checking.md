@@ -1,11 +1,11 @@
 ---
 title: Turn ADRs into Enforceable Code Rules
-description: See how IntentWeave extracts Architectural Decision Records into rules.yaml and checks them in CI in milliseconds — no Neo4j or LLM required to enforce them.
+description: See how IntentWeave extracts Architectural Decision Records into rules.yaml and checks them in CI in milliseconds — no LLM required to enforce them.
 ---
 
 ## The Problem
 
-Vibe-coding AI agents and busy developers can implement code that quietly breaks your architectural decisions. While standard CI tools catch formatting and linting errors, they don't catch deviations from architectural intent. IntentWeave bridges this gap by turning your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring Neo4j or LLMs in your CI pipeline.
+Vibe-coding AI agents and busy developers can implement code that quietly breaks your architectural decisions. While standard CI tools catch formatting and linting errors, they don't catch deviations from architectural intent. IntentWeave bridges this gap by turning your Architectural Decision Records (ADRs) and conventions into enforceable code constraints—without requiring LLMs in your CI pipeline.
 
 ## 1. Extract and Enforce ADRs
 
@@ -58,15 +58,6 @@ iw index arch-check --from-scan docs/ARCHITECTURE.md --provider openai --strict
 * `--strict`: Fail on undocumented flows. Exits with code 1 even if there are no violation matches but flows exist in code that are missing from the diagram.
 * `--refresh`: Re-run the LLM scan even if a valid cache exists.
 * `--config <path>`: Path to a manual `architecture.yaml` definition if skipping diagrams.
-
-### Validate using pre-computed Diagrams
-
-If you are already using the `cari_enrich` MCP tool's enrichment output, you can skip the LLM call entirely during the checks:
-
-```bash
-# Validate using pre-extracted diagram triples hidden inside your local index.db
-iw index arch-check --from-diagrams
-```
 
 ## 3. Built-in Intent Enforcements (Zero Config)
 

@@ -66,8 +66,7 @@ domains dependency-cruiser doesn't cover at all:
   intra-function `taint_propagation`, so you can flag things like "UI components must never touch
   `.resource.path`, even indirectly through a local variable."
 - **Custom graph queries** — a `cypher` rule type runs CypherLite queries directly against
-  IntentWeave's SQLite index for checks the built-in rule types can't express, without requiring
-  Neo4j.
+  IntentWeave's SQLite index for checks the built-in rule types can't express.
 - **Behavioral rules** — Mermaid sequence diagrams in your docs can be checked against the real
   call graph, so "the diagram in your docs *is* the spec" instead of just decoration.
 - **Doc↔code grounding and drift detection** — dependency-cruiser has no concept of documentation
@@ -123,7 +122,7 @@ specific property access or tracking a tainted variable across a function.
 | Orphan / dead-code detection | ✅ | ✅ (combined with unused-export + stale-doc signals) |
 | Dependency graph visualization | ✅ (dot, HTML, Mermaid) | ✅ (interactive HTML report) |
 | AST-level rules (property access, calls, taint) | ❌ | ✅ |
-| Custom graph queries (Cypher-style, no Neo4j) | ❌ | ✅ |
+| Custom graph queries (Cypher-style) | ❌ | ✅ |
 | Behavioral rules vs. real call graph | ❌ | ✅ |
 | Doc↔code grounding & drift detection | ❌ | ✅ |
 | ADR → rules extraction (LLM-assisted) | ❌ | ✅ (optional) |

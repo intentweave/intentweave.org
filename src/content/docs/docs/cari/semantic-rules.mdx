@@ -1,6 +1,6 @@
 ---
 title: Semantic Rule Checking
-description: Enforce architectural decisions across three domains — structural (import graphs, AST), behavioral (Mermaid sequence/flow diagrams), and documentary (coverage, staleness, terminology) — without Neo4j or runtime overhead.
+description: Enforce architectural decisions across three domains — structural (import graphs, AST), behavioral (Mermaid sequence/flow diagrams), and documentary (coverage, staleness, terminology) — without runtime overhead.
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -222,7 +222,7 @@ The query must return columns `file`, `line`, and `detail`.
         RETURN s.file AS file, s.line AS line, s.name AS detail
 ```
 
-CypherLite supports a subset of Cypher syntax directly against the SQLite schema — no Neo4j required. Use this for custom cross-table checks that the built-in types cannot express.
+CypherLite supports a subset of Cypher syntax directly against the SQLite schema. Use this for custom cross-table checks that the built-in types cannot express.
 
 ---
 

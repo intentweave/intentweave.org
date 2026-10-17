@@ -32,7 +32,7 @@ none of these tools were built for them:
 - **RAG context for AI coding agents** — `iw index context-pack` hands your AI coding agent a
   token-budgeted, ranked bundle of files, rules, and doc drift for a query.
 - **Custom graph queries** — a `cypher` rule type runs CypherLite queries directly against
-  IntentWeave's SQLite index, without requiring Neo4j.
+  IntentWeave's SQLite index.
 
 ## Try it in 30 seconds
 

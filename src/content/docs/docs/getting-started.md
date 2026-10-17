@@ -179,7 +179,6 @@ living score, and code health. Open it in any browser — no server needed.
 - [Architecture Analysis](/examples/architecture-layers/) — layers, violations, and HTML reports
 - [CI Integration](/docs/integrations/ci/) — add drift checks to your pipeline
 - [Copilot / MCP](/docs/integrations/mcp/) — use CARI tools in VS Code
-- [Knowledge Graph](/docs/kg/overview/) — optional deep semantic extraction
 
 ---
 

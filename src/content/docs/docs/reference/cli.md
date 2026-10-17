@@ -18,7 +18,7 @@ npx @intentweave/cli <command>
 
 ---
 
-## CARI Commands (no LLM, no Neo4j)
+## CARI Commands (no LLM)
 
 ### `iw init`
 
@@ -210,7 +210,7 @@ All analysis queries are available as `iw index` subcommands:
 | `iw index rules-extract`      | Canonical command behind `iw intent extract` (same options) |
 | `iw index scan-diagrams`      | Canonical command behind `iw intent scan` (same options)  |
 | `iw index rules-trend`        | ADR conformance trend over git history                    |
-| `iw index arch-check`         | Validate imports against a diagram/YAML architecture spec — `--from-scan <paths>` (LLM diagram scan, no config needed), `--from-diagrams` (use enriched triples), `--strict`, `--refresh` |
+| `iw index arch-check`         | Validate imports against a diagram/YAML architecture spec — `--from-scan <paths>` (LLM diagram scan, no config needed), `--strict`, `--refresh` |
 | `iw index deprecated-callers` | Active callers of `@deprecated` symbols                    |
 | `iw index internal-violations`| `@internal`/`_`-prefix boundary violations across packages |
 | `iw index type-assertions`    | Inventory of `as any` / double / angle-bracket casts       |
@@ -387,9 +387,9 @@ iw index export --focus <target> [options]
 
 Run an ad-hoc [CypherLite](/docs/cari/semantic-rules/) query directly against the CARI graph
 projection — a second layer on top of the 30+
-built-in queries, for questions they don't cover. No Neo4j, no LLM — only `.iw/index.db`.
-This queries the CARI SQLite projection only. For the separate LLM-powered Knowledge Graph
-(Neo4j), use the `kg_query` MCP tool instead — see below.
+built-in queries, for questions they don't cover. No LLM — only `.iw/index.db`.
+This queries the CARI SQLite projection only. For a graph stored by `plugin-kg-lite`,
+use the `kg_query` MCP tool instead — see below.
 
 ```bash
 iw index cypher <query> [options]
@@ -419,17 +419,15 @@ types: `IMPORTS`, `DEFINES`, `CALLS`, `ANNOTATED_BY`, `HAS_TODO`, `HAS_RATIONALE
 for the full property reference and current template list.
 
 KG queries are available via the MCP server (`iw mcp`) using GitHub Copilot tools
-(`kg_query`, `kg_context`, `kg_entities`, `kg_impact`, `kg_doc_health`, `kg_schema`).
-Set `NEO4J_URI`, `NEO4J_USER`, and `NEO4J_PASSWORD` environment variables before
-starting the MCP server.
+(`kg_query`, `kg_context`, `kg_entities`, `kg_doc_health`, `kg_schema`). They read a graph
+stored by `plugin-kg-lite` (`iw plugin add kg-lite`).
 
 ### `iw intent living`
 
 Documentation freshness analysis. Three modes (least → most infrastructure):
 
 1. `--lite` — Zero-infra keyword scan (no index needed)
-2. _(default)_ — CARI-backed analysis from `.iw/index.db` (no Neo4j)
-3. `--neo4j` — Full KG-based analysis (requires Neo4j + persisted KWG)
+2. _(default)_ — CARI-backed analysis from `.iw/index.db`
 
 ```bash
 iw intent living [files...] [options]
@@ -438,9 +436,6 @@ iw intent living [files...] [options]
 | Option           | Default        | Description                                   |
 | ---------------- | -------------- | --------------------------------------------- |
 | `--db <path>`    | `.iw/index.db` | Path to CARI index (default mode)             |
-| `--neo4j`        | off            | Full KG mode — requires Neo4j                 |
-| `-s, --session`  | —              | Session ID (required for `--neo4j` only)      |
-| `--only`         | all            | Specific detectors: doc-code,temporal,deps,doc-doc |
 | `--lite`         | off            | Lightweight keyword-only mode                 |
 | `-f, --format`   | `markdown`     | Output format: markdown \| json               |
 | `-o, --output`   | —              | Write to file                                 |
@@ -448,8 +443,8 @@ iw intent living [files...] [options]
 
 ### `iw persist`
 
-> **Removed.** Persisting to Neo4j via CLI is no longer supported. Use the
-> `kg_*` MCP tools from GitHub Copilot to query an existing Neo4j instance.
+> **Removed.** Writing the knowledge graph from the CLI is no longer supported. Use the
+> `kg_*` MCP tools from GitHub Copilot to query a graph stored by `plugin-kg-lite`.
 
 ### `iw xlink`
 
@@ -475,10 +470,6 @@ iw mcp [options]
 
 | Variable           | Default                 | Description                           |
 | ------------------ | ----------------------- | ------------------------------------- |
-| `NEO4J_URI`        | `bolt://localhost:7687` | Neo4j URI                             |
-| `NEO4J_USERNAME`   | `neo4j`                 | Neo4j user                            |
-| `NEO4J_PASSWORD`   | _(required for KG)_     | Neo4j password                        |
-| `NEO4J_DATABASE`   | `neo4j`                 | Neo4j database                        |
 | `IW_SESSION`       | `default`               | Default session ID                    |
 | `OPENAI_API_KEY`   | _(optional)_            | For `--provider openai` + NL queries  |
 | `IW_LLM_MODEL`    | `gpt-4o-mini`           | LLM model                             |

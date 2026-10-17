@@ -12,9 +12,8 @@ Install only what you need.
 | Layer | What You Get | Cost | Requirements |
 |-------|-------------|------|-------------|
 | **Core (CARI)** | 30+ query modes, architecture visualization, CI drift checks, clone detection, community detection, hub analysis, and more | $0 | Node ≥ 22.15, Git |
-| **+ plugin-llm** | LLM-generated layer names, selective enrichment (diagram validation, decision tracking, contradiction detection) | Pay-per-use (OpenAI) | OpenAI API key |
+| **+ plugin-llm** | LLM-generated architecture layer names | Pay-per-use (OpenAI) | OpenAI API key |
 | **+ plugin-kg-lite** | Cypher queries over a local SQLite-backed knowledge graph — no external database needed | $0 | _(none)_ |
-| **+ plugin-kg** | Full Neo4j persistence, semantic queries, impact analysis, cross-document reasoning | $0 (self-hosted) | Neo4j 5 |
 | **+ plugin-swift** | Swift AST extraction via tree-sitter | $0 | _(none)_ |
 | **+ plugin-python** | Python AST extraction via tree-sitter | $0 | _(none)_ |
 
@@ -22,8 +21,8 @@ Install only what you need.
 
 Each row is a use case. Columns show which plugins are needed. Core is always included.
 
-| Use Case | Core | plugin-llm | plugin-kg-lite | plugin-kg |
-|----------|:----:|:----------:|:--------------:|:---------:|
+| Use Case | Core | plugin-llm | plugin-kg-lite |
+|----------|:----:|:----------:|:--------------:|
 | **Ranked file retrieval** | ✅ | | | |
 | **CI drift detection** | ✅ | | | |
 | **Clone detection** (exact + structural) | ✅ | | | |
@@ -47,12 +46,6 @@ Each row is a use case. Columns show which plugins are needed. Core is always in
 | **Contradiction detection** *(planned)* | ✅ | ✅ | | |
 | **Config-to-docs sync** *(planned)* | ✅ | ✅ | | |
 | **Local Cypher queries** | ✅ | | ✅ | |
-| **Full semantic KG queries** | ✅ | | | ✅ |
-| **Impact analysis** | ✅ | | | ✅ |
-| **Cross-document reasoning** | ✅ | | | ✅ |
-| **KG persistence** | ✅ | | | ✅ |
-| **Enrichment + local KG** | ✅ | ✅ | ✅ | |
-| **Enrichment + full KG** | ✅ | ✅ | | ✅ |
 
 ## Recommended Setups
 
@@ -90,18 +83,17 @@ iw index hubs                      # find god-nodes
 
 ### Decision archaeology / knowledge management
 
-Use the `kg_query`, `kg_context`, and `kg_impact` MCP tools in GitHub Copilot
-after configuring Neo4j credentials:
+Use the `kg_query` and `kg_context` MCP tools in GitHub Copilot, backed by the SQLite
+graph in `plugin-kg-lite`:
 
 ```bash
-export NEO4J_PASSWORD=intentweave
-export OPENAI_API_KEY=sk-...
+iw plugin add kg-lite
 iw mcp --session my-project
 ```
 
-Then ask Copilot: _"What decisions were made about authentication?"_ or _"What is the impact of changing src/auth/service.ts?"_
+Then ask Copilot: _"What are the main components of the authentication module?"_
 
-**Plugins needed:** `plugin-llm` + `plugin-kg`.
+**Plugins needed:** `plugin-kg-lite`.
 
 ## Installing Plugins
 
@@ -113,9 +105,6 @@ npm install -D @intentweave/plugin-llm
 
 # Local KG (Cypher over SQLite)
 npm install -D @intentweave/plugin-kg-lite
-
-# Full KG (Neo4j)
-npm install -D @intentweave/plugin-kg
 
 # Language support
 npm install -D @intentweave/plugin-swift
@@ -142,7 +131,7 @@ the `PluginRegistry`.
 │  │   LLM    │  │ Persistence  │  │   Language    │ │
 │  │          │  │              │  │               │ │
 │  │plugin-llm│  │plugin-kg-lite│  │ plugin-swift  │ │
-│  │          │  │  plugin-kg   │  │ plugin-python │ │
+│  │          │  │              │  │ plugin-python │ │
 │  └──────────┘  └──────────────┘  └───────────────┘ │
 │                                                     │
 │  Discovery: scan node_modules for @intentweave/*    │

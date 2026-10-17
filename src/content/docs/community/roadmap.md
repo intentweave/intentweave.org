@@ -7,9 +7,8 @@ description: What's planned for IntentWeave.
 
 IntentWeave ships **three composable layers** of code intelligence. Layer 1 (CARI) is
 **production-ready** with 1532 tests passing across 80 test files and 16 packages.
-Layer 2 (Selective Enrichment) is **partially available** — the `cari_enrich` MCP tool
-scores files for enrichment candidacy today (dry-run only; full LLM extraction isn't
-yet wired up to a CLI command). Layer 3 (Intent
+Layer 2 (Selective Enrichment) is **removed**, including its LLM extraction. The `cari_enrich`
+MCP tool still ranks files as enrichment candidates (dry-run only). Layer 3 (Intent
 Verification) is **shipped** — `iw intent check` runs all three enforcement domains
 (structural / behavioral / documentary) at $0 after a one-time LLM rule-extraction step.
 
@@ -19,8 +18,7 @@ Verification) is **shipped** — `iw intent check` runs all three enforcement do
 Layer 3 — Intent Verification          (shipped)
   iw intent check: structural + behavioral + documentary domains
   Insights Book: 15+ chapter HTML deliverable
-Layer 2 — Selective Semantic Enrichment (partially available)
-  cari_enrich MCP tool — dry-run scoring of CARI-selected targets
+Layer 2 — Selective Semantic Enrichment (removed; `cari_enrich` ranks candidates only)
 Layer 1 — CARI                         (production-ready, $0)
   AST + keywords + git + SQLite → 60+ query modes
 ```
@@ -91,8 +89,7 @@ Layer 1 — CARI                         (production-ready, $0)
 - ✅ **Plugin system** — `PluginRegistry` with auto-discovery, 3 capability types
   (LLM, persistence, language)
 - ✅ **CypherLite** — zero-dependency Cypher→SQL transpiler for SQLite-backed KG queries
-- ✅ **plugin-kg-lite** — lightweight KG backend using CypherLite + SQLite (no Neo4j needed)
-- ✅ **plugin-kg** — full Neo4j KG backend via `PersistenceCapability`
+- ✅ **plugin-kg-lite** — lightweight KG backend using CypherLite + SQLite
 - ✅ **plugin-swift** / **plugin-python** — tree-sitter Swift and Python language plugins
 - ✅ **plugin-llm** — OpenAI-based LLM capability
 
